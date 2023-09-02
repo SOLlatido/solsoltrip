@@ -1,7 +1,9 @@
 import React from 'react'
-import { View, Text, Button, ImageBackground, StyleSheet } from 'react-native'
+import { View, Text, Button, ImageBackground, StyleSheet, Image} from 'react-native'
 import aurora from "../assets/images/aurora_background.png";
 import LongButton from '../components/ButtonItems/LongButton';
+import sol from "../assets/images/character_sol.png";
+
 function Intro() {
   return (
     <View style={styles.container}>
@@ -22,8 +24,10 @@ function Intro() {
       </View >
 
       <View style={styles.character}>
-
-
+        <Text>test</Text>
+        <Image
+          style = {styles.sol}
+          source={sol}/>
       </View>
 
       <LongButton content='시작하기'></LongButton>
@@ -71,6 +75,12 @@ const styles = StyleSheet.create({
     },
     character : {
         flex : 3,
+        resizeMode : "cover",
+        justifyContent : "center",
+        alignItems : "center"
+        // width : 
+    },
+    sol : {
     }
 })
   
