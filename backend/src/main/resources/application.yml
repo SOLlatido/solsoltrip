@@ -5,7 +5,7 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/solsoltrip;MODE=MYSQL
+    url: jdbc:h2:mem:solsoltrip;MODE=MYSQL
     username: sa
     password:
 
