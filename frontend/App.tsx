@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import Intro from './screens/Intro.tsx';
+import Intro from './screens/Intro';
 
 
 export default function App() {

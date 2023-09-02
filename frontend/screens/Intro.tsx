@@ -1,26 +1,32 @@
 import React from 'react'
 import { View, Text, Button, ImageBackground, StyleSheet } from 'react-native'
 import aurora from "../assets/images/aurora_background.png";
-import LongButton from '../components/ButtonItem/LongButton';
-
+import LongButton from '../components/ButtonItems/LongButton';
 function Intro() {
   return (
     <View style={styles.container}>
-      <View style={styles.introContainer}>
 
-        <ImageBackground 
-          source={aurora}
-          style={styles.image}
-          >
-        </ImageBackground>
+    <ImageBackground 
+        source={aurora}
+        style={styles.image}
+        >
+    </ImageBackground>
+
+      <View style={styles.introContainer}>
         <View style={styles.titles}>
           <Text style= {styles.title}>여행을 앞두고 계신가요?</Text>
           <Text style= {styles.subtitle}>동행통장과 함께 쏠쏠한 추억 쌓아요</Text>
           <Text style= {styles.subtitle}>북극성 여행작가 쏠이 가이드해드릴게요!</Text>
-          
-          <LongButton></LongButton>
         </View>
+
+      </View >
+
+      <View style={styles.character}>
+
+
       </View>
+
+      <LongButton content='시작하기'></LongButton>
     </View>
   )
   
@@ -31,7 +37,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#000',
       alignItems: 'center',
       justifyContent: 'center',
-      color : "#fff"
+      textColor : "#fff"
     },
     image : {
       width : '100%',
@@ -41,23 +47,31 @@ const styles = StyleSheet.create({
   
     },
     introContainer : {
+      flex : 2,
       width : '100%',
       height : '100%',
     },
     titles : {
       marginTop : '35%',
       width : "100%",
-      marginLeft : "5%"
+      marginLeft : "5%",
+      color : "#fff"
     },
     title : {
       fontSize : 26,
-      fontWeight : 'bold',
-      marginBottom : 15
+      fontWeight : '500',
+      marginBottom : 20,
+      color : "#fff"
+      
     },
     subtitle : {
-      fontSize : 17,
-      marginTop : 5
+      fontSize : 15,
+      marginTop : 7,
+      color : "#fff"
     },
+    character : {
+        flex : 3,
+    }
 })
   
 export default Intro

@@ -1,26 +1,29 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import React from 'react'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 const LongButton = (props:{content:string}) => {
   const content:string = props.content
   return (
-    <View>
+    <View style={s.container}>
       <Pressable
-        style={s.container}
+        style={s.button}
         onPress={()=>{console.warn("hello")}}
-      ></Pressable>
-      <Text style={s.text}>시작하기</Text>
+      >
+      <Text style={s.text}>{content}</Text>
+      </Pressable>
     </View>
   )
 }
 
 const s = StyleSheet.create({
   container : {
-    width:"100%",
-    padding : 10,
+    flex:1,
+    padding:20,
+    width : "100%"
   },
   button : {
-    backgroundColor : "#fff",
+    backgroundColor : "#7B5AF3",
     height : 50,
     borderRadius : 15,
     justifyContent : "center",
@@ -28,7 +31,8 @@ const s = StyleSheet.create({
   },
   text : {
     fontSize : 20,
-    fontWeight : '500'
+    fontWeight : '500',
+    color : "#fff"
   }
 })
 
