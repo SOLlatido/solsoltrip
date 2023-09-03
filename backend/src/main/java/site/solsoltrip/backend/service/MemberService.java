@@ -31,6 +31,7 @@ public class MemberService {
         final Member member = Member.builder()
                 .email(requestDto.email())
                 .password(passwordEncoder.encode(requestDto.password()))
+                .name(requestDto.name())
                 .phone(requestDto.phone())
                 .role(Role.USER)
                 .build();

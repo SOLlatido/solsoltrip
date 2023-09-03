@@ -21,9 +21,11 @@ public class Member {
 
     private String password;
 
+    private String name;
+
     private String phone;
 
-    private String role;
+    private Role role;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberEvent> eventList = new ArrayList<>();
