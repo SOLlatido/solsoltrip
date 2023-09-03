@@ -12,7 +12,7 @@ function EndTimeReset(){
         <View style={tw `flex-1 bg-white`}>
 
             <View style={tw `flex-1 justify-center items-center`}>
-                <View style={tw `flex-1 flex-row justify-center items-center mt-20`}>
+                <View style={tw `flex-2 flex-row justify-center items-center mt-20`}>
                     <Ionicons style={tw `flex-1 text-4xl pl-3`} name="close-outline" size={24} color="black" />
                     <Text style={tw `flex-2 text-xl font-black`}>종료날짜 선택</Text>
                 </View>
@@ -23,7 +23,7 @@ function EndTimeReset(){
 
 
 
-            <View style={tw `flex-3 bg-white`}>
+            <View style={tw `flex-4 bg-white`}>
                 <Calendar/>
             </View>
 

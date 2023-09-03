@@ -4,6 +4,8 @@ import uuid from "react-native-uuid";
 import { StyleSheet, Text, View } from "react-native";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
+import tw from 'twrnc'; 
+
 // 컴포넌트
 import divideArray from "./utils/divideArray";
 import isSameObj from "./utils/isSameObj";
@@ -141,9 +143,9 @@ function Body(props){
           onSwipeRight={onSwipeRight}
           config={{ velocityThreshold: 0.1 }}
         >
-          <View style={S.dayOfWeek}>
+          <View style={tw `flex-row`}>
             {dayOfWeek.map((day, idx) => (
-              <View style={S.box} key={idx}>
+              <View style={tw `w-1/7 h-18 mt-3 justify-center items-center t.mY16`} key={idx}>
                 <Text style={changeColorByDay(day).dayOfWeek}>{day}</Text>
               </View>
             ))}
@@ -152,7 +154,7 @@ function Body(props){
 
           <View>
             {viewTotalDays ? (
-              <View style={S.totalDays}>
+              <View style={tw `flex-row flex-wrap`}>
                 {Object.keys(totalDaysByState).map((state) =>
                   totalDaysByState[state].daysList.map((day) => {
                     const checkPressedDate = {
@@ -162,7 +164,7 @@ function Body(props){
                       date: day,
                     };
                     return (
-                      <View style={S.box} key={uuid.v4()}>
+                      <View style={tw `w-1/7 h-18 justify-center items-center t.mY16`} key={uuid.v4()}>
                         <Pressable
                           onPress={handlePressDay.bind(this, checkPressedDate)}
                           style={({ pressed }) => {
@@ -170,9 +172,10 @@ function Body(props){
                               pressedDate.date === checkPressedDate.date &&
                               pressedDate.month === checkPressedDate.month &&
                               pressedDate.year === checkPressedDate.year
-                                ? S.pressedDate
+                              
+                                ? tw `w-10 h-10 bg-white border rounded-3xl justify-center items-center`
                                 : null,
-                              pressed && S.pressed,
+                              pressed && tw `opacity-30`,
                             ];
                           }}
                         >
@@ -183,10 +186,10 @@ function Body(props){
                                   { state: "curr", ...props.today },
                                   checkPressedDate
                                 )
-                                  ? S.today
+                                  ? tw `text-[#2196f3] text-2xl`
                                   : state === "prev" || state === "next"
-                                  ? S.prev
-                                  : S.curr,
+                                  ? tw `text-gray-400 text-2xl`
+                                  : tw `text-black text-2xl`,
                               ],
                             ]}
                           >
@@ -207,7 +210,7 @@ function Body(props){
                     date: el,
                   };
                   return (
-                    <View style={S.box} key={idx}>
+                    <View style={tw `w-1/7 h-18 justify-center items-center t.mY16`} key={idx}>
                       <Pressable
                         onPress={handlePressDay.bind(this, checkPressedDate)}
                         style={({ pressed }) => {
@@ -215,9 +218,9 @@ function Body(props){
                             pressedDate.date === checkPressedDate.date &&
                             pressedDate.month === checkPressedDate.month &&
                             pressedDate.year === checkPressedDate.year
-                              ? S.pressedDate
+                              ? tw `w-10 h-10 bg-white border rounded-3xl justify-center items-center`
                               : null,
-                            pressed && S.pressed,
+                            pressed && tw `opacity-30`,
                           ];
                         }}
                       >
@@ -225,8 +228,8 @@ function Body(props){
                           style={[
                             [
                               isSameObj({ ...props.today }, checkPressedDate)
-                                ? S.today
-                                : S.curr,
+                                ? tw `text-[#2196f3] text-2xl`
+                                : tw `text-black text-2xl`,
                             ],
                           ]}
                         >
@@ -251,54 +254,10 @@ export default Body
 const dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 
-const S = StyleSheet.create({
+const changeColorByDay = (day) =>
+  StyleSheet.create({
     dayOfWeek: {
-      flexDirection: "row",
-    },
-    totalDays: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-    },
-    box: {
-      width: "14.2%",
-      height: 30,
-      justifyContent: "center",
-      alignItems: "center",
-      marginVertical: 16,
-    },
-    prev: {
-      color: "gray",
-      fontSize: 24,
-    },
-    next: {
-      color: "gray",
-      fontSize: 24,
-    },
-    curr: {
-      color: "black",
-      fontSize: 24,
-    },
-    today: {
-      color: "#2196f3",
-      fontSize: 24,
-    },
-    pressedDate: {
-      width: 40,
-      height: 40,
-      backgroundColor: "white",
-      borderWidth: 1,
-      borderRadius: 20,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    pressed: {
-      opacity: 0.3,
+      color: day === "Sun" ? "red" : day === "Sat" ? "blue" : "gray",
+      fontSize: 16,
     },
   });
-  const changeColorByDay = (day) =>
-    StyleSheet.create({
-      dayOfWeek: {
-        color: day === "Sun" ? "red" : day === "Sat" ? "blue" : "gray",
-        fontSize: 16,
-      },
-    });
