@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.solsoltrip.backend.dto.MemberSignUpRequestDto;
+import site.solsoltrip.backend.dto.MemberRequestDto;
 import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.repository.MemberRepository;
 
@@ -22,7 +22,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void signup(final MemberSignUpRequestDto requestDto) {
+    public void signup(final MemberRequestDto.signup requestDto) {
         if (checkEmailExistence(requestDto.email())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
@@ -30,6 +30,7 @@ public class MemberService {
         final Member member = Member.builder()
                 .email(requestDto.email())
                 .password(passwordEncoder.encode(requestDto.password()))
+                .name(requestDto.name())
                 .phone(requestDto.phone())
                 .role(requestDto.role())
                 .build();
