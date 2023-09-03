@@ -1,14 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import Intro from './screens/Intro';
+import AppNavigation from './navigation/AppNavigation';
 
 
 export default function App() {
-  const navigation = useRouter();
   return (
     <>
-      <Intro></Intro>
-      {/* <StatusBar style="auto" /> */}
+      <AppNavigation></AppNavigation>
     </>
   );
 }
