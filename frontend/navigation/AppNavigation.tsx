@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
+import EndTimeReset from '../screens/EndTimeReset';
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
@@ -15,6 +16,7 @@ const AppNavigation = () => {
         initialRouteName='Intro'>
         <Stack.Screen name='Intro' component={Intro} />
         <Stack.Screen name='Login' component={Login} />
+        <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -34,9 +36,14 @@ type LoginParams = {
     key : string;
 };
 
+type EndTimeResetParams = {
+    key : string;
+};
+
 export type RootStackParamList = {
   Intro: IntroParams;
   Login: LoginParams;
+  EndTimeReset : EndTimeResetParams;
 };
 
 export const defaultNavigationOptions: NativeStackNavigationOptions = {
