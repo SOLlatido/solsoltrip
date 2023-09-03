@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class TripRequestDto {
     public record validation (
-            @NotBlank
+//            @NotBlank
             Long memberSeq
     ) {}
 }
