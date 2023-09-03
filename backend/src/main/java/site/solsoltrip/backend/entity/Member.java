@@ -1,9 +1,7 @@
 package site.solsoltrip.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +10,8 @@ import java.util.List;
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor
+@Builder
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +21,11 @@ public class Member {
 
     private String password;
 
+    private String name;
+
     private String phone;
 
-    private String role;
+    private Role role;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberEvent> eventList = new ArrayList<>();
