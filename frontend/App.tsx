@@ -8,7 +8,7 @@ export default function App() {
   return (
     <>
       <Intro></Intro>
-      <StatusBar style="auto" />
+      {/* <StatusBar style="auto" /> */}
     </>
   );
 }
