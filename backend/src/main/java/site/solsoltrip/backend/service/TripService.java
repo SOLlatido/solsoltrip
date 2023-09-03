@@ -25,14 +25,14 @@ public class TripService {
     }
 
     @Transactional
-    public void sendRequest(Long memberSeq, String uri) {
-        DataHeader dataHeader = new DataHeader();
+    public void sendRequest(final Long memberSeq, final String uri) {
+        final DataHeader dataHeader = new DataHeader();
 
-        DataBody dataBody = DataBody.builder()
-                .실명번호(memberSeq + "")
+        final DataBody dataBody = DataBody.builder()
+                .실명번호(String.valueOf(memberSeq))
                 .build();
 
-        ShbhackRequestDto requestDto = ShbhackRequestDto.builder()
+        final ShbhackRequestDto requestDto = ShbhackRequestDto.builder()
                 .dataHeader(dataHeader)
                 .dataBody(dataBody)
                 .build();
