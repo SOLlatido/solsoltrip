@@ -1,4 +1,6 @@
 import {View, Text, StyleSheet} from 'react-native';
+// 컴포넌트
+import Calendar from '../components/Calendar/Calendar';
 
 function EndTimeReset(){
 
@@ -11,7 +13,9 @@ function EndTimeReset(){
 
             <View style={styles.timeView}></View>
 
-            <View style={styles.calendarView}></View>
+            <View style={styles.calendarView}>
+                <Calendar/>
+            </View>
 
             <View style={styles.buttonsView}></View>
 

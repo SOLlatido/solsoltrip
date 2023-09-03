@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-// import GestureRecognizer from "react-native-swipe-gestures";
+import GestureRecognizer from "react-native-swipe-gestures";
+import uuid from "react-native-uuid";
+import { StyleSheet, Text, View } from "react-native";
 
 // 컴포넌트
 import divideArray from "./utils/divideArray";
@@ -144,7 +146,7 @@ function Body(props){
                       date: day,
                     };
                     return (
-                      <View style={S.box} key={uuidv4()}>
+                      <View style={S.box} key={uuid.v4()}>
                         <Pressable
                           onPress={handlePressDay.bind(this, checkPressedDate)}
                           style={({ pressed }) => {
@@ -228,3 +230,59 @@ function Body(props){
 }
 
 export default Body
+
+
+const dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+
+const S = StyleSheet.create({
+    dayOfWeek: {
+      flexDirection: "row",
+    },
+    totalDays: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+    },
+    box: {
+      width: "14.2%",
+      height: 30,
+      justifyContent: "center",
+      alignItems: "center",
+      marginVertical: 16,
+    },
+    prev: {
+      color: "gray",
+      fontSize: 24,
+    },
+    next: {
+      color: "gray",
+      fontSize: 24,
+    },
+    curr: {
+      color: "black",
+      fontSize: 24,
+    },
+    today: {
+      color: "#2196f3",
+      fontSize: 24,
+    },
+    pressedDate: {
+      width: 40,
+      height: 40,
+      backgroundColor: "white",
+      borderWidth: 1,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    pressed: {
+      opacity: 0.3,
+    },
+  });
+  const changeColorByDay = (day) =>
+    StyleSheet.create({
+      dayOfWeek: {
+        color: day === "Sun" ? "red" : day === "Sat" ? "blue" : "gray",
+        fontSize: 16,
+      },
+    });
