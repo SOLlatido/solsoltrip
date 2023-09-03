@@ -52,7 +52,13 @@ function Calendar(){
 
     return(
         <View style={styles.calendarContainer}>
-            <Header/>
+            <Header
+                month={month}
+                year={year}
+                moveToNextMonth={moveToNextMonth}
+                moveToPreviousMonth={moveToPrevioustMonth}
+                moveToSpecificYearAndMonth={moveToSpecificYearAndMonth}
+            />
 
             <Body
                 year={year}
@@ -60,7 +66,7 @@ function Calendar(){
                 moveToNextMonth = {moveToNextMonth}
                 moveToPrevioustMonth = {moveToPrevioustMonth}
                 moveToSpecificYearAndMonth = {moveToSpecificYearAndMonth}
-                />
+            />
 
         </View>
     )

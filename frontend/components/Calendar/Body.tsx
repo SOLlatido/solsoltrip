@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import GestureRecognizer from "react-native-swipe-gestures";
 import uuid from "react-native-uuid";
 import { StyleSheet, Text, View } from "react-native";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 // 컴포넌트
 import divideArray from "./utils/divideArray";
+import isSameObj from "./utils/isSameObj";
 
 
 function Body(props){

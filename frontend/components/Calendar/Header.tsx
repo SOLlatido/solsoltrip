@@ -2,20 +2,22 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
-// import SelectMonthModal from "../Modal/SelectMonthModal";
-// import SelectYearModal from "../Modal/SelectYearModal";
 
 /**
  * 이전 달 년도 다음 버튼으로 구성
  * 
  */
-function Header(){
+function Header(props){
+
+    const [yearModalVisible, setYearModalVisible] = useState(false);
+    const [monthModalVisible, setMonthModalVisible] = useState(false);
 
     return(
         <>
             <View style={styles.header}>
 
                 <Pressable
+                    onPress={props.moveToPreviousMonth.bind(this, props.month)}
                     style={({pressed})=> pressed && styles.pressed}
                 >
                     <Ionicons name="chevron-back" size={24} color="black" />
@@ -23,14 +25,14 @@ function Header(){
 
                 <View style={{ flexDirection: "row" }}>
                     <Pressable>
-                        <Text>9월 </Text>
+                        <Text>{props.month}월</Text>
                     </Pressable>
                     <Pressable>
-                        <Text>2023</Text>
+                        <Text>{props.year}</Text>
                     </Pressable>
                 </View>
                 
-                <Pressable>
+                <Pressable onPress={props.moveToNextMonth.bind(this, props.month)}>
                     <Ionicons name="chevron-forward" size={24} color="black" />
                 </Pressable>
 
