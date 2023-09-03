@@ -7,17 +7,12 @@ import aurora from '../assets/images/aurora_background.png';
 type NavigationProps = {
     navigation: StackNavigationProp<any>;
   };
-const Login:React.FC<NavigationProps> = ({navigation}) => {
+const SignUp:React.FC<NavigationProps> = ({navigation}) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const handleMain = () =>{
-    navigation.goBack();
-  }
-  const handleLogin = () =>{
-    navigation.navigate("MyAccounts");
-  }
+
   const handleSignUp = () =>{
-    navigation.navigate("SignUp");
+    navigation.navigate("Login");
   }
 
   return (
@@ -28,34 +23,46 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
       <View style={tw `flex-2 w-full h-full`}>
         <View style={tw `flex-1 w-full items-center`}>
           <View style={tw `flex-1`}></View>
-          <Text style={tw `flex-1 text-2xl mt-5 text-[#222]`}>아이디 / 비밀번호</Text>
+          <Text style={tw `flex-1 text-2xl mt-5 text-[#222]`}>회원가입</Text>
 
           <View style={tw `flex-2 items-center`}>
           <TextInput
               style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
-              placeholder="아이디 입력"
+              placeholder="이름을 입력해주세요"
               onChangeText={(text) => setId(text)}
               value={id}
             />
             <TextInput
-              style={tw`bg-white rounded-lg w-80 h-12 px-4`}
-              placeholder="영문자, 숫자, 특수문자 혼용(8~15자)"
+              style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
+              placeholder="아이디를 입력해주세요"
               secureTextEntry={true} // This hides the input as it's a password
               onChangeText={(text) => setPassword(text)}
               value={password}
             />
-            <Text style={tw `mt-4 text-[#444]`}>처음이신가요? <Text onPress={handleSignUp} style={tw `mt-4 text-[#0046FF]`}>회원가입</Text></Text>
+            <TextInput
+              style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
+              placeholder="비밀번호를 입력해주세요"
+              secureTextEntry={true} // This hides the input as it's a password
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+            />
+            <TextInput
+              style={tw`bg-white rounded-lg w-80 h-12 px-4`}
+              placeholder="이메일을 입력해주세요"
+              secureTextEntry={true} // This hides the input as it's a password
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+            />
             
             </View>
         </View>
       </View>
 
-      <LongButton content='메인으로' onPress={handleMain}></LongButton>
-      <LongButton content='로그인' onPress={handleLogin}></LongButton>
+      <LongButton content='회원가입' onPress={handleSignUp}></LongButton>
   
     </View>
     </>
   )
 }
 
-export default Login
+export default SignUp
