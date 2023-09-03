@@ -36,7 +36,7 @@ function Body(props){
 
         // 기능 1-1 : 이전 달의 월요일부터 다음달 시작 요일까지 출력
         const previousDays = Array.from(
-            // 만약  previousMonthLastDay = 4 (목)
+            // 만약  previousMonthLastDay = 4 (목) -> +1을 해주는 이유는 일요일이 가장 우측에 있기 때문에 이미 차있는 요일 수는 5개
             // previousMonthLastDate = 31
             // previousDays = [27, 28, 29, 30, 31]
             {length: previousMonthLastDay + 1},
@@ -51,7 +51,7 @@ function Body(props){
         );
 
         const nextDays = Array.from(
-            {length: 6 - currentMonthLastDate},
+            {length: 6 - currentMonthLastDay},
             (v,i) => i+1
         );
 
@@ -145,7 +145,7 @@ function Body(props){
         >
           <View style={tw `flex-row`}>
             {dayOfWeek.map((day, idx) => (
-              <View style={tw `w-1/7 h-18 mt-3 justify-center items-center t.mY16`} key={idx}>
+              <View style={tw `w-1/7 h-16 mt-3 justify-center items-center t.mY16`} key={idx}>
                 <Text style={changeColorByDay(day).dayOfWeek}>{day}</Text>
               </View>
             ))}
@@ -164,7 +164,7 @@ function Body(props){
                       date: day,
                     };
                     return (
-                      <View style={tw `w-1/7 h-18 justify-center items-center t.mY16`} key={uuid.v4()}>
+                      <View style={tw `w-1/7 h-16 justify-center items-center t.mY16`} key={uuid.v4()}>
                         <Pressable
                           onPress={handlePressDay.bind(this, checkPressedDate)}
                           style={({ pressed }) => {
@@ -210,7 +210,7 @@ function Body(props){
                     date: el,
                   };
                   return (
-                    <View style={tw `w-1/7 h-18 justify-center items-center t.mY16`} key={idx}>
+                    <View style={tw `w-1/7 h-16 justify-center items-center t.mY16`} key={idx}>
                       <Pressable
                         onPress={handlePressDay.bind(this, checkPressedDate)}
                         style={({ pressed }) => {
