@@ -1,5 +1,6 @@
 import {View, Text} from 'react-native';
 import tw from 'twrnc'; 
+import { Ionicons } from "@expo/vector-icons";
 
 // 컴포넌트
 import Calendar from '../components/Calendar/Calendar';
@@ -8,10 +9,11 @@ import LongButton from '../components/ButtonItems/LongButton';
 function EndTimeReset(){
 
     return(
-        <View style={tw `flex-1`}>
+        <View style={tw `flex-1 bg-white`}>
 
-            <View style={tw `flex-1 justify-center items-center`}>
-                <Text style={tw `pt-10 text-xl font-black`}>종료날짜를 재설정해주세요</Text>
+            <View style={tw `flex-1 flex-row justify-center items-center`}>
+                <Ionicons style={tw `flex-1 text-4xl pt-10 pl-3`} name="close-outline" size={24} color="black" />
+                <Text style={tw `flex-2 pt-10 text-xl font-black`}>종료날짜 선택</Text>
             </View>
 
 
@@ -20,8 +22,7 @@ function EndTimeReset(){
             </View>
 
             <View style={tw `flex-1 flex-row`}>
-                <LongButton content='취소'/>
-                <LongButton content='완료'/>
+                <LongButton content='수정'/>
             </View>
 
         </View>
