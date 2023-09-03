@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
+import tw from 'twrnc'; 
+
+// 컴포넌트
 import Body from "./Body";
 import Header from "./Header";
 
@@ -51,7 +54,7 @@ function Calendar(){
 
 
     return(
-        <View style={styles.calendarContainer}>
+        <View style={tw `w-full`}>
             <Header
                 month={month}
                 year={year}
@@ -73,11 +76,3 @@ function Calendar(){
 }
 
 export default Calendar
-
-
-const styles = StyleSheet.create({
-    calendarContainer: {
-        width: "100%",
-
-    }
-})
