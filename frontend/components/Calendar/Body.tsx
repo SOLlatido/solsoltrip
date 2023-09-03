@@ -24,7 +24,7 @@ function Body(props){
 
     const {year, month, date} = props; //Calendar 컴포넌트에서 넘겨준 props
 
-    // 기능1:
+    // 기능1: 한 달력에 1) 이전 월 일부 date 2) 현재 달 전체 date 3) 다음 달 일부 date => 총 5줄 
     const getTotalDays = (year, month) => {
         const previousMonthLastDate = new Date(year, month-1, 0).getDate(); //9월이면 31이 도출
         const previousMonthLastDay = new Date(year, month-1,0).getDay(); //월요일 = 1, 화요일 = 2, 수요일 =3, 목요일 = 4, 금요일 = 5, 토요일 6, 일요일 7

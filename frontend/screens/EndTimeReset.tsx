@@ -1,6 +1,9 @@
 import {View, Text, StyleSheet} from 'react-native';
+import tw from 'twrnc'; 
+
 // 컴포넌트
 import Calendar from '../components/Calendar/Calendar';
+import LongButton from '../components/ButtonItems/LongButton';
 
 function EndTimeReset(){
 
@@ -11,13 +14,15 @@ function EndTimeReset(){
                 <Text style={styles.statementText}>종료날짜를 재설정해주세요</Text>
             </View>
 
-            <View style={styles.timeView}></View>
 
             <View style={styles.calendarView}>
                 <Calendar/>
             </View>
 
-            <View style={styles.buttonsView}></View>
+            <View style={tw `flex-1 flex-row`}>
+                <LongButton content='취소'/>
+                <LongButton content='완료'/>
+            </View>
 
             <View style={styles.bottomNavView}></View>
 
@@ -48,11 +53,6 @@ const styles = StyleSheet.create({
         fontWeight:"900",
     },
 
-    // 기간 설정 영역
-    timeView: {
-        flex: 1,
-        backgroundColor:"orange",
-    },
 
     // 달력 영역
     calendarView:{
