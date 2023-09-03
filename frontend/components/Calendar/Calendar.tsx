@@ -64,7 +64,7 @@ function Calendar(){
                 year={year}
                 month={month}
                 moveToNextMonth = {moveToNextMonth}
-                moveToPrevioustMonth = {moveToPrevioustMonth}
+                moveToPreviousMonth = {moveToPrevioustMonth}
                 moveToSpecificYearAndMonth = {moveToSpecificYearAndMonth}
             />
 

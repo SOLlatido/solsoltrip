@@ -121,6 +121,18 @@ function Body(props){
         setViewTotalDays(true);
       };
 
+      useEffect(() => {
+        getTotalDays(year, month);
+      }, [year, month, date]);
+    
+      useEffect(() => {
+        totalDays.forEach((el, idx) => {
+          if (el.includes(date)) {
+            setWeek(idx);
+          }
+        });
+      }, [totalDays]);
+
       return (
         <GestureRecognizer
           onSwipeUp={onSwipeUp}
@@ -136,6 +148,8 @@ function Body(props){
               </View>
             ))}
           </View>
+
+
           <View>
             {viewTotalDays ? (
               <View style={S.totalDays}>
