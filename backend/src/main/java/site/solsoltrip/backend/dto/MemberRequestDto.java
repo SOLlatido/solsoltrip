@@ -19,7 +19,12 @@ public class MemberRequestDto {
 
             @NotBlank
             @Pattern(regexp="^010([0-9]{8})$", message = "전화번호는 하이픈 없이, 010으로 시작하는 11자리 숫자를 입력해주세요.")
-            String phone,
+            String phone) {}
 
-            String role) {}
+        public record login(
+                @NotBlank
+                String email,
+
+                @NotBlank
+                String password) {}
 }
