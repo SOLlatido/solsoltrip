@@ -37,7 +37,7 @@ public class TripService {
                 .dataBody(dataBody)
                 .build();
 
-        Mono<String> responseMono = webClient.post()
+        final Mono<String> responseMono = webClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class TripService {
     @Builder
     @Getter
     static class ShbhackRequestDto {
-        private DataHeader dataHeader = new DataHeader();
+        private DataHeader dataHeader;
 
         private DataBody dataBody;
     }
