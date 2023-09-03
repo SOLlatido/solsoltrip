@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.solsoltrip.backend.dto.MemberRequestDto;
+import site.solsoltrip.backend.dto.MemberResponseDto;
 import site.solsoltrip.backend.service.MemberService;
 
 @RestController
@@ -22,5 +23,12 @@ public class MemberController {
         memberService.signup(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<MemberResponseDto.login> login(@RequestBody @Validated final MemberRequestDto.login requestDto) {
+        MemberResponseDto.login responseDto = memberService.login(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
