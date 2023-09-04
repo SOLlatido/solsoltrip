@@ -19,6 +19,8 @@ import LongButton from '../components/ButtonItems/LongButton';
 import sol from '../assets/images/character_sol.png';
 import CenterModal from '../components/Modals/CenterModal';
 
+import { useRecoilState} from 'recoil';
+import {centerModalState} from '../recoil/centerModal/atom'
 
 type IntroProps = {
   navigation: StackNavigationProp<any>;
@@ -26,6 +28,8 @@ type IntroProps = {
 
 const Intro:React.FC<IntroProps> = ({navigation}) => {
   const translateY = new Animated.Value(0);
+
+  const [modalVisible, setModalVisible] = useRecoilState(centerModalState); //recoil state: 모달
   
   useEffect(() => {
     const animateSol = () => {

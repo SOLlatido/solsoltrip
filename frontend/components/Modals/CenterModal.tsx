@@ -4,11 +4,15 @@ import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 import tw from 'twrnc'; 
 
+import { useRecoilState} from 'recoil';
+import {centerModalState} from '../../recoil/centerModal/atom';
+
 function CenterModal({ modalTitle, content1, content2 }: CenterModalProps){
     //<CenterModal modalTitle:string={"여행 종료"} content1:string={"산하님, 즐거운 여행 되셨나요?"} content2:string={"정산 내역을 안내해드리겠습니다."}/>
     // props : title : 제목, content1 : 1번째줄 , content2 : 2번째줄
     
-    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    // const [modalVisible, setModalVisible] = useRecoilState(centerModalState);
+    const [modalVisible, setModalVisible] = useState(false);
 
     return(
         // 전체 배경

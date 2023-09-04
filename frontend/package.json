@@ -25,6 +25,7 @@
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-uuid": "^2.0.1",
     "recoil": "^0.7.7",
+    "recoil-persist": "^5.1.0",
     "twrnc": "^3.6.4"
   },
   "devDependencies": {
