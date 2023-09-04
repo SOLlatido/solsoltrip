@@ -24,6 +24,7 @@
     "react-native-screens": "~3.22.0",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-uuid": "^2.0.1",
+    "recoil": "^0.7.7",
     "twrnc": "^3.6.4"
   },
   "devDependencies": {
