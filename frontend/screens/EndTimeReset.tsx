@@ -1,73 +1,40 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text} from 'react-native';
+import tw from 'twrnc'; 
+import { Ionicons } from "@expo/vector-icons";
+
+// 컴포넌트
+import Calendar from '../components/Calendar/Calendar';
+import LongButton from '../components/ButtonItems/LongButton';
 
 function EndTimeReset(){
 
     return(
-        <View style={styles.containerView}>
+        <View style={tw `flex-1 bg-white`}>
 
-            <View style={styles.introView}>
-                <Text style={styles.statementText}>종료날짜를 재설정해주세요</Text>
+            <View style={tw `flex-1 justify-center items-center`}>
+                <View style={tw `flex-2 flex-row justify-center items-center mt-15`}>
+                    <Ionicons style={tw `flex-1 text-4xl pl-3`} name="close-outline" size={24} color="black" />
+                    <Text style={tw `flex-2 text-xl font-black`}>종료날짜 선택</Text>
+                </View>
+                <View style={tw `flex-1 justify-center items-center mt-2`}>
+                    <Text style={tw `text-sm text-neutral-500`}>종료 날짜는 오늘 날짜부터 선택하실 수 있어요</Text>
+                </View>
             </View>
 
-            <View style={styles.timeView}></View>
 
-            <View style={styles.calendarView}></View>
 
-            <View style={styles.buttonsView}></View>
+            <View style={tw `flex-4 bg-white`}>
+                <Calendar/>
+            </View>
 
-            <View style={styles.bottomNavView}></View>
+            <View style={tw `flex-1 flex-row`}>
+                <LongButton content='수정'/>
+            </View>
 
         </View>
     )
 
 }
-
-
-const styles = StyleSheet.create({
-
-    containerView: {
-        flex: 1,
-    },
-
-
-    // 상단 안내 문구 영역
-    introView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "red",
-    },
-    
-    statementText:{
-        paddingTop:30,
-        fontSize:20,
-        fontWeight:"900",
-    },
-
-    // 기간 설정 영역
-    timeView: {
-        flex: 1,
-        backgroundColor:"orange",
-    },
-
-    // 달력 영역
-    calendarView:{
-        flex: 3,
-        backgroundColor:"yellow",
-    },
-
-    // 취소 완료 버튼 영역
-    buttonsView:{
-        flex: 1,
-        backgroundColor:"green",
-    },
-
-    // 하단 nav 영역
-    bottomNavView:{
-
-    }
-
-})
 
 
 export default EndTimeReset
