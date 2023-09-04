@@ -4,13 +4,15 @@ import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 import tw from 'twrnc'; 
 
-function CenterModal(){
+function CenterModal({ modalTitle, content1, content2 }: CenterModalProps){
+    //<CenterModal modalTitle:string={"여행 종료"} content1:string={"산하님, 즐거운 여행 되셨나요?"} content2:string={"정산 내역을 안내해드리겠습니다."}/>
+    // props : title : 제목, content1 : 1번째줄 , content2 : 2번째줄
     
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     return(
         // 전체 배경
-        <View style={tw`flex-1 justify-center items-center bg-white opacity-90`}>
+        <View>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -25,12 +27,12 @@ function CenterModal(){
                     <View style={tw`m-20 bg-white rounded-2xl shadow-[#000] w-5/6 h-2/6`}>
 
                         <View style={tw `flex-2`}>
-                            <Text style={tw`mb-5 text-left text-3xl font-black p-5`}>여행 종료</Text>
+                            <Text style={tw`mb-5 text-left text-3xl font-black p-5`}>{modalTitle}</Text>
                         </View>
 
                         <View style={tw `flex-2 pl-5`}>
-                            <Text style={tw`mb-5 text-left text-xl`}>산하님, 즐거운 여행 되셨나요?</Text>
-                            <Text style={tw`mb-5 text-left text-xl mt--5`}>정산 내역을 안내해드리겠습니다.</Text>
+                            <Text style={tw`mb-5 text-left text-xl`}>{content1}</Text>
+                            <Text style={tw`mb-5 text-left text-xl mt--5`}>{content2}</Text>
                         </View>
 
                         <View style={tw `flex-1 w-full`}>
@@ -46,9 +48,9 @@ function CenterModal(){
                 </View>
             </Modal>
             <Pressable
-                style={tw`rounded-2xl p-5 bg-[#2196F3]`}
+                style={tw`rounded-2xl p-5 bg-[#7B5AF3]`}
                 onPress={() => setModalVisible(true)}>
-                <Text style={tw`text-white font-bold text-center`}>Show Modal</Text>
+                <Text style={tw`text-white font-bold text-center`}>{modalTitle}</Text>
             </Pressable>
         </View>
     )
@@ -57,3 +59,11 @@ function CenterModal(){
 
 
 export default CenterModal;
+
+
+// CenterModal 컴포넌트의 Props 타입 정의
+interface CenterModalProps {
+    modalTitle: string;
+    content1: string;
+    content2: string;
+}

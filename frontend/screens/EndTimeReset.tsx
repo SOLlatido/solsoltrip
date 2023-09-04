@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 // 컴포넌트
 import Calendar from '../components/Calendar/Calendar';
 import LongButton from '../components/ButtonItems/LongButton';
+import CenterModal from '../components/Modals/CenterModal';
 
 function EndTimeReset(){
 
