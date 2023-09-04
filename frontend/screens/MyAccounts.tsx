@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
-import { View, Text} from 'react-native'
+import { ScrollView, Text} from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
-function MyAccounts() {
+import { StackNavigationProp } from '@react-navigation/stack';
+import tw from "twrnc"
+type NavigationProps = {
+  navigation: StackNavigationProp<any>;
+};
+const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
   const [myAccounts, setMyAccounts] = useState([])
 
   const accountNumber:string = "123232123"
@@ -16,8 +21,7 @@ function MyAccounts() {
     // :
     
     // }
-    <View>
-        <Text>This is an account page</Text>
+    <ScrollView style={tw `mt-30`}>
         <AccountItem 
           accountNumber={accountNumber} 
           travelTitle={travelTitle}
@@ -32,7 +36,14 @@ function MyAccounts() {
           numberOfPeople={numberOfPeople}
           >
           </AccountItem>
-    </View>
+        <AccountItem 
+          accountNumber={accountNumber} 
+          travelTitle={travelTitle}
+          duration={duration}
+          numberOfPeople={numberOfPeople}
+          >
+          </AccountItem>
+    </ScrollView>
   )
 }
 
