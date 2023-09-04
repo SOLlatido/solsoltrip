@@ -25,12 +25,12 @@ public class MemberService {
 
     @Transactional
     public void signup(final MemberRequestDto.signup requestDto) {
-        if (checkEmailExistence(requestDto.email())) {
+        if (checkEmailExistence(requestDto.id())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
         final Member member = Member.builder()
-                .email(requestDto.email())
+                .id(requestDto.id())
                 .password(passwordEncoder.encode(requestDto.password()))
                 .name(requestDto.name())
                 .phone(requestDto.phone())
