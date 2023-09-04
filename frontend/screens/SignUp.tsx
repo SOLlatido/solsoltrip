@@ -18,7 +18,7 @@ const SignUp:React.FC<NavigationProps> = ({navigation}) => {
   return (
     <>
     <View style={tw `flex flex-1 bg-white items-center justify-center`}>
-      <ImageBackground source={aurora} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
+      <ImageBackground source={aurora} style={tw `w-full h-full absolute`}></ImageBackground>
 
       <View style={tw `flex-2 w-full h-full`}>
         <View style={tw `flex-1 w-full items-center`}>
