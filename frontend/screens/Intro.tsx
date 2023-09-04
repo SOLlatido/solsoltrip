@@ -83,7 +83,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
 
       <LongButton content="시작하기" onPress={handleNavigate} />
         <View style={tw `mb-10`}>
-      <Button onPress={()=>{navigation.navigate("EndTimeReset")}} title='산하하던거'></Button>
+      <Button onPress={()=>{navigation.navigate("CenterModal")}} title='산하하던거'></Button>
         </View>
 
     </View>

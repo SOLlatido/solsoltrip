@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
 import EndTimeReset from '../screens/EndTimeReset';
+import CenterModal from '../components/Modals/CenterModal';
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
@@ -17,6 +18,7 @@ const AppNavigation = () => {
         <Stack.Screen name='Intro' component={Intro} />
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
+        <Stack.Screen name='CenterModal' component={CenterModal} />
       </Stack.Navigator>
     </NavigationContainer>
   )
