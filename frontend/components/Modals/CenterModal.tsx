@@ -18,14 +18,14 @@ function CenterModal({ modalTitle, content1, content2 }: CenterModalProps){
         // 전체 배경
         <View>
             <Modal
-                animationType="slide"
+                // animationType="slide"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
                     setModalVisible(!modalVisible);
                 }}>
                 {/* 실제 모달 위치 조정 */}
-                <View style={tw`flex-1 justify-center items-center mt-22 shadow-md`}>
+                <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-22 shadow-md`}>
 
                     {/* 실제 모달 크기 조절*/}
                     <View style={tw`m-20 bg-white rounded-2xl shadow-[#000] w-5/6 h-2/6`}>
