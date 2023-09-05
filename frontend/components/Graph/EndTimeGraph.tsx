@@ -55,10 +55,11 @@ function EndTimeGraph(){
                         chartConfig={chartConfig}
                         yAxisLabel="₩"
                         bezier
+                        withInnerLines={false}
                         style={{
                             marginVertical: 9,
                             borderRadius: 16,
-                    }}
+                        }}
                 />
             </View>
 

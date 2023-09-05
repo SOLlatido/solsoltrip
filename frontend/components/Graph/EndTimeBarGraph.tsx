@@ -7,7 +7,7 @@ const initialData = {
   labels: ["교통", "관광", "식비", "숙소", "기타"],
   datasets: [
     {
-      data: [10.3, 126, 283.8, 452],
+      data: [10.3, 126, 283.8, 452, 100],
     },
   ],
 };
@@ -24,11 +24,14 @@ const EndTimeBarGraph = () => {
     decimalPlaces: 0,
   };
 
-  const [tooltipIndex, setTooltipIndex] = useState(null);
-
   return (
-    <View style={tw`flex-1`}>
-      <View style={tw`flex-3`}>
+    <View style={tw`flex-1 mt-3`}>
+
+        <View style={tw `pl-2`}>
+            <Text style={tw `text-white font-bold ml-1`}>단위 : 천 원</Text>
+        </View>
+
+
         <BarChart
           data={initialData}
           width={screenWidth}
@@ -39,16 +42,12 @@ const EndTimeBarGraph = () => {
           fromZero
           yLabelsOffset={12}
           showValuesOnTopOfBars={true}
+          withInnerLines={false}
+          style={{
+            marginVertical: 9,
+            borderRadius: 16,
+        }}
         />
-        {tooltipIndex !== null && (
-          <View
-            style={tw`absolute bg-white p-2 rounded-lg shadow-lg`}>
-            <Text style={tw`text-black`}>
-              {initialData.datasets[0].data[tooltipIndex]}
-            </Text>
-          </View>
-        )}
-      </View>
     </View>
   );
 };
