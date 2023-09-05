@@ -17,7 +17,10 @@ import tw from 'twrnc';
 import aurora from '../assets/images/aurora_background.png';
 import LongButton from '../components/ButtonItems/LongButton';
 import sol from '../assets/images/character_sol.png';
+import CenterModal from '../components/Modals/CenterModal';
 
+import { useRecoilState} from 'recoil';
+import {centerModalState} from '../recoil/centerModal/atom'
 
 type IntroProps = {
   navigation: StackNavigationProp<any>;
@@ -25,6 +28,8 @@ type IntroProps = {
 
 const Intro:React.FC<IntroProps> = ({navigation}) => {
   const translateY = new Animated.Value(0);
+
+  const [modalVisible, setModalVisible] = useRecoilState(centerModalState); //recoil state: 모달
   
   useEffect(() => {
     const animateSol = () => {
@@ -81,7 +86,8 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
 
       <LongButton content="시작하기" onPress={handleNavigate} />
         <View style={tw `mb-10`}>
-      <Button onPress={()=>{navigation.navigate("Login")}} title='산하하던거'></Button>
+          <Button onPress={()=>{navigation.navigate("EndTimeReset")}} title='산하하던거'></Button>
+          <CenterModal modalTitle={"여행 종료"} content1={"산하님, 즐거운 여행 되셨나요?"} content2={"정산 내역을 안내해드리겠습니다."}/>
         </View>
 
     </View>

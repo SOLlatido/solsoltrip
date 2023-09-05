@@ -8,6 +8,7 @@ import MyAccounts from '../screens/MyAccounts';
 import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo } from '@expo/vector-icons';
+import EndTimeReset from '../screens/EndTimeReset';
 
 const Stack = createNativeStackNavigator();
 //뒤로가기 버튼 컴포넌트
@@ -28,6 +29,7 @@ const AppNavigation = () => {
         //     headerShown: false,
         //   }}
         initialRouteName='Intro'>
+
         <Stack.Screen name='Intro' component={Intro} options={{headerShown:false}} />
         <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
         <Stack.Screen name='SignUp' component={SignUp} options={{headerShown:false}} />
@@ -41,6 +43,7 @@ const AppNavigation = () => {
             )
           }}
           />
+        <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -61,9 +64,14 @@ type LoginParams = {
     key : string;
 };
 
+type EndTimeResetParams = {
+    key : string;
+};
+
 export type RootStackParamList = {
   Intro: IntroParams;
   Login: LoginParams;
+  EndTimeReset : EndTimeResetParams;
 };
 
 export const defaultNavigationOptions: NativeStackNavigationOptions = {
