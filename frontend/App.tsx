@@ -4,10 +4,6 @@ import AppNavigation from './navigation/AppNavigation';
 
 import {
   RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
-  useRecoilValue,
 } from 'recoil';
 
 
