@@ -23,7 +23,7 @@ public class MemberRequestDto {
 
         public record login(
                 @NotBlank
-                String email,
+                String id,
 
                 @NotBlank
                 String password) {}
