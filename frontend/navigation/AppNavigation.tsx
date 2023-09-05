@@ -5,16 +5,19 @@ import Intro from '../screens/Intro';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
 import MyAccounts from '../screens/MyAccounts';
-import { Image, ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
-import backBtn from "../assets/images/back_button.png"
-const Stack = createNativeStackNavigator();
+import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native'
+import { Entypo } from '@expo/vector-icons';
 
-interface BackButtonProps {
-  source: ImageSourcePropType;
-  style: ImageStyle;
-}
-const BackButton: React.FC<BackButtonProps> = ({ source, style }) => {
-  return <Image source={source} style={style} />;
+const Stack = createNativeStackNavigator();
+//뒤로가기 버튼 컴포넌트
+const BackButton: React.FC = () => {
+  const navigation = useNavigation();
+  return (
+  <Pressable onPress={()=>{navigation.goBack(); console.log("yay")}}>
+  <Entypo name="chevron-thin-left" size={24} color="black" />
+  </Pressable>
+  )
 };
 
 const AppNavigation = () => {
@@ -33,12 +36,8 @@ const AppNavigation = () => {
             headerTitle : "나의 동행통장",
             headerTransparent : true, 
             headerBackTitleVisible : false,
-            // headerBackImage : () => 
-              // <BackButton source={backBtn} style={{width:30, height:30}} ></BackButton>
-            headerLeft : (props) => (
-              <Pressable onPress={()=>props.canGoBack}>
-                <BackButton source={backBtn} style={{width:30}}></BackButton>
-              </Pressable>
+            headerLeft : () => (
+                <BackButton></BackButton>
             )
           }}
           />

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { ScrollView, Text} from 'react-native'
+import { ScrollView, Text, ImageBackground} from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
 import { StackNavigationProp } from '@react-navigation/stack';
 import tw from "twrnc"
+import aurora from "../assets/images/aurora_background.png"
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
@@ -21,7 +22,11 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
     // :
     
     // }
-    <ScrollView style={tw `mt-30`}>
+    <>
+      <ImageBackground source={aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
+
+    <Text style={tw `mt-30 text-base self-center`}>통장을 클릭하여 나의 여행을 확인해보세요.</Text>
+    <ScrollView style={tw `mt-5`}>
         <AccountItem 
           accountNumber={accountNumber} 
           travelTitle={travelTitle}
@@ -44,6 +49,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
           >
           </AccountItem>
     </ScrollView>
+    </>
   )
 }
 
