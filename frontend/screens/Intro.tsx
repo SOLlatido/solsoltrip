@@ -62,7 +62,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
 
   return (
     <View style={tw `flex flex-1 bg-black items-center justify-center text-white`}>
-      <ImageBackground source={aurora} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
+      <ImageBackground source={aurora} style={tw `w-full h-full absolute`}></ImageBackground>
 
       <View style={tw `flex-2 w-full h-full`}>
         <View style={tw `mt-35 w-full ml-5`}>
@@ -75,9 +75,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       <View style={tw `flex-3 flex justify-center items-center`}>
       <Animated.View
         style={[
-          tw`transform`,
           { transform: [{ translateY }] },
-          tw`transition-transform duration-1000 ease-linear`,
         ]}
       >
           <Image
