@@ -1,6 +1,7 @@
-import {View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
-import tw from 'twrnc'; 
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState, useEffect } from 'react';
+import { View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import tw from 'twrnc';
+import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
 
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
@@ -8,46 +9,67 @@ import starrynight from '../assets/images/starrynight_bg.jpg';
 // 컴포넌트
 import EndTimeGraph from '../components/Graph/EndTimeGraph';
 import LongButton from '../components/ButtonItems/LongButton';
+import EndTimeBarGraph from '../components/Graph/EndTimeBarGraph';
 
+function EndTimeHistory() {
+  const [animation1, setAnimation1] = useState(null);
+  const [animation2, setAnimation2] = useState(null);
+  const [animation3, setAnimation3] = useState(null);
 
-function EndTimeHistory(){
+  useEffect(() => {
+    if (animation1) animation1.slideInUp(1000); // 첫 번째 애니메이션
+  }, [animation1]);
 
-    return(
-        <View style={tw `flex-1 bg-white w-full`}>
-            <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
+  useEffect(() => {
+    if (animation2) animation2.slideInUp(2000); // 두 번째 애니메이션
+  }, [animation2]);
 
-            {/* 동행통장 지출 금액 */}
-            <View style={tw `flex-3 justify-center items-center`}>
-                <View style={tw `flex-1 justify-center items-center`}>
-                    <Text style={tw `text-xl text-white`}>동행통장 지출 금액</Text>
-                    <Text style={tw `text-5xl font-bold text-white`}>980,000원</Text>
-                </View>
-            </View>
+  useEffect(() => {
+    if (animation3) animation3.slideInUp(3000); // 세 번째 애니메이션
+  }, [animation3]);
 
-            {/* 스크롤 영역 */}
-            <View style={tw `flex-5`}>
-                <SafeAreaView>
-                    <ScrollView>
-                        {/* 그래프 */}
-                        <View style={tw `flex-1`}>
-                            <EndTimeGraph/>
-                        </View>
+  return (
+    <View style={tw `flex-1 bg-white w-full`}>
+      <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
 
-                        <View style={tw `flex-1`}>
-                            
-                        </View>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+      {/* 동행통장 지출 금액 */}
+      <Animatable.View
+        ref={(ref) => setAnimation1(ref)}
+        style={tw `flex-3`}
+      >
+        <Animatable.View style={tw `flex-1 items-center mt-10`}>
+          <Text style={tw `text-xl text-white mt-10`}>동행통장 지출 금액</Text>
+          <Text style={tw `text-5xl font-bold text-white`}>980,000원</Text>
+        </Animatable.View>
+      </Animatable.View>
 
-            <View style={tw `flex-0.7 flex-row items-end justify-center`}>
-                <LongButton content='다음'/>
-            </View>
+      {/* 스크롤 영역 */}
+      <View style={tw `flex-10`}>
+        <SafeAreaView>
+          <ScrollView>
+            {/* 그래프 */}
+            <Animatable.View
+              ref={(ref) => setAnimation2(ref)}
+              style={tw `flex-1`}
+            >
+              <EndTimeGraph />
+            </Animatable.View>
 
-        </View>
-    )
+            <Animatable.View
+              ref={(ref) => setAnimation3(ref)}
+              style={tw `flex-1`}
+            >
+              <EndTimeBarGraph />
+            </Animatable.View>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
 
+      <View style={tw `flex-0.7 flex-row items-end justify-center`}>
+        <LongButton content='다음' />
+      </View>
+    </View>
+  );
 }
 
-
-export default EndTimeHistory
+export default EndTimeHistory;

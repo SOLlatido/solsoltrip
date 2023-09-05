@@ -1,4 +1,4 @@
-import {View, Text, ImageBackground, Dimensions} from 'react-native';
+import {View, Text, Dimensions} from 'react-native';
 import tw from 'twrnc'; 
 import {LineChart} from "react-native-chart-kit";
 
@@ -53,6 +53,7 @@ function EndTimeGraph(){
                         width={Dimensions.get('window').width}
                         height={250}
                         chartConfig={chartConfig}
+                        yAxisLabel="₩"
                         bezier
                         style={{
                             marginVertical: 9,
