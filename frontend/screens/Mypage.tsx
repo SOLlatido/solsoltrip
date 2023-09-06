@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView } from 'react-native';
 import tw from 'twrnc'; 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,15 +7,15 @@ import UserInfo from '../components/Mypage/UserInfo';
 
 const Mypage = () => {
     return(
-        <View style={tw`flex-1 bg-red-50`}>
+        <ScrollView  style={tw`flex-1 bg-red-50`}>
             <View style={tw`flex-1 bg-orange-50`}>
-                <UserInfo/>
+                <UserInfo userName={"신산하"} point={300} coupon={4}/>
             </View>
 
-            <View style={tw`flex-2 bg-amber-50`}>
+            <View style={tw`flex-1 bg-amber-50`}>
                 {/* 내 모든 계좌 */}
             </View>
-        </View>
+        </ScrollView >
     )
 }
 
