@@ -9,6 +9,7 @@ import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo } from '@expo/vector-icons';
 import EndTimeReset from '../screens/EndTimeReset';
+import EndTimeHistory from '../screens/EndTimeHistory';
 
 const Stack = createNativeStackNavigator();
 //뒤로가기 버튼 컴포넌트
@@ -44,6 +45,7 @@ const AppNavigation = () => {
           }}
           />
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} />
       </Stack.Navigator>
     </NavigationContainer>
   )
