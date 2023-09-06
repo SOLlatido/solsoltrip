@@ -45,7 +45,15 @@ const AppNavigation = () => {
           }}
           />
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
-        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} />
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} 
+          options={{
+            headerTransparent : true, 
+            headerBackTitleVisible : true,
+            headerLeft : () => (
+                <BackButton></BackButton>
+            )
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
