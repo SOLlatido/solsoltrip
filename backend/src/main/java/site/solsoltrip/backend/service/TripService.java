@@ -1,21 +1,17 @@
 package site.solsoltrip.backend.service;
 
+import com.google.gson.Gson;
 import jakarta.annotation.PostConstruct;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import site.solsoltrip.backend.dto.TripRequestDto;
 
-import java.nio.charset.Charset;
-
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TripService {
     private WebClient webClient;
 
@@ -25,58 +21,29 @@ public class TripService {
     }
 
     @Transactional
-    public void sendRequest(final Long memberSeq, final String uri) {
-        final DataHeader dataHeader = new DataHeader();
+    public void validation(final TripRequestDto.validation requestDto) {
+        final String bankListObject = sendRequest(requestDto.memberSeq(), "/v1/account");
 
-        final DataBody dataBody = DataBody.builder()
-                .실명번호(String.valueOf(memberSeq))
-                .build();
+        final Gson gson = new Gson();
 
-        final ShbhackRequestDto requestDto = ShbhackRequestDto.builder()
-                .dataHeader(dataHeader)
-                .dataBody(dataBody)
-                .build();
-
-        final Mono<String> responseMono = webClient.post()
-                .uri(uri)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .acceptCharset(Charset.forName("UTF-8"))
-                .bodyValue(requestDto)
-                .retrieve()
-                .bodyToMono(String.class);
-
-        responseMono.subscribe(
-                response -> {
-                    System.out.println("response = " + response);
-                },
-                error -> {
-                    System.out.println("error = " + error);
-                }
-        );
+        final ShbhackResponseDto responseDto = gson.fromJson(bankListObject, ShbhackResponseDto.class);
     }
 
     @Transactional
-    public void validation(final TripRequestDto.validation requestDto) {
-        sendRequest(requestDto.memberSeq(), "/v1/account");
-    }
+    public String sendRequest(final Long memberSeq, final String uri) {
+        final ShbhackRequestDto requestDto = ShbhackRequestDto.builder()
+                .dataHeader(new ShbhackRequestDto.DataHeader())
+                .dataBody(ShbhackRequestDto.DataBody.builder()
+                        .실명번호(String.valueOf(memberSeq))
+                        .build())
+                .build();
 
-    @Builder
-    @Getter
-    static class ShbhackRequestDto {
-        private DataHeader dataHeader;
-
-        private DataBody dataBody;
-    }
-
-    @Getter
-    static class DataHeader {
-        private final String apikey = "2023_Shinhan_SSAFY_Hackathon";
-    }
-
-    @Builder
-    @Getter
-    static class DataBody {
-        private String 실명번호;
+        return webClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestDto)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 }
