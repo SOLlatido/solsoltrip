@@ -6,6 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
 
+//컴포넌트
+import SavingMoneySlider from '../components/Slider/SavingMoneySlider';
+
 const EndTimeSavingMoney = () => {
     
     const [saving, setSaving] = useState("20,000");
@@ -19,8 +22,8 @@ const EndTimeSavingMoney = () => {
                 <Text style={tw `text-5xl font-bold text-white`}>{saving}원</Text>
             </View>
 
-            <View style={tw `flex-3 bg-orange-100`}>
-
+            <View style={tw `flex-3 items-center justify-center`}>
+                <SavingMoneySlider/>
             </View>
 
             <View style={tw `flex-1 bg-blue-100`}>
