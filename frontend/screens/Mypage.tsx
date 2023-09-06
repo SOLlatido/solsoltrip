@@ -7,8 +7,8 @@ import UserInfo from '../components/Mypage/UserInfo';
 
 const Mypage = () => {
     return(
-        <ScrollView  style={tw`flex-1 bg-red-50`}>
-            <View style={tw`flex-1 bg-orange-50`}>
+        <ScrollView  style={tw`flex-1`}>
+            <View style={tw`flex-1`}>
                 <UserInfo userName={"신산하"} point={300} coupon={4}/>
             </View>
 

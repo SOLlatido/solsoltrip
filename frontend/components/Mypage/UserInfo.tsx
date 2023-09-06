@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 const UserInfo = ({userName, point, coupon}:UserInfo) => {
 
     return (
-        <View style={tw`flex-1 mt-30`}>
+        <View style={tw`flex-1 mt-30 pb-10 bg-violet-100`}>
             <View style={tw`flex-1`}>
                 <View style={tw`flex-1 p-5 flex-1 flex-row items-center`}>
 
@@ -22,7 +22,7 @@ const UserInfo = ({userName, point, coupon}:UserInfo) => {
                 </View>
 
                 <View style={tw`flex-1 items-center shadow-md`}>
-                    <View style={tw`flex-1 bg-violet-100 w-[90%] h-30 justify-center items-center rounded-3xl`}>
+                    <View style={tw`flex-1 bg-white w-[90%] h-30 justify-center items-center rounded-3xl`}>
 
                         <View style={tw`pl-5 pr-5 flex-row justify-between`}>
                             <Text style={tw`flex-1 text-xl font-500`}>마이신한 포인트</Text>
