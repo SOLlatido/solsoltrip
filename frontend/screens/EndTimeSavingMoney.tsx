@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import {View, Text, ImageBackground} from 'react-native';
 import tw from 'twrnc'; 
-import { Ionicons } from "@expo/vector-icons";
+import { StackNavigationProp } from '@react-navigation/stack';
 
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
 
 //컴포넌트
 import SavingMoneySlider from '../components/Slider/SavingMoneySlider';
+import LongButton from '../components/ButtonItems/LongButton';
 
-const EndTimeSavingMoney = () => {
+
+type EndTimeSavingMoneyProps = {
+    navigation: StackNavigationProp<any>;
+};
+
+const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
     
     const [saving, setSaving] = useState("20,000");
+
+    const handleSavingMoney = () => {
+        navigation.navigate("EndTimeHistory");
+    }
+    // const handleSavingMoney = () => {
+    //     navigation.navigate("EndTimeSavingMoney");
+    // }
 
     return(
         <View style={tw`flex-1`}>
@@ -26,8 +39,9 @@ const EndTimeSavingMoney = () => {
                 <SavingMoneySlider/>
             </View>
 
-            <View style={tw `flex-1 bg-blue-100`}>
-
+            <View style={tw `flex-1 flex-row`}>
+                <LongButton content='이전' onPress={handleSavingMoney}/>
+                <LongButton content='다음'/>
             </View>
         </View>
     )
