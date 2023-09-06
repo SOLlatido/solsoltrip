@@ -30,9 +30,10 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
     // }
     <>
       <ImageBackground source={aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
-
+    <View style={tw`flex`}>
     <Text style={tw `ml-7 mt-30 text-base self-center font-bold text-xl self-start`}>다영님의 동행통장</Text>
     <Text style={tw `ml-7 text-base text-[#333]`}>통장을 클릭하여 나의 여행을 확인해보세요.</Text>
+    </View>
     <ScrollView style={tw `mt-5`}>
         <AccountItem 
           accountNumber={accountNumber} 

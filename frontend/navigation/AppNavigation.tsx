@@ -2,16 +2,19 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native'
+import { Entypo, AntDesign } from '@expo/vector-icons';
+
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
-import MyAccounts from '../screens/MyAccounts';
-import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native'
-import { Entypo } from '@expo/vector-icons';
 import EndTimeReset from '../screens/EndTimeReset';
 import AccountList from '../screens/RegisterAccount/AccountList';
-import { AntDesign } from '@expo/vector-icons';
+import MyAccounts from '../screens/MyAccounts';
+import AccountName from '../screens/RegisterAccount/AccountName';
+import AccountDuration from '../screens/RegisterAccount/AccountDuration';
+
 const Stack = createNativeStackNavigator();
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
@@ -67,7 +70,28 @@ const AppNavigation = () => {
                 // <CancelButton navigation={useNavigation()}></CancelButton>
             )
           }}
-        
+        />
+        <Stack.Screen name='AccountName' component={AccountName} 
+          options={{
+            headerTitle : "동행통장 만들기",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <BackButton></BackButton>
+                // <CancelButton navigation={useNavigation()}></CancelButton>
+            )
+          }}
+        />
+        <Stack.Screen name='AccountDuration' component={AccountDuration} 
+          options={{
+            headerTitle : "동행통장 만들기",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <BackButton></BackButton>
+                // <CancelButton navigation={useNavigation()}></CancelButton>
+            )
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

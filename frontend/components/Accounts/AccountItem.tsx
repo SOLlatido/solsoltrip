@@ -3,7 +3,8 @@ import { View, Text, Pressable } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient'
 import tw from 'twrnc';
 
-const AccountItem = ({ accountNumber, travelTitle, duration, numberOfPeople }) => {
+const AccountItem = (props : { accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
+  const {accountNumber, travelTitle, duration, numberOfPeople} = props
   return (
     <Pressable onPress={()=>console.log("pressed!")}>
     <LinearGradient
