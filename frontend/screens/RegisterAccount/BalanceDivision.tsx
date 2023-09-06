@@ -3,7 +3,7 @@ import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, TextInput } from 'react-native'
 import tw from "twrnc"
 
-function AccountName() {
+function AccountDivision() {
   const [accountName, setAccountName] = useState<string>();
 
   return (
@@ -11,8 +11,8 @@ function AccountName() {
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
       <View style={tw `mt-30`}>
       <View>
-        <Text style={tw `text-lg self-center mt-5`}>2 / 4</Text>
-        <Text style={tw `text-base self-center mt-1`}>동행통장의 이름을 입력해주세요.</Text>
+        <Text style={tw `text-lg self-center mt-5`}>4 / 4</Text>
+        <Text style={tw `text-base self-center mt-1`}>여행비 수금 방법을 선택해주세요</Text>
       </View>
 
       <TextInput
@@ -28,4 +28,4 @@ function AccountName() {
   )
 }
 
-export default AccountName
+export default AccountDivision

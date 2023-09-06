@@ -14,6 +14,7 @@ import AccountList from '../screens/RegisterAccount/AccountList';
 import MyAccounts from '../screens/MyAccounts';
 import AccountName from '../screens/RegisterAccount/AccountName';
 import AccountDuration from '../screens/RegisterAccount/AccountDuration';
+import BalanceDivision from "../screens/RegisterAccount/BalanceDivision"
 
 const Stack = createNativeStackNavigator();
 type NavigationProps = {
@@ -83,6 +84,17 @@ const AppNavigation = () => {
           }}
         />
         <Stack.Screen name='AccountDuration' component={AccountDuration} 
+          options={{
+            headerTitle : "동행통장 만들기",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <BackButton></BackButton>
+                // <CancelButton navigation={useNavigation()}></CancelButton>
+            )
+          }}
+        />
+        <Stack.Screen name='BalanceDivision' component={BalanceDivision} 
           options={{
             headerTitle : "동행통장 만들기",
             headerTransparent : true, 
