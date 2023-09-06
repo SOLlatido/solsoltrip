@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 const UserInfo = ({userName, point, coupon}:UserInfo) => {
 
     return (
-        <View style={tw`flex-1 mt-30 pb-10 bg-violet-100`}>
+        <View style={tw`flex-1 pb-10`}>
             <View style={tw`flex-1`}>
                 <View style={tw`flex-1 p-5 flex-1 flex-row items-center`}>
 
