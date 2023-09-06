@@ -35,7 +35,7 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
                 <Text style={tw `text-5xl font-bold text-white`}>{saving}원</Text>
             </View>
 
-            <View style={tw `flex-3 items-center justify-center`}>
+            <View style={tw `flex-4 items-center justify-center`}>
                 <SavingMoneySlider/>
             </View>
 

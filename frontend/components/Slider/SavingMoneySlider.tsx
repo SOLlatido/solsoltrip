@@ -8,15 +8,18 @@ import LongButton from '../ButtonItems/LongButton';
 const {width:SCREEN_WIDTH} = Dimensions.get("window");
 
 const SavingMoneySlider = () => {
-  const [Participants, setParticipants] = useState([
+    const loginUser = "tksgk2598";
+    const [Participants, setParticipants] = useState([
     {
+        userId : "sdy",
         userName: "신산하",
         profileImg: 'https://picsum.photos/100/100',
         money: "8,000",
         isHost: true,
-        type: "receive" //send or receive
+        type: "send" //send or receive
       },
       {
+        userId : "sdy",
         userName: "석다영",
         profileImg: 'https://picsum.photos/100/100',
         money: "2,000",
@@ -24,6 +27,7 @@ const SavingMoneySlider = () => {
         type: "receive" //send or receive
       },
       {
+        userId : "kms",
         userName: "김민식",
         profileImg: 'https://picsum.photos/100/100',
         money: "5,000",
@@ -31,6 +35,7 @@ const SavingMoneySlider = () => {
         type: "receive" //send or receive
       },
       {
+        userId : "lsh",
         userName: "이승현",
         profileImg: 'https://picsum.photos/100/100',
         money: "5,000",
@@ -71,7 +76,7 @@ const SavingMoneySlider = () => {
                             people.type==="receive"?
                                 <Text style={tw`text-[20px] font-bold mt-1 text-white`}>아래 금액을 받아야 합니다.</Text>
                                 :
-                                <Text style={tw`text-[20px] font-bold mt-1 text-white`}>주최자님께 아래 금액을 드려야 합니다.</Text>
+                                <Text style={tw`text-[20px] font-bold mt-1 text-white`}>아래 금액을 드려야 합니다.</Text>
 
                         }
                     </View>
@@ -81,8 +86,21 @@ const SavingMoneySlider = () => {
                     </View>
 
                     <View style={tw`flex-1 flex-row`}>
-                        <LongButton content='보내기'/>
-                        <LongButton content='랜덤정산'/>
+                        {
+                            // receive : 방장이 사람들에게 돈을 보내야 함 (방장이 보내기 진행)
+                            // send : 사람들이 방장한테 돈을 보내야 함 (방장이 돈 달라고 요청)
+                            // null : 내가 방장이면 아무것도 안뜸
+                           
+                                people.type==="receive" && !people.isHost?<LongButton content='보내기'/>:
+                                (
+                                    people.type==="send" && !people.isHost?<LongButton content='보내기'/>:null
+                                )
+                                
+                            
+                            
+                                
+                        }
+                        {loginUser!==people.userId?null:<LongButton content='랜덤정산'/>}
                     </View>
                 </View>
               );
