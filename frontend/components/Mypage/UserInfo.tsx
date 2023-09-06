@@ -2,8 +2,7 @@ import { View, Text, Image, Dimensions, Pressable } from 'react-native';
 import tw from 'twrnc';
 import { Ionicons } from "@expo/vector-icons";
 
-const UserInfo = ({userName, point, coupon}) => {
-    const windowWidth = Dimensions.get('window').width;
+const UserInfo = ({userName, point, coupon}:UserInfo) => {
 
     return (
         <View style={tw`flex-1 mt-30`}>
@@ -44,3 +43,9 @@ const UserInfo = ({userName, point, coupon}) => {
 }
 
 export default UserInfo;
+
+interface UserInfo{
+    userName:string,
+    point:number,
+    coupon:number
+}
