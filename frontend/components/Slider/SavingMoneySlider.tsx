@@ -9,14 +9,15 @@ const {width:SCREEN_WIDTH} = Dimensions.get("window");
 
 const SavingMoneySlider = () => {
     const loginUser = "tksgk2598";
+    const hostUser = "tksgk2598";
     const [Participants, setParticipants] = useState([
     {
-        userId : "sdy",
+        userId : "tksgk2598",
         userName: "신산하",
         profileImg: 'https://picsum.photos/100/100',
         money: "8,000",
         isHost: true,
-        type: "send" //send or receive
+        type: "receive" //send or receive
       },
       {
         userId : "sdy",
@@ -87,20 +88,20 @@ const SavingMoneySlider = () => {
 
                     <View style={tw`flex-1 flex-row`}>
                         {
-                            // receive : 방장이 사람들에게 돈을 보내야 함 (방장이 보내기 진행)
-                            // send : 사람들이 방장한테 돈을 보내야 함 (방장이 돈 달라고 요청)
+                          // 방장입장에서만 생각하자. 왜냐하면 참여자들은 신한 계좌가 없다고 생각해야 하기 떄문이다.
+                            // receive : 방장이 돈을 받아야 한다
+                            // send : 방장이 돈을 보내야 한다
                             // null : 내가 방장이면 아무것도 안뜸
-                           
-                                people.type==="receive" && !people.isHost?<LongButton content='보내기'/>:
-                                (
-                                    people.type==="send" && !people.isHost?<LongButton content='보내기'/>:null
+                              loginUser!==hostUser? null : (
+                                people.type==="send" && !people.isHost ?<LongButton content='보내기'/>:(
+                                  people.type==="receive" && !people.isHost?<LongButton content='요청하기'/>:null
                                 )
-                                
-                            
-                            
-                                
+                              )
+      
+
                         }
-                        {loginUser!==people.userId?null:<LongButton content='랜덤정산'/>}
+                        {/* 현재 상황에서는 랜덤정산 생략하자 시간 남으면 진행 */}
+                        {/* <LongButton content='랜덤정산'/>  */}
                     </View>
                 </View>
               );
