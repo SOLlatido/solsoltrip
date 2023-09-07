@@ -9,6 +9,7 @@ import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo } from '@expo/vector-icons';
 import EndTimeReset from '../screens/EndTimeReset';
+import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
 
@@ -45,9 +46,21 @@ const AppNavigation = () => {
             )
           }}
           />
+          
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
         <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
         <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
+        <Stack.Screen name='Mypage' component={Mypage} 
+          options={{
+            headerTitle : "마이페이지",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft : () => (
+                <BackButton></BackButton>
+            )
+          }}
+          />
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} />
       </Stack.Navigator>
     </NavigationContainer>
   )
