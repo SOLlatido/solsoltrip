@@ -22,9 +22,9 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/nearby")
-    public ResponseEntity<EventResponseDto.nearbyInform> nearbyInform(@RequestBody @Validated final EventRequestDto.nearbyInform requestDto) {
-        final EventResponseDto.nearbyInform responseDto = eventService.nearbyInform(requestDto);
+    @GetMapping("/nearbyOrArrivalInform")
+    public ResponseEntity<EventResponseDto.nearbyOrArrivalInform> nearbyOrArrivalInform(@RequestBody @Validated final EventRequestDto.nearbyOrArrivalInform requestDto) {
+        final EventResponseDto.nearbyOrArrivalInform responseDto = eventService.nearbyOrArrivalInform(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
