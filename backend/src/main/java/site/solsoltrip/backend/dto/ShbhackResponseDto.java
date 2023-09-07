@@ -20,8 +20,6 @@ public class ShbhackResponseDto {
 
     @Getter
     public static class DataBody {
-        private String 고객명;
-        private String 반복횟수1;
         private List<DepositAndSavings> 조회내역1;
 
         @Getter
