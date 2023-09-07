@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
+import { StackNavigationProp } from '@react-navigation/stack';
 
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
@@ -11,10 +12,18 @@ import EndTimeGraph from '../components/Graph/EndTimeGraph';
 import LongButton from '../components/ButtonItems/LongButton';
 import EndTimeBarGraph from '../components/Graph/EndTimeBarGraph';
 
-function EndTimeHistory() {
+type EndTimeHistoryProps = {
+  navigation: StackNavigationProp<any>;
+};
+
+const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [animation1, setAnimation1] = useState(null);
   const [animation2, setAnimation2] = useState(null);
   const [animation3, setAnimation3] = useState(null);
+
+  const handleSavingMoney = () => {
+    navigation.navigate("EndTimeSavingMoney");
+  }
 
   useEffect(() => {
     if (animation1) animation1.slideInUp(1000); // 첫 번째 애니메이션
@@ -66,7 +75,7 @@ function EndTimeHistory() {
       </View>
 
       <View style={tw `flex-0.7 flex-row items-end justify-center`}>
-        <LongButton content='다음' />
+        <LongButton content='다음' onPress={handleSavingMoney} />
       </View>
     </View>
   );

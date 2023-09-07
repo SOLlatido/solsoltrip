@@ -11,6 +11,7 @@ import { Entypo } from '@expo/vector-icons';
 import EndTimeReset from '../screens/EndTimeReset';
 import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
+import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
 
 const Stack = createNativeStackNavigator();
 //뒤로가기 버튼 컴포넌트
@@ -47,7 +48,8 @@ const AppNavigation = () => {
           />
           
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
-
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
+        <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
         <Stack.Screen name='Mypage' component={Mypage} 
           options={{
             headerTitle : "마이페이지",
