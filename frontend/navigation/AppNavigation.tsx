@@ -9,6 +9,7 @@ import { ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo } from '@expo/vector-icons';
 import EndTimeReset from '../screens/EndTimeReset';
+import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 
 const Stack = createNativeStackNavigator();
@@ -44,7 +45,19 @@ const AppNavigation = () => {
             )
           }}
           />
+          
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
+
+        <Stack.Screen name='Mypage' component={Mypage} 
+          options={{
+            headerTitle : "마이페이지",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft : () => (
+                <BackButton></BackButton>
+            )
+          }}
+          />
         <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} />
       </Stack.Navigator>
     </NavigationContainer>
