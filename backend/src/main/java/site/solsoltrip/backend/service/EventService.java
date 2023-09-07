@@ -36,6 +36,10 @@ public class EventService {
 
     @Transactional
     public void registEvent(final EventRequestDto.registEvent requestDto) {
+        if (eventRepository.findByXAndY(requestDto.x(), requestDto.y()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 이벤트 지역입니다.");
+        }
+
         final String regionObject = sendRequest(requestDto.x(), requestDto.y());
 
         final Gson gson = new Gson();
