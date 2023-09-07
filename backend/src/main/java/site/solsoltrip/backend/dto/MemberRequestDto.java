@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Pattern;
 public class MemberRequestDto {
     public record signup(
             @NotBlank
-            @Pattern(regexp="^[a-zA-Z]+[!#$%&'*+-/=?^_`(){|}~]*[a-zA-Z0-9]*@[\\w]+\\.[a-zA-Z0-9-]+[.]*[a-zA-Z0-9]+$", message = "이메일 형식에 맞게 입력해주세요.")
-            String email,
+            @Pattern(regexp="^[a-zA-Z][0-9a-zA-Z]{5,19}$", message = "아이디는 영문자로 시작하여 6자리 이상 20자리 이하로 입력해주세요.")
+            String id,
 
             @NotBlank
             @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$", message = "비밀번호는 영문, 숫자, 특수기호 조합으로 8자리 이상 입력해주세요.")
@@ -23,7 +23,7 @@ public class MemberRequestDto {
 
         public record login(
                 @NotBlank
-                String email,
+                String id,
 
                 @NotBlank
                 String password) {}
