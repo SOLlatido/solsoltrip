@@ -58,12 +58,13 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public EventResponseDto.nearbyInform nearbyInform(final EventRequestDto.nearbyInform requestDto) {
+    @Transactional
+    public EventResponseDto.nearbyOrArrivalInform nearbyOrArrivalInform(final EventRequestDto.nearbyOrArrivalInform requestDto) {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
 
-        final List<Event> eventList = eventRepository.findByRegion(requestDto.region());
+        final List<Event> eventList = eventRepository.findAll();
 
         if (eventList.isEmpty()) {
             return null;
@@ -71,9 +72,11 @@ public class EventService {
 
         List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
 
+        boolean isArrived = false;
+
         for (Event event : eventList) {
             final MemberEvent memberEvent = memberEventRepository
-                    .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(member.getMemberSeq(), event.getEventSeq())
+                    .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(requestDto.memberSeq(), event.getEventSeq())
                     .orElseGet(() -> memberEventRepository.save(MemberEvent.builder()
                                     .event(event)
                                     .member(member)
@@ -91,39 +94,33 @@ public class EventService {
                 continue;
             }
 
-            short plane = 0;
-            double ratio = 0;
-
-            if (event.getY() - requestDto.y() > 0 && event.getX() - requestDto.x() > 0) {
-                plane = 1;
-            } else if (event.getY() - requestDto.y() > 0 && event.getX() - requestDto.x() < 0) {
-                plane = 2;
-            } else if (event.getY() - requestDto.y() < 0 && event.getX() - requestDto.x() < 0) {
-                plane = 3;
-            } else if (event.getY() - requestDto.y() < 0 && event.getX() - requestDto.x() > 0) {
-                plane = 4;
-            } else if (event.getY() - requestDto.y() == 0) {
-                ratio = 1;
-            } else {
-                ratio = 0;
-            }
-
-            if (event.getX() - requestDto.x() != 0 || event.getY() - requestDto.y() != 0) {
-                ratio = Math.abs(event.getX() - requestDto.x()) / Math.abs(event.getY() - requestDto.y());
+            if (dist < 5) {
+                arrivalInform(requestDto.memberSeq(), event.getEventSeq());
+                isArrived = true;
             }
 
             EventResponseDto.EventResponseVO responseVO = EventResponseDto.EventResponseVO.builder()
                     .name(event.getName())
-                    .plane(plane)
-                    .ratio(ratio)
                     .build();
 
             responseVOList.add(responseVO);
         }
 
-        return EventResponseDto.nearbyInform.builder()
+        return EventResponseDto.nearbyOrArrivalInform.builder()
+                .isArrived(isArrived)
                 .responseVOList(responseVOList)
                 .build();
+    }
+
+    @Transactional
+    private void arrivalInform(final Long memberSeq, final Long eventSeq) {
+        final MemberEvent memberEvent = memberEventRepository
+                .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(memberSeq, eventSeq)
+                .orElseThrow(() -> new IllegalArgumentException("찾은 멤버 및 이벤트와 매칭되는 정보가 없습니다."));
+
+        memberEvent.updateIsDone(true);
+
+        // TODO : 이벤트 로직이 들어올 장소
     }
 
     private static double coordinateToMeter(double eventX, double eventY, double curX, double curY) {
@@ -140,9 +137,9 @@ public class EventService {
     }
 
     private static double deg2rad(double deg){
-        return (deg * Math.PI/180.0);
+        return (deg * Math.PI / 180.0);
     }
-    //radian(라디안)을 10진수로 변환
+
     private static double rad2deg(double rad){
         return (rad * 180 / Math.PI);
     }
