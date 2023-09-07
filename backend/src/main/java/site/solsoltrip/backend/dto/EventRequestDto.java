@@ -9,9 +9,6 @@ public class EventRequestDto {
             @NotBlank
             String name,
 
-            @NotBlank
-            String region,
-
             @Range(min = 0, max = 180)
             Double x,
 
