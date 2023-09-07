@@ -23,4 +23,8 @@ public class MemberEvent {
     private Event event;
 
     private Boolean isDone;
+
+    public void updateIsDone(final Boolean isDone) {
+        this.isDone = isDone;
+    }
 }
