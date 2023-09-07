@@ -2,11 +2,15 @@ package site.solsoltrip.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "registed_account")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class RegistedAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
