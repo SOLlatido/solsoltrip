@@ -15,6 +15,7 @@ import MyAccounts from '../screens/MyAccounts';
 import AccountName from '../screens/RegisterAccount/AccountName';
 import AccountDuration from '../screens/RegisterAccount/AccountDuration';
 import BalanceDivision from "../screens/RegisterAccount/BalanceDivision"
+import InviteFriends from '../screens/RegisterAccount/InviteFriends';
 
 const Stack = createNativeStackNavigator();
 type NavigationProps = {
@@ -97,6 +98,19 @@ const AppNavigation = () => {
         <Stack.Screen name='BalanceDivision' component={BalanceDivision} 
           options={{
             headerTitle : "동행통장 만들기",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <BackButton></BackButton>
+                // <CancelButton navigation={useNavigation()}></CancelButton>
+            )
+          }}
+        />
+        <Stack.Screen name='InviteFriends' component={InviteFriends} 
+          options={{
+            // gestureDirection : "vertical",
+            animation : "fade_from_bottom",
+            headerTitle : "",
             headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
