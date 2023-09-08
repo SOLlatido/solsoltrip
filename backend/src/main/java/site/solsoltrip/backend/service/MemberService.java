@@ -32,8 +32,9 @@ public class MemberService {
                 .id(requestDto.id())
                 .password(passwordEncoder.encode(requestDto.password()))
                 .name(requestDto.name())
+                .point(0)
                 .phone(requestDto.phone())
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build();
 
         memberRepository.save(member);
