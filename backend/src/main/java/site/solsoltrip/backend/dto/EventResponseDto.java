@@ -1,6 +1,5 @@
 package site.solsoltrip.backend.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,12 +7,7 @@ import java.util.List;
 
 public class EventResponseDto {
     @Builder
-    public record nearbyOrArrivalInform(
-            @NotNull
-            boolean isArrived,
-
-            List<EventResponseVO> responseVOList
-    ) {}
+    public record nearbyOrArrivalInform(boolean isArrived, int point, List<EventResponseVO> responseVOList) {}
 
     @Getter
     @Builder
