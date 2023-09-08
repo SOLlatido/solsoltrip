@@ -60,7 +60,6 @@ const AppNavigation = () => {
             )
           }}
           />
-        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} />
       </Stack.Navigator>
     </NavigationContainer>
   )
