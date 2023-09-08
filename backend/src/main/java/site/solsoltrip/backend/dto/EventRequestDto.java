@@ -16,7 +16,7 @@ public class EventRequestDto {
             Double y
     ) {}
 
-    public record nearbyInform(
+    public record nearbyOrArrivalInform(
             @NotNull
             Long memberSeq,
 
