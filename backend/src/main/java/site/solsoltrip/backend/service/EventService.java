@@ -14,6 +14,7 @@ import site.solsoltrip.backend.repository.MemberRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +54,7 @@ public class EventService {
         List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
 
         boolean isArrived = false;
+        int eventPoint = 0;
 
         for (Event event : eventList) {
             final MemberEvent memberEvent = memberEventRepository
@@ -75,8 +77,9 @@ public class EventService {
             }
 
             if (dist < Event.ARRIVAL_UNIT) {
-                arrivalInform(requestDto.memberSeq(), event.getEventSeq());
+                eventPoint = arrivalInform(requestDto.memberSeq(), event.getEventSeq());
                 isArrived = true;
+                continue;
             }
 
             EventResponseDto.EventResponseVO responseVO = EventResponseDto.EventResponseVO.builder()
@@ -88,19 +91,30 @@ public class EventService {
 
         return EventResponseDto.nearbyOrArrivalInform.builder()
                 .isArrived(isArrived)
+                .point(eventPoint)
                 .responseVOList(responseVOList)
                 .build();
     }
 
     @Transactional
-    private void arrivalInform(final Long memberSeq, final Long eventSeq) {
+    private int arrivalInform(final Long memberSeq, final Long eventSeq) {
         final MemberEvent memberEvent = memberEventRepository
                 .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(memberSeq, eventSeq)
                 .orElseThrow(() -> new IllegalArgumentException("찾은 멤버 및 이벤트와 매칭되는 정보가 없습니다."));
 
         memberEvent.updateIsDone(true);
 
-        // TODO : 이벤트 로직이 들어올 장소
+        final Member member = memberRepository.findByMemberSeq(memberSeq).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
+        int myPoint = member.getPoint();
+
+        int eventPoint = generatePoint();
+
+        member.updatePoint(myPoint + eventPoint);
+
+        return eventPoint;
     }
 
     private static double coordinateToMeter(double eventX, double eventY, double curX, double curY) {
@@ -122,5 +136,31 @@ public class EventService {
 
     private static double rad2deg(double rad){
         return (rad * 180 / Math.PI);
+    }
+
+    private static int generatePoint() {
+        int point = 0;
+
+        Random random = new Random();
+
+        double percentage = (Math.random() * 100) + 1;
+
+        if (0 < percentage && percentage < Event.FIRST_SECTION_PERCENTAGE) {
+            point = random.nextInt(9) + 1;
+        } else if (Event.FIRST_SECTION_PERCENTAGE <= percentage &&
+                percentage < Event.SECOND_SECTION_PERCENTAGE) {
+            point = random.nextInt(10) + 10;
+        } else if (Event.SECOND_SECTION_PERCENTAGE <= percentage &&
+                percentage < Event.THIRD_SECTION_PERCENTAGE) {
+            point = random.nextInt(30) + 20;
+        } else if (Event.THIRD_SECTION_PERCENTAGE <= percentage &&
+                percentage < Event.FOURTH_SECTION_PERCENTAGE) {
+            point = random.nextInt(50) + 50;
+        } else if (Event.FOURTH_SECTION_PERCENTAGE <= percentage &&
+                percentage < Event.FIFTH_SECTION_PERCENTAGE) {
+            point = random.nextInt(901) + 100;
+        }
+
+        return point;
     }
 }
