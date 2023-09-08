@@ -13,13 +13,16 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Event {
+    public static final double COORDINATE_TO_METER_UNIT = 60 * 1.1515 * 1609.344;
+
+    public static final int NEARBY_UNIT = 500;
+    public static final int ARRIVAL_UNIT = 5;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventSeq;
 
     private String name;
-
-    private String region;
 
     private Double x;
 
