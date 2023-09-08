@@ -18,6 +18,12 @@ public class Event {
     public static final int NEARBY_UNIT = 500;
     public static final int ARRIVAL_UNIT = 5;
 
+    public static final int FIRST_SECTION_PERCENTAGE = 60;
+    public static final int SECOND_SECTION_PERCENTAGE = 90;
+    public static final int THIRD_SECTION_PERCENTAGE = 97;
+    public static final int FOURTH_SECTION_PERCENTAGE = 99;
+    public static final int FIFTH_SECTION_PERCENTAGE = 100;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventSeq;
