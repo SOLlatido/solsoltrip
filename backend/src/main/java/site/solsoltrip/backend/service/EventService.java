@@ -1,12 +1,8 @@
 package site.solsoltrip.backend.service;
 
-import com.google.gson.Gson;
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.EventRequestDto;
 import site.solsoltrip.backend.dto.EventResponseDto;
 import site.solsoltrip.backend.entity.Event;
@@ -27,30 +23,14 @@ public class EventService {
     private final MemberRepository memberRepository;
     private final MemberEventRepository memberEventRepository;
 
-    private WebClient webClient;
-
-    @PostConstruct
-    public void initWebClient() {
-        webClient = WebClient.create("https://dapi.kakao.com/v2/local/geo/coord2regioncode.json");
-    }
-
     @Transactional
     public void registEvent(final EventRequestDto.registEvent requestDto) {
         if (eventRepository.findByXAndY(requestDto.x(), requestDto.y()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 이벤트 지역입니다.");
         }
 
-        final String regionObject = sendRequest(requestDto.x(), requestDto.y());
-
-        final Gson gson = new Gson();
-
-        final RegionJson regionJson = gson.fromJson(regionObject, RegionJson.class);
-
-        final String region = regionJson.getDocuments().get(0).address_name;
-
         final Event event = Event.builder()
                 .name(requestDto.name())
-                .region(region)
                 .x(requestDto.x())
                 .y(requestDto.y())
                 .build();
@@ -90,11 +70,11 @@ public class EventService {
 
             double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
 
-            if (dist > 500) {
+            if (dist > Event.NEARBY_UNIT) {
                 continue;
             }
 
-            if (dist < 5) {
+            if (dist < Event.ARRIVAL_UNIT) {
                 arrivalInform(requestDto.memberSeq(), event.getEventSeq());
                 isArrived = true;
             }
@@ -133,50 +113,14 @@ public class EventService {
 
         dist = rad2deg(dist);
 
-        return dist * 60 * 1.1515 * 1609.344;
+        return dist * Event.COORDINATE_TO_METER_UNIT;
     }
 
     private static double deg2rad(double deg){
-        return (deg * Math.PI / 180.0);
+        return (deg * Math.PI / 180);
     }
 
     private static double rad2deg(double rad){
         return (rad * 180 / Math.PI);
-    }
-
-    private String sendRequest(final double latitude, final double longitude) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("x", latitude)
-                        .queryParam("y", longitude)
-                        .build())
-                .header("Authorization", "KakaoAK 7276680ce0f3c0be137b878203962dfa")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    @Getter
-    private static class RegionJson {
-        private Meta meta;
-        private List<Document> documents;
-
-        @Getter
-        public static class Meta {
-            private int total_count;
-        }
-
-        @Getter
-        public static class Document {
-            private String region_type;
-            private String code;
-            private String address_name;
-            private String region_1depth_name;
-            private String region_2depth_name;
-            private String region_3depth_name;
-            private String region_4depth_name;
-            private double x;
-            private double y;
-        }
     }
 }
