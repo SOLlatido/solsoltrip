@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Text, View, Modal } from "react-native";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 

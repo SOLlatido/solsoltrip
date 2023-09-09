@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Platform, Text, View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker, AnimatedRegion, Animated, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import haversine from 'haversine';
 
 // recoil
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { eventMapState } from '../recoil/eventMap/atom';
 import { centerModalState } from '../recoil/centerModal/atom';
 
