@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
-import { View, Text, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, Pressable} from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -39,17 +39,18 @@ function AccountDuration() {
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
       <View style={tw `mt-30`}>
       <View>
-        <Text style={tw `text-lg self-center mt-5`}>3 / 4</Text>
-        <Text style={tw `text-base self-center mt-1`}>여행 시작날짜 / 종료날짜를 입력해주세요</Text>
+        <Text style={tw `text-lg self-center mt-5`}>Step 3 / 4</Text>
+        <Text style={tw `text-base self-center mt-1`}>여행 시작날짜, 종료날짜를 입력해주세요</Text>
       </View>
 
       <View style={tw `flex flex-row w-5/6 self-center items-center mt-15`}>
 
-      <TouchableOpacity style={tw `flex-1 rounded-lg self-center items-center`} onPress={()=>{showDatePicker(); setStage(0)}}>
+      <Pressable style={[tw `flex-1 self-center items-center`]} onPress={()=>{showDatePicker(); setStage(0)}}>
         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>
             {startText}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
+
       <MaterialCommunityIcons name="train-car-passenger" size={24} color="#51C0C7" />
       <TouchableOpacity style={tw `flex-1 rounded-lg items-center`} onPress={()=>{showDatePicker(); setStage(1)}}>
         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>

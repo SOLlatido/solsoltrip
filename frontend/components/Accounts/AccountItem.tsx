@@ -19,7 +19,7 @@ const AccountItem = (props : { accountNumber:string, travelTitle:string, duratio
         <Text style={tw`text-xl font-bold text-white`}>{travelTitle}</Text>
         <Text style={tw`text-gray-300 text-xs font-bold tracking-wider`}>{duration}</Text>
       </View>
-      <View style={tw`mt-4 flex-row justify-self-start`}>
+      <View style={tw`mt-4 flex-row`}>
         <Text style={tw`text-gray-200 items-center mr-2`}>{numberOfPeople}명의 동행</Text>  
         <Pressable  style={tw``}><Feather name="more-horizontal" size={20} color="#ddd" /></Pressable>
       </View>

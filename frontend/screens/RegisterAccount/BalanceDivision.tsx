@@ -14,7 +14,7 @@ function AccountDivision() {
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
       <View style={tw `mt-30`}>
       <View>
-        <Text style={tw `text-lg self-center mt-5`}>4 / 4</Text>
+        <Text style={tw `text-lg self-center mt-5`}>Step 4 / 4</Text>
         <Text style={tw `text-base self-center mt-1`}>여행비 관리 정보를 선택해주세요</Text>
       </View>
 

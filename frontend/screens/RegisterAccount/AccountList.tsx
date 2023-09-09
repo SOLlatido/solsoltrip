@@ -24,7 +24,7 @@ function AccountList() {
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
       <View style={tw `mt-30`}>
       <View>
-        <Text style={tw `text-lg self-center mt-5`}>1 / 4</Text>
+        <Text style={tw `text-lg self-center mt-5`}>Step 1 / 4</Text>
         <Text style={tw `text-base self-center mt-1`}>동행통장으로 사용하실 계좌를 선택해주세요.</Text>
       </View>
 
