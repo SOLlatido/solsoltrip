@@ -7,7 +7,7 @@ import tw from 'twrnc';
 import { useRecoilState} from 'recoil';
 import {centerModalState} from '../../recoil/centerModal/atom';
 
-function CenterModal({ modalTitle, content1, content2 }: CenterModalProps){
+function CenterModal({ modalTitle, content}: CenterModalProps){
     //<CenterModal modalTitle:string={"여행 종료"} content1:string={"산하님, 즐거운 여행 되셨나요?"} content2:string={"정산 내역을 안내해드리겠습니다."}/>
     // props : title : 제목, content1 : 1번째줄 , content2 : 2번째줄
     
@@ -35,8 +35,7 @@ function CenterModal({ modalTitle, content1, content2 }: CenterModalProps){
                         </View>
 
                         <View style={tw `flex-2 pl-5`}>
-                            <Text style={tw`mb-5 text-left text-xl`}>{content1}</Text>
-                            <Text style={tw`mb-5 text-left text-xl mt--5`}>{content2}</Text>
+                            <Text style={tw`mb-5 text-left text-xl`}>{content}</Text>
                         </View>
 
                         <View style={tw `flex-1 w-full`}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Platform, Text, View, StyleSheet, Dimensions, Image } from 'react-native';
+import { Platform, Text, View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker, AnimatedRegion, Animated, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
@@ -11,6 +11,9 @@ import { eventMapState } from '../recoil/eventMap/atom';
 
 // 캐릭터 이미지
 import sol_charater1 from '../assets/character/sol_character1.png';
+
+// 컴포넌트
+import CenterModal from '../components/Modals/CenterModal';
 
 const EventMap = () => {
   const [location, setLocation] = useState<any>(null);
@@ -158,6 +161,14 @@ const EventMap = () => {
   }, []);
 
 
+  //포인트 얻게 도와주는 모달창 띄우기
+  const getPoint = (title:string) => {
+    return(
+      <CenterModal modalTitle={"포인트 획득"} content={`${title}에 도착하셨습니다. \n 500포인트 획득!`}/>
+    )
+  }
+
+
   return (
     <View>
       <MapView
@@ -187,10 +198,13 @@ const EventMap = () => {
               title={place?.title}
               description={place?.description}
             >
-              <Image
-                source={sol_charater1} // 이미지를 직접 지정합니다.
-                style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
-              />
+              <TouchableOpacity>
+                <Image
+                  source={sol_charater1} // 이미지를 직접 지정합니다.
+                  style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
+                  onPress={() => getPoint(place?.title)}
+                />
+              </TouchableOpacity>
             </Marker>
           );
         })}
