@@ -39,4 +39,8 @@ public class Accompany {
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
     private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
+
+    public void updateEndDatetime(final LocalDateTime endDatetime) {
+        this.endDatetime = endDatetime;
+    }
 }
