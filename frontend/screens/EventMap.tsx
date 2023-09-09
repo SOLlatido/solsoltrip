@@ -16,7 +16,10 @@ const EventMap = () => {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
-  const [prevLatLng, setPrevLatLng] = useState({ latitude: 0, longitude: 0 });
+  const [prevLatLng, setPrevLatLng] = useState<any>({
+    latitude: 36.3557439,
+    longitude: 127.3468684
+  });
   const [routeCoordinates, setRouteCoordinates] = useState([]); //유저가 움직인 이동경로
 
   const [eventMap, setEventMap] = useRecoilState(eventMapState);
@@ -24,8 +27,6 @@ const EventMap = () => {
 
   // 거리를 계산하는 함수
   const calcDistance = (newLatLng: any) => {
-    console.log(`prevLatLng = ${prevLatLng.longitude}`);
-    console.log(`newLatLng = ${newLatLng.longitude}`);
     return haversine(prevLatLng, newLatLng) || 0;
   };
 
@@ -37,7 +38,7 @@ const EventMap = () => {
   };
 
   // 내 위치를 찾는 함수
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -45,14 +46,24 @@ const EventMap = () => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let locationChange = await Location.getCurrentPositionAsync({accuracy:5});
 
-      setLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
+      if(locationChange.coords){
+
+        setLocation({
+          latitude: locationChange.coords?.latitude,
+          longitude: locationChange.coords?.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+  
+        setPrevLatLng({
+          latitude: locationChange.coords?.latitude,
+          longitude: locationChange.coords?.longitude,
+        })
+
+      }
+
     })();
   }, []);
 
@@ -64,6 +75,8 @@ const EventMap = () => {
         timeInterval: 5000,
         distanceInterval: 10,
       };
+
+      //실시간으로 위치 변화 감지
       const locationSubscription = await Location.watchPositionAsync(
         locationOptions,
         (position) => {
@@ -73,6 +86,9 @@ const EventMap = () => {
             latitude,
             longitude,
           };
+
+          //현재 위치로 변경
+          setPrevLatLng(newCoordinate)
 
           setLocation({
             latitude: latitude,
@@ -87,7 +103,6 @@ const EventMap = () => {
           const newDistance = calcDistance(newCoordinate);
           setDistanceTravelled((prevDistance) => prevDistance + newDistance);
 
-          console.log(newCoordinate.latitude);
           setPrevLatLng(newCoordinate);
 
           // 500m 안에 들어왔는지 확인 -> alert
@@ -96,49 +111,38 @@ const EventMap = () => {
 
           for (let i = 0; i < characterLocations.length; i++) {
             markerLocation = characterLocations[i];
-
+          
             // 이미 본 캐릭터는 처리하지 않음
             if (!markerLocation.display) continue;
-
+          
             isWithin500mFlag = isWithin500m(newCoordinate, markerLocation);
-    
+          
             if (isWithin500mFlag && markerLocation.display) {
-
-                console.log(`Entering if block with i = ${i}`);
-
-                // Recoil 상태를 업데이트하여 display 속성 변경
-                setEventMap((prevEventMapState) => {
-
-                    const updatedCharacterLocations = prevEventMapState.characterLocations.map(
-                      (characterLocation, index) => {
-                        if (index === i) {
-                          // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
-                          return { ...characterLocation, display: false };
-                        }
-                        // 변경 대상이 아니면 그대로 반환
-                        return characterLocation;
+          
+              // Recoil 상태를 업데이트하여 display 속성 변경
+              setEventMap((prevEventMapState) => {
+          
+                const updatedCharacterLocations = prevEventMapState.characterLocations.map(
+                  (characterLocation, index) => {
+                    if (index === i && characterLocation.display) {
+                      // 유저가 500m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
+                      if (characterLocation.title != null) {
+                        alert(`500m 이내에 ${characterLocation.title} 관광지가 보입니다!`);
                       }
-                    );
-                  
-                    // 업데이트된 characterLocations를 포함한 새로운 상태를 반환
-                    return {
-                      ...prevEventMapState,
-                      characterLocations: updatedCharacterLocations,
-                    };
-                });
-                  
-                  
-                  
-                  
-                  
-                console.log(markerLocation);
-
-                
-
-              // 유저가 500m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
-              if(markerLocation.title!=null)
-                alert(`500m 이내에 ${markerLocation.title} 관광지가 보입니다!`);
-              break;
+                      // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
+                      return { ...characterLocation, display: false };
+                    }
+                    // 변경 대상이 아니면 그대로 반환
+                    return characterLocation;
+                  }
+                );
+          
+                // 업데이트된 characterLocations를 포함한 새로운 상태를 반환
+                return {
+                  ...prevEventMapState,
+                  characterLocations: updatedCharacterLocations,
+                };
+              });
             }
           }
         }
@@ -153,9 +157,6 @@ const EventMap = () => {
     watchLocation();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated eventMap:", eventMap);
-  }, [eventMap, prevLatLng]);
 
   return (
     <View>
