@@ -1,5 +1,7 @@
 package site.solsoltrip.backend.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -14,22 +16,23 @@ public class TripRequestDto {
             @NotNull
             Long memberSeq,
 
-            @NotNull
+            @NotBlank
             String name,
 
-            @NotNull
+            @NotBlank
             String account,
 
             @NotNull
             LocalDateTime startDateTime,
 
             @NotNull
+            @FutureOrPresent
             LocalDateTime endDateTime,
 
             @NotNull
             int availableAmount,
 
-            @NotNull
+            @NotBlank
             String getMethod
     ) {}
 }
