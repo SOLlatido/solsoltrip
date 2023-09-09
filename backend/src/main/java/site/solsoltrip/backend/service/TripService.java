@@ -78,7 +78,7 @@ public class TripService {
 
         accompanyRepository.save(accompany);
 
-        Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+        final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         final MemberAccompany memberAccompany = MemberAccompany.builder()
@@ -121,7 +121,7 @@ public class TripService {
 
         final JsonArray checkHistory = dataBody.get("조회내역1").getAsJsonArray();
 
-        List<ShbhackResponseDto.DataBody.DepositAndSavings> 조회내역 = new ArrayList<>();
+        final List<ShbhackResponseDto.DataBody.DepositAndSavings> 조회내역 = new ArrayList<>();
 
         final int bankDataNum = Integer.parseInt(dataBody.get("반복횟수1").getAsString());
 
