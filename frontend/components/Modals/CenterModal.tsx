@@ -67,6 +67,5 @@ export default CenterModal;
 // CenterModal 컴포넌트의 Props 타입 정의
 interface CenterModalProps {
     modalTitle: string;
-    content1: string;
-    content2: string;
+    content: string;
 }
