@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Text, View, Modal } from "react-native";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
@@ -9,17 +9,28 @@ import {centerModalState} from '../../recoil/centerModal/atom';
 
 // 컴포넌트
 import EventMapAnimation from '../Animation/EventMapAnimation';
-import BlurBlack from '../Blur/BlurBlack';
 
 function CenterModal({ modalTitle, content}: CenterModalProps){
     
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
+    useEffect(()=>{
+
+    },[modalVisible])
+
     return(
         // 전체 배경
         <View style={tw`flex-1`}>
-            <BlurBlack/>
-            <View style={tw`flex-1`}><EventMapAnimation/></View>
+            
+            {/* 모달창 뜰 때 배경 블러처리 */}
+            <Pressable>
+                {modalVisible&&<View style={tw`w-full h-full bg-black opacity-30`}></View>}
+            </Pressable>
+
+            <Pressable>
+                <View style={tw`flex-1`}><EventMapAnimation/></View>
+            </Pressable>
+
             <Modal
                 animationType="slide"
                 transparent={true}

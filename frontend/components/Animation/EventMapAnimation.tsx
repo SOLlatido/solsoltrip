@@ -7,8 +7,8 @@ import {View, Dimensions} from "react-native";
 import React, {useState, useEffect} from 'react';
 
 const EventMapAnimation = () => {
-    const windowWidth = Dimensions.get('window').width-150;
-    const windowHeight = Dimensions.get('window').height-150;
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
 
 
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
