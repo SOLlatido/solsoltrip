@@ -51,12 +51,12 @@ public class EventService {
             return null;
         }
 
-        List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
+        final List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
 
         boolean isArrived = false;
         int eventPoint = 0;
 
-        for (Event event : eventList) {
+        for (final Event event : eventList) {
             final MemberEvent memberEvent = memberEventRepository
                     .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(requestDto.memberSeq(), event.getEventSeq())
                     .orElseGet(() -> memberEventRepository.save(MemberEvent.builder()
@@ -70,7 +70,7 @@ public class EventService {
                 continue;
             }
 
-            double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
+            final double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
 
             if (dist > Event.NEARBY_UNIT) {
                 continue;
@@ -82,7 +82,7 @@ public class EventService {
                 continue;
             }
 
-            EventResponseDto.EventResponseVO responseVO = EventResponseDto.EventResponseVO.builder()
+            final EventResponseDto.EventResponseVO responseVO = EventResponseDto.EventResponseVO.builder()
                     .name(event.getName())
                     .build();
 
@@ -108,17 +108,17 @@ public class EventService {
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
 
-        int myPoint = member.getPoint();
+        final int myPoint = member.getPoint();
 
-        int eventPoint = generatePoint();
+        final int eventPoint = generatePoint();
 
         member.updatePoint(myPoint + eventPoint);
 
         return eventPoint;
     }
 
-    private static double coordinateToMeter(double eventX, double eventY, double curX, double curY) {
-        double theta = eventY - curY;
+    private static double coordinateToMeter(final double eventX, final double eventY, final double curX, final double curY) {
+        final double theta = eventY - curY;
 
         double dist = Math.sin(deg2rad(eventX)) * Math.sin(deg2rad(curX)) +
                 Math.cos(deg2rad(eventX)) * Math.cos(deg2rad(curX)) * Math.cos(deg2rad(theta));
@@ -130,20 +130,20 @@ public class EventService {
         return dist * Event.COORDINATE_TO_METER_UNIT;
     }
 
-    private static double deg2rad(double deg){
+    private static double deg2rad(final double deg){
         return (deg * Math.PI / 180);
     }
 
-    private static double rad2deg(double rad){
+    private static double rad2deg(final double rad){
         return (rad * 180 / Math.PI);
     }
 
     private static int generatePoint() {
         int point = 0;
 
-        Random random = new Random();
+        final Random random = new Random();
 
-        double percentage = (Math.random() * 100) + 1;
+        final double percentage = (Math.random() * 100) + 1;
 
         if (0 < percentage && percentage < Event.FIRST_SECTION_PERCENTAGE) {
             point = random.nextInt(9) + 1;
