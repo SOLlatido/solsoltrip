@@ -33,7 +33,7 @@ public class TripService {
 
     @Transactional
     public void validation(final TripRequestDto.validation requestDto) {
-        if (registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq()).isEmpty()) {
+        if (registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq()).size() == 0) {
             final String bankListObject = sendRequest(requestDto.memberSeq(), "/v1/account");
 
             final ShbhackResponseDto responseDto = stringToShbhackResponseDto(bankListObject);
