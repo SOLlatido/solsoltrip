@@ -1,14 +1,14 @@
 package site.solsoltrip.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "member_accompany")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor
+@Builder
 public class MemberAccompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
