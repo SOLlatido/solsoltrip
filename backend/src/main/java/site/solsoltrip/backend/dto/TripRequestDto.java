@@ -1,35 +1,35 @@
 package site.solsoltrip.backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public class TripRequestDto {
     public record validation (
-            @NotBlank
+            @NotNull
             Long memberSeq
     ) {}
 
     public record registAccount (
-            @NotBlank
+            @NotNull
             Long memberSeq,
 
-            @NotBlank
+            @NotNull
             String name,
 
-            @NotBlank
+            @NotNull
             String account,
 
-            @NotBlank
+            @NotNull
             LocalDateTime startDateTime,
 
-            @NotBlank
+            @NotNull
             LocalDateTime endDateTime,
 
-            @NotBlank
-            int avaliableAmount,
+            @NotNull
+            int availableAmount,
 
-            @NotBlank
+            @NotNull
             String getMethod
     ) {}
 }

@@ -10,7 +10,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.ShbhackRequestDto;
 import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.dto.TripRequestDto;
+import site.solsoltrip.backend.entity.Accompany;
+import site.solsoltrip.backend.entity.MemberAccompany;
 import site.solsoltrip.backend.entity.RegistedAccount;
+import site.solsoltrip.backend.repository.AccompanyRepository;
+import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.repository.MemberRepository;
 import site.solsoltrip.backend.repository.RegistedAccountRepository;
 
@@ -23,6 +27,8 @@ import java.util.List;
 public class TripService {
     private final RegistedAccountRepository registedAccountRepository;
     private final MemberRepository memberRepository;
+    private final MemberAccompanyRepository memberAccompanyRepository;
+    private final AccompanyRepository accompanyRepository;
 
     private WebClient webClient;
 
@@ -44,7 +50,8 @@ public class TripService {
                         .account(data.get계좌번호())
                         .name(data.get상품명())
                         .balance(Integer.parseInt(data.get잔액()))
-                        .member(memberRepository.findByMemberSeq(requestDto.memberSeq()).get())
+                        .member(memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
                         .build();
 
                 registedAccountRepository.save(account);
@@ -52,6 +59,32 @@ public class TripService {
         }
 
         // Todo : 동행통장으로 계좌를 사용할 수 있는지 여부에 대한 로직
+    }
+
+    @Transactional
+    public void registAccount(final TripRequestDto.registAccount requestDto) {
+        final Accompany accompany = Accompany.builder()
+                .name(requestDto.name())
+                .account(requestDto.account())
+                .startDatetime(requestDto.startDateTime())
+                .endDatetime(requestDto.endDateTime())
+                .availableAmount(requestDto.availableAmount())
+                .getMethod(requestDto.getMethod())
+                .isChecked(false)
+                .build();
+
+        accompanyRepository.save(accompany);
+
+        final MemberAccompany memberAccompany = MemberAccompany.builder()
+                .member(memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
+                .accompany(accompany)
+                .isManager(true)
+                .isPaid(false)
+                .settlement(0)
+                .build();
+
+        memberAccompanyRepository.save(memberAccompany);
     }
 
     @Transactional
