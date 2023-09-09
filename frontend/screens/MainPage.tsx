@@ -58,7 +58,7 @@ function MainPage() {
                     <SearchBar onChangeText={handleSearch} value={searchText} />
                 </View>
                 {/* expenseTab */}
-                <View style={tw `border-2 border-gray-400 flex-1 flex-row items-center justify-center`}>
+                <View style={tw `flex-1 flex-row items-center justify-center`}>
                     <ExpenseTab
                         content={"전체"}
                         isActive={activeTab === "전체"}
@@ -76,9 +76,13 @@ function MainPage() {
                         />
                 </View>
                 {/* expenseHistory */}
-                <View style={tw `bg-[#888] flex-7`}>
-                    <ScrollView style={tw `bg-[#7B5AF3] flex-0.9`}>
-
+                <View style={tw `bg-[#888] flex-7 items-center`}>
+                    <ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                      <ExpenseItem></ExpenseItem>
+                      <ExpenseItem></ExpenseItem>
+                      <ExpenseItem></ExpenseItem>
+                      <ExpenseItem></ExpenseItem>
+                      <ExpenseItem></ExpenseItem>
 
                     </ScrollView>
                 </View>
