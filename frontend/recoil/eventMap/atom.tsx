@@ -8,12 +8,6 @@ const initialState = {
     longitude: 0,
     distanceTravelled: 0, // 이동한 거리 
     prevLatLng: {},
-    // coordinate: new AnimatedRegion({
-    //     latitude: 0,
-    //     longitude: 0,
-    //     latitudeDelta: 0,
-    //     longitudeDelta: 0,
-    // }),
     characterLocations: [{ // 캐릭터 위치 리스트
         latitude: 36.3688253,
         longitude: 127.3468684,
