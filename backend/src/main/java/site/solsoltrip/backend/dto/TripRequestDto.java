@@ -21,10 +21,10 @@ public class TripRequestDto {
             String account,
 
             @NotBlank
-            LocalDateTime startTime,
+            LocalDateTime startDateTime,
 
             @NotBlank
-            LocalDateTime endTime,
+            LocalDateTime endDateTime,
 
             @NotBlank
             int avaliableAmount,
