@@ -23,4 +23,11 @@ public class TripController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PostMapping("/regist")
+    public ResponseEntity<Void> registAccount(@RequestBody @Validated final TripRequestDto.registAccount requestDto) {
+        tripService.registAccount(requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
