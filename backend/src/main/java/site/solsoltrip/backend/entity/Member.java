@@ -23,6 +23,8 @@ public class Member {
 
     private String name;
 
+    private int point;
+
     private String phone;
 
     private Role role;
@@ -38,4 +40,8 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<RegistedAccount> registedAccountList = new ArrayList<>();
+
+    public void updatePoint(final int point) {
+        this.point = point;
+    }
 }

@@ -1,5 +1,17 @@
 package site.solsoltrip.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class TripRequestDto {
-    public record validation (Long memberSeq) {}
+    public record validation (
+            @NotBlank
+            Long memberSeq
+    ) {}
+
+    public record registAccount (
+            @NotBlank
+            String account,
+
+
+    ) {}
 }

@@ -7,19 +7,17 @@ import java.util.List;
 
 public class EventResponseDto {
     @Builder
-    public record nearbyInform(List<EventResponseVO> responseVOList) {}
+    public record nearbyOrArrivalInform(boolean isArrived, int point, List<EventResponseVO> responseVOList) {}
 
     @Getter
     @Builder
     public static class EventResponseVO {
         private final String name;
-        private final short plane;
-        private final double ratio;
+        private final double dist;
 
-        EventResponseVO(final String name, final short plane, final double ratio) {
+        EventResponseVO(final String name, final double dist) {
             this.name = name;
-            this.plane = plane;
-            this.ratio = ratio;
+            this.dist = dist;
         }
     }
 }
