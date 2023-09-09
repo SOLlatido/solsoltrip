@@ -12,6 +12,7 @@ const category:number = 4
 const Category = ({categoryNum}:{categoryNum : number}) => {
     return (
         <>
+        <View style={tw `pb-1 pt-1`}>
         {categoryNum === 1 && (
           <MaterialIcons name="hotel" size={20} color="black" />
         )}
@@ -33,6 +34,7 @@ const Category = ({categoryNum}:{categoryNum : number}) => {
         {categoryNum === 7 && (
         <FontAwesome name="question" size={20} color="black" />
         )}
+        </View>
         </>
     )
 }

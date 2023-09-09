@@ -6,6 +6,7 @@ import aurora from "../assets/images/aurora_background.png";
 import SearchBar from '../components/Inputs/SearchBar';
 import ExpenseItem from '../components/Accounts/ExpenseItem';
 import tw from "twrnc";
+import TabNavigation from '../navigation/TabNavigation';
 
 
 const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => {
@@ -88,6 +89,7 @@ function MainPage() {
                 </View>
             </View>
         </View>
+        {/* <TabNavigation/> */}
     </>
   )
 }

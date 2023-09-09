@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Pressable, View, Text, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
@@ -18,7 +19,12 @@ import AccountDuration from '../screens/RegisterAccount/AccountDuration';
 import BalanceDivision from "../screens/RegisterAccount/BalanceDivision"
 import InviteFriends from '../screens/RegisterAccount/InviteFriends';
 import MainPage from '../screens/MainPage';
+import MyTravelMates from '../screens/MyTravelMates';
+import TabNavigation from './TabNavigation';
+
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
@@ -177,6 +183,22 @@ const AppNavigation = () => {
             )
           }}
         />
+        <Stack.Screen name='MyTravelMates' component={MyTravelMates} 
+          options={{
+            // gestureDirection : "vertical",
+            // animation : "",
+            headerTitle : "",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+            ),
+          }}
+        />
+        <Stack.Screen name='TabNavigation' component={TabNavigation}
+          options={{
+            headerShown : false
+          }}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
