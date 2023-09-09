@@ -12,10 +12,6 @@ const EventMapAnimation = () => {
 
 
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
-
-    useEffect(()=>{
-        console.log(modalVisible);
-    },[modalVisible])
     
 
     return(

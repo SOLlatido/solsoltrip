@@ -1,5 +1,4 @@
 import { atom } from 'recoil';
-import {AnimatedRegion} from 'react-native-maps';
 
 
 const initialState = {
@@ -16,6 +15,7 @@ const initialState = {
         title: "충남대학교",
         description: "대전의 큰 학교이자 유명한 관광지",
         display: true,
+        getPoint:false,
     },{
         latitude: 36.3557439,
         longitude: 127.3471908,
@@ -24,6 +24,7 @@ const initialState = {
         title: "계룡스파텔",
         description: "스파",
         display: true,
+        getPoint:false,
     }],
 }
 
@@ -39,6 +40,5 @@ export interface eventMapType {
     longitude: number,
     distanceTravelled: number,
     prevLatLng: object,
-    // coordinate: any[],
     characterLocations: any[],
 }

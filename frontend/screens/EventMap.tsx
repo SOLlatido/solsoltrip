@@ -14,7 +14,11 @@ import { centerModalState } from '../recoil/centerModal/atom';
 import sol_charater1 from '../assets/character/sol_character1.png';
 
 // 컴포넌트
-import CenterModal from '../components/Modals/CenterModal';
+import EventModal from '../components/Modals/EventModal';
+
+
+//500m는 근처에 관광지가 있다고 알림
+//10m는 포인트를 받을 수 있음
 
 const EventMap = () => {
   const [location, setLocation] = useState<any>(null);
@@ -29,6 +33,8 @@ const EventMap = () => {
   const [eventMap, setEventMap] = useRecoilState(eventMapState);
   const { characterLocations } = eventMap;
 
+  const [point, setPoint] = useState<number>(10);
+
   // 모달
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
   const [modalContent, setModalContent] = useState('');
@@ -42,6 +48,12 @@ const EventMap = () => {
   const isWithin500m = (userLocation: any, markerLocation: any) => {
     const distance = calcDistance(userLocation);
     return distance <= 0.5; // 500m = 0.5 km
+  };
+
+  // 유저의 위치와 마커 간의 거리를 확인하는 함수 10m 알람범위
+  const isWithin10m = (userLocation: any, markerLocation: any) => {
+    const distance = calcDistance(userLocation);
+    return distance <= 0.01; // 10m = 0.01 km
   };
 
   // 내 위치를 찾는 함수
@@ -171,9 +183,8 @@ const EventMap = () => {
       open:true,
       event:true,
     }
-    console.log(`와우`);
     setModalVisible(newValue);
-    setModalContent(title);
+    setModalContent(`${title} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
 
@@ -213,8 +224,8 @@ const EventMap = () => {
                 />
               </TouchableOpacity>
 
-              <CenterModal
-                  modalTitle="포인트 획득"
+              <EventModal
+                  modalTitle="감사합니다"
                   content={modalContent}
                   
               />
