@@ -8,6 +8,7 @@ import haversine from 'haversine';
 // recoil
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { eventMapState } from '../recoil/eventMap/atom';
+import { centerModalState } from '../recoil/centerModal/atom';
 
 // 캐릭터 이미지
 import sol_charater1 from '../assets/character/sol_character1.png';
@@ -28,6 +29,10 @@ const EventMap = () => {
   const [eventMap, setEventMap] = useRecoilState(eventMapState);
   const { characterLocations } = eventMap;
 
+  // 모달
+  const [modalVisible, setModalVisible] = useRecoilState(centerModalState);
+  const [modalContent, setModalContent] = useState('');
+
   // 거리를 계산하는 함수
   const calcDistance = (newLatLng: any) => {
     return haversine(prevLatLng, newLatLng) || 0;
@@ -36,7 +41,6 @@ const EventMap = () => {
   // 유저의 위치와 마커 간의 거리를 확인하는 함수 500m 알람범위
   const isWithin500m = (userLocation: any, markerLocation: any) => {
     const distance = calcDistance(userLocation);
-    console.log(`distance = ${distance}`);
     return distance <= 0.5; // 500m = 0.5 km
   };
 
@@ -163,14 +167,14 @@ const EventMap = () => {
 
   //포인트 얻게 도와주는 모달창 띄우기
   const getPoint = (title:string) => {
-    return(
-      <CenterModal modalTitle={"포인트 획득"} content={`${title}에 도착하셨습니다. \n 500포인트 획득!`}/>
-    )
+    console.log(`와우`);
+    setModalVisible(true);
+    setModalContent(title);
   }
 
 
   return (
-    <View>
+    <View style={{flex:1}}>
       <MapView
         initialRegion={{
           latitude: 37.78825,
@@ -198,13 +202,18 @@ const EventMap = () => {
               title={place?.title}
               description={place?.description}
             >
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => getPoint(place?.title)}>
                 <Image
                   source={sol_charater1} // 이미지를 직접 지정합니다.
                   style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
-                  onPress={() => getPoint(place?.title)}
                 />
               </TouchableOpacity>
+
+              <CenterModal
+                  modalTitle="포인트 획득"
+                  content={modalContent}
+                  
+              />
             </Marker>
           );
         })}
