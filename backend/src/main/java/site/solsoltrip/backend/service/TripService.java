@@ -11,6 +11,7 @@ import site.solsoltrip.backend.dto.ShbhackRequestDto;
 import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.dto.TripRequestDto;
 import site.solsoltrip.backend.entity.Accompany;
+import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.entity.MemberAccompany;
 import site.solsoltrip.backend.entity.RegistedAccount;
 import site.solsoltrip.backend.repository.AccompanyRepository;
@@ -39,10 +40,13 @@ public class TripService {
 
     @Transactional
     public void validation(final TripRequestDto.validation requestDto) {
-        if (registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq()).size() == 0) {
+        if (registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq()).isEmpty()) {
             final String bankListObject = sendRequest(requestDto.memberSeq(), "/v1/account");
 
             final ShbhackResponseDto responseDto = stringToShbhackResponseDto(bankListObject);
+
+            final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
             for (ShbhackResponseDto.DataBody.DepositAndSavings data : responseDto.getDataBody().get조회내역1()) {
                 RegistedAccount account = RegistedAccount.builder()
@@ -50,8 +54,7 @@ public class TripService {
                         .account(data.get계좌번호())
                         .name(data.get상품명())
                         .balance(Integer.parseInt(data.get잔액()))
-                        .member(memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
-                                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
+                        .member(member)
                         .build();
 
                 registedAccountRepository.save(account);
@@ -106,19 +109,19 @@ public class TripService {
     }
 
     @Transactional
-    public ShbhackResponseDto stringToShbhackResponseDto(String jsonObject) {
-        JsonElement element = JsonParser.parseString(jsonObject);
+    public ShbhackResponseDto stringToShbhackResponseDto(final String jsonObject) {
+        final JsonElement element = JsonParser.parseString(jsonObject);
 
-        JsonObject object = element.getAsJsonObject();
+        final JsonObject object = element.getAsJsonObject();
 
-        JsonObject dataHeader = object.get("dataHeader").getAsJsonObject();
-        JsonObject dataBody = object.get("dataBody").getAsJsonObject();
+        final JsonObject dataHeader = object.get("dataHeader").getAsJsonObject();
+        final JsonObject dataBody = object.get("dataBody").getAsJsonObject();
 
-        JsonArray checkHistory = dataBody.get("조회내역1").getAsJsonArray();
+        final JsonArray checkHistory = dataBody.get("조회내역1").getAsJsonArray();
 
         List<ShbhackResponseDto.DataBody.DepositAndSavings> 조회내역 = new ArrayList<>();
 
-        int bankDataNum = Integer.parseInt(dataBody.get("반복횟수1").getAsString());
+        final int bankDataNum = Integer.parseInt(dataBody.get("반복횟수1").getAsString());
 
         for (int i = 0; i < bankDataNum; i++) {
             조회내역.add(ShbhackResponseDto.DataBody.DepositAndSavings.builder()
@@ -129,7 +132,7 @@ public class TripService {
                     .build());
         }
 
-        ShbhackResponseDto responseDto = ShbhackResponseDto.builder()
+        final ShbhackResponseDto responseDto = ShbhackResponseDto.builder()
                 .dataHeader(ShbhackResponseDto.DataHeader.builder()
                         .successCode(dataHeader.get("successCode").getAsString())
                         .resultCode(dataHeader.get("resultCode").getAsString())
