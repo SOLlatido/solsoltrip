@@ -25,6 +25,24 @@ const initialState = {
         description: "스파",
         display: true,
         getPoint:false,
+    },{
+        latitude: 37.475589,
+        longitude: 126.6178849,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+        title: "차이나타운",
+        description: "인천 안의 중국 체험기",
+        display: true,
+        getPoint:false,
+    },{
+        latitude: 36.3538693,
+        longitude: 127.3468555,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+        title: "루체먼드리치스타",
+        description: "내집인데 어떤대",
+        display: true,
+        getPoint:false,
     }],
 }
 

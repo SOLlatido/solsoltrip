@@ -39,21 +39,37 @@ const EventMap = () => {
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
   const [modalContent, setModalContent] = useState('');
 
-  // 거리를 계산하는 함수
-  const calcDistance = (newLatLng: any) => {
-    return haversine(prevLatLng, newLatLng) || 0;
+  // 거리를 계산하는 함수 (현재 나의 위치와 마커 위치)
+  const calcDistance = (markerLocation:any, userLocation: any) => {
+    if(userLocation===undefined || userLocation.latitude===undefined || 
+      userLocation.longitude===undefined || markerLocation===undefined || 
+      markerLocation.latitude===undefined || markerLocation.longitude===undefined) return;
+
+
+    return haversine(markerLocation, userLocation) || 0;
   };
 
   // 유저의 위치와 마커 간의 거리를 확인하는 함수 500m 알람범위
-  const isWithin500m = (userLocation: any, markerLocation: any) => {
-    const distance = calcDistance(userLocation);
+  const isWithin500m = (markerLocation: any, userLocation: any) => {
+    const distance = calcDistance(markerLocation, userLocation);
     return distance <= 0.5; // 500m = 0.5 km
   };
 
   // 유저의 위치와 마커 간의 거리를 확인하는 함수 10m 알람범위
-  const isWithin10m = (userLocation: any, markerLocation: any) => {
-    const distance = calcDistance(userLocation);
-    return distance <= 0.01; // 10m = 0.01 km
+  const isWithin10m = (markerLocation: any, userLocation: any) => {
+    const distance = calcDistance(markerLocation, userLocation);
+    return distance <= 0.05; // 50m = 0.05 km
+  };
+
+  // EventModal을 열거나 alert를 띄우는 함수를 작성
+  const openEventModalOrAlert = (place: any) => {
+    if (isWithin10m(location, place)) {
+      // 거리가 10m 이내인 경우 EventModal 열기
+      getPoint(place?.title);
+    } else {
+      // 거리가 10m 이내가 아닌 경우 alert 띄우기
+      alert("10m 이내가 아닙니다");
+    }
   };
 
   // 내 위치를 찾는 함수
@@ -134,7 +150,7 @@ const EventMap = () => {
             // 이미 본 캐릭터는 처리하지 않음
             if (!markerLocation.display) continue;
           
-            isWithin500mFlag = isWithin500m(newCoordinate, markerLocation);
+            isWithin500mFlag = isWithin500m(markerLocation,newCoordinate);
           
             if (isWithin500mFlag && markerLocation.display) {
           
@@ -143,6 +159,10 @@ const EventMap = () => {
           
                 const updatedCharacterLocations = prevEventMapState.characterLocations.map(
                   (characterLocation, index) => {
+                    if (!characterLocation || !characterLocation.latitude || !characterLocation.longitude) {
+                      // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
+                      return null;
+                    }
                     if (index === i && characterLocation.display) {
                       // 유저가 500m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
                       if (characterLocation.title != null) {
@@ -199,25 +219,28 @@ const EventMap = () => {
         }}
         style={styles.map}
         showsUserLocation
-        followsUserLocation
-        loadingEnabled={true}
+        loadingEnabled={false}
         region={location}
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={3} />
 
         {characterLocations.map((place, index) => {
+          if (!place || !place.latitude || !place.longitude) {
+            // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
+            return null;
+          }
           return (
             <Marker
               coordinate={{
                 latitude: place?.latitude,
                 longitude: place?.longitude,
-                latitudeDelta: place?.latitudeDelta,
-                longitudeDelta: place?.longitudeDelta,
+                // latitudeDelta: place?.latitudeDelta,
+                // longitudeDelta: place?.longitudeDelta,
               }}
               title={place?.title}
               description={place?.description}
             >
-              <TouchableOpacity onPress={() => getPoint(place?.title)}>
+              <TouchableOpacity onPress={() => openEventModalOrAlert(place)}>
                 <Image
                   source={sol_charater1} // 이미지를 직접 지정합니다.
                   style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
@@ -227,7 +250,6 @@ const EventMap = () => {
               <EventModal
                   modalTitle="감사합니다"
                   content={modalContent}
-                  
               />
             </Marker>
           );
