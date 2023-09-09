@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient'
+import { Feather } from '@expo/vector-icons';
 import tw from 'twrnc';
 
 const AccountItem = (props : { accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
@@ -18,8 +19,9 @@ const AccountItem = (props : { accountNumber:string, travelTitle:string, duratio
         <Text style={tw`text-xl font-bold text-white`}>{travelTitle}</Text>
         <Text style={tw`text-gray-300 text-xs font-bold tracking-wider`}>{duration}</Text>
       </View>
-      <View style={tw`mt-4`}>
-        <Text style={tw`text-gray-200`}>{numberOfPeople}명의 동행 <Pressable><Text></Text></Pressable></Text>
+      <View style={tw`mt-4 flex-row justify-self-start`}>
+        <Text style={tw`text-gray-200 items-center mr-2`}>{numberOfPeople}명의 동행</Text>  
+        <Pressable  style={tw``}><Feather name="more-horizontal" size={20} color="#ddd" /></Pressable>
       </View>
     </LinearGradient>
     </Pressable>

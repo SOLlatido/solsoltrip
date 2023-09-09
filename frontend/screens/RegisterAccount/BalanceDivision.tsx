@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, Alert} from 'react-native'
 import { Octicons } from '@expo/vector-icons';
 import tw from "twrnc"
 
@@ -25,6 +25,7 @@ function AccountDivision() {
             <View style={tw `flex-row self-center`}>
             <TextInput
                 keyboardType='numeric'
+                returnKeyType='done'
                 style={tw`bg-white rounded-lg w-5/6 h-12 px-4 mb-0`}
                 placeholder="지출 예정 금액을 입력해주세요"
                 placeholderTextColor={"#999"}
@@ -32,12 +33,13 @@ function AccountDivision() {
               />
                 <Octicons style={tw `ml-2 self-center`} name="question" size={24} color="#7EBBBB" />
             </View>
-            <Text style={tw `mt-5 pl-4 mb-2 text-[#555] text-base`}>내가 기여할 금액</Text>
+            <Text style={tw `mt-5 pl-4 mb-2 text-[#555] text-base`}>출금 불가 금액</Text>
             <View style={tw `flex-row self-center`}>
             <TextInput
                 keyboardType='numeric'
+                returnKeyType='done'
                 style={tw`bg-white rounded-lg w-5/6 h-12 px-4 mb-0`}
-                placeholder="동행통장에서 지출 불가한 최소금액을 알려주세요"
+                placeholder="출금 불가한 최소금액을 알려주세요"
                 placeholderTextColor={"#999"}
                 onChangeText={(text) => setPlannedExpense(text)}
               />
@@ -59,8 +61,8 @@ function AccountDivision() {
       </View>
     </View>
     </View>
-
-    <NextButton router='InviteFriends'></NextButton>
+    <TouchableOpacity onPress={()=>{Alert.alert("동행통장 생성이 완료되었습니다. 동행 초대 페이지로 이동합니다.")}}><NextButton router='InviteFriends'></NextButton></TouchableOpacity>
+    
     </>
   )
 }

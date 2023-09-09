@@ -3,6 +3,7 @@ import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, TouchableOpacity, TextInput } from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 function AccountDuration() {
     const [startText, setStartText] = useState<string>("시작 날짜")
     const [endText, setEndText] = useState<string>("종료 날짜")
@@ -49,7 +50,7 @@ function AccountDuration() {
             {startText}
         </Text>
       </TouchableOpacity>
-
+      <MaterialCommunityIcons name="train-car-passenger" size={24} color="#51C0C7" />
       <TouchableOpacity style={tw `flex-1 rounded-lg items-center`} onPress={()=>{showDatePicker(); setStage(1)}}>
         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>
             {endText}

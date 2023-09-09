@@ -2,9 +2,10 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Pressable } from 'react-native';
+import { Pressable, View, Text, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
-import { Entypo, AntDesign } from '@expo/vector-icons';
+import { Entypo, AntDesign, Feather, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
+import tw from "twrnc";
 
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
@@ -16,7 +17,7 @@ import AccountName from '../screens/RegisterAccount/AccountName';
 import AccountDuration from '../screens/RegisterAccount/AccountDuration';
 import BalanceDivision from "../screens/RegisterAccount/BalanceDivision"
 import InviteFriends from '../screens/RegisterAccount/InviteFriends';
-
+import MainPage from '../screens/MainPage';
 const Stack = createNativeStackNavigator();
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
@@ -34,8 +35,45 @@ const BackButton: React.FC = () => {
 const CancelButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
   <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
-    <AntDesign name="close" size={24} color="black" />
+    <AntDesign name="close" size={26} color="black" />
   </Pressable>
+  )
+};
+const CancelInviteButton:React.FC<NavigationProps> = ({navigation}) => {
+  return (
+  <Pressable onPress={()=>{navigation.navigate("MainPage")}}>
+    <AntDesign name="close" size={26} color="black" />
+  </Pressable>
+  )
+};
+
+//메인화면 버튼 컴포넌트
+const MainButton:React.FC<NavigationProps> = ({navigation}) => {
+  return (
+  <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
+    <AntDesign name="home" size={26} color="black" />
+  </Pressable>
+  )
+};
+
+const MainRightButtons : React.FC<NavigationProps> = ({navigation}) => {
+  return (
+    <>
+    <View style={tw `flex-row`}>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{navigation.navigate("InviteFriends")}}>
+      <Ionicons name="person-add" size={20.5} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>동행추가</Text></View>
+      </Pressable>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
+      <MaterialCommunityIcons name="airplane-landing" size={22} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>정산하기</Text></View>
+      </Pressable>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
+      <Feather name="log-out" size={22} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>로그아웃</Text></View>
+      </Pressable>
+    </View>
+    </>
   )
 };
 
@@ -43,11 +81,7 @@ const AppNavigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        // screenOptions={{
-        //     headerShown: false,
-        //   }}
         initialRouteName='Intro'>
-
         <Stack.Screen name='Intro' component={Intro} options={{headerShown:false}} />
         <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
         <Stack.Screen name='SignUp' component={SignUp} options={{headerShown:false}} />
@@ -69,8 +103,10 @@ const AppNavigation = () => {
             headerBackTitleVisible : false,
             headerLeft: () => (
               <BackButton></BackButton>
-                // <CancelButton navigation={useNavigation()}></CancelButton>
-            )
+            ),
+            headerRight : () => (
+              <CancelButton navigation={useNavigation()}></CancelButton>
+          )
           }}
         />
         <Stack.Screen name='AccountName' component={AccountName} 
@@ -80,8 +116,10 @@ const AppNavigation = () => {
             headerBackTitleVisible : false,
             headerLeft: () => (
               <BackButton></BackButton>
-                // <CancelButton navigation={useNavigation()}></CancelButton>
-            )
+            ),
+            headerRight : () => (
+              <CancelButton navigation={useNavigation()}></CancelButton>
+          )
           }}
         />
         <Stack.Screen name='AccountDuration' component={AccountDuration} 
@@ -91,7 +129,9 @@ const AppNavigation = () => {
             headerBackTitleVisible : false,
             headerLeft: () => (
               <BackButton></BackButton>
-                // <CancelButton navigation={useNavigation()}></CancelButton>
+              ),
+            headerRight : () => (
+                <CancelButton navigation={useNavigation()}></CancelButton>
             )
           }}
         />
@@ -102,8 +142,10 @@ const AppNavigation = () => {
             headerBackTitleVisible : false,
             headerLeft: () => (
               <BackButton></BackButton>
-                // <CancelButton navigation={useNavigation()}></CancelButton>
-            )
+            ),
+            headerRight : () => (
+              <CancelButton navigation={useNavigation()}></CancelButton>
+          )
           }}
         />
         <Stack.Screen name='InviteFriends' component={InviteFriends} 
@@ -112,10 +154,26 @@ const AppNavigation = () => {
             animation : "fade_from_bottom",
             headerTitle : "",
             headerTransparent : true, 
+            headerBackTitleVisible : true,
+            headerBackTitle : "메인",
+            headerLeft: () => (
+              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+            ),
+          }}
+        />
+        <Stack.Screen name='MainPage' component={MainPage} 
+          options={{
+            // gestureDirection : "vertical",
+            animation : "fade_from_bottom",
+            headerTitle : "",
+            headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
-              <BackButton></BackButton>
-                // <CancelButton navigation={useNavigation()}></CancelButton>
+              <MainButton navigation={useNavigation()}></MainButton>
+            ),
+            headerRight : () => (
+              <MainRightButtons navigation={useNavigation()}></MainRightButtons>
+
             )
           }}
         />

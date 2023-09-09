@@ -69,7 +69,6 @@ function InviteFriends() {
       </View>
 
       </View>
-      <NextButton router='InviteFriends'></NextButton>
 
       </View>
 
