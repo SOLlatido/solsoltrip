@@ -30,7 +30,7 @@ const EventMap = () => {
   const { characterLocations } = eventMap;
 
   // 모달
-  const [modalVisible, setModalVisible] = useRecoilState(centerModalState);
+  const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
   const [modalContent, setModalContent] = useState('');
 
   // 거리를 계산하는 함수
@@ -167,8 +167,12 @@ const EventMap = () => {
 
   //포인트 얻게 도와주는 모달창 띄우기
   const getPoint = (title:string) => {
+    const newValue = {
+      open:true,
+      event:true,
+    }
     console.log(`와우`);
-    setModalVisible(true);
+    setModalVisible(newValue);
     setModalContent(title);
   }
 
@@ -236,3 +240,8 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
 });
+
+interface CenterModalState{
+  open:boolean;
+  event:boolean;
+}
