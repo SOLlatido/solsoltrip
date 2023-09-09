@@ -3,7 +3,7 @@ import tw from 'twrnc';
 
 const BlurBlack = () => {
     return(
-        <View style={tw`flex-1 bg-black opacity-[90%]`}>
+        <View style={tw`flex-1 bg-black opacity-90`}>
 
         </View>
     )

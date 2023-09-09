@@ -2,11 +2,14 @@ import LottieView from 'lottie-react-native';
 import tw from 'twrnc'; 
 import { useRecoilState} from 'recoil';
 import {centerModalState} from '../../recoil/centerModal/atom';
-import {View } from "react-native";
+import {View, Dimensions} from "react-native";
 
 import React, {useState, useEffect} from 'react';
 
 const EventMapAnimation = () => {
+    const windowWidth = Dimensions.get('window').width-150;
+    const windowHeight = Dimensions.get('window').height-150;
+
 
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
@@ -17,7 +20,7 @@ const EventMapAnimation = () => {
 
     return(
         modalVisible.event?
-        <View style={tw`flex-1 justify-center items-center`}><LottieView style={tw`w-[200] h-[200]`} source={require('../../assets/lottie/eventAnimation.json')} autoPlay loop/></View>:null
+        <View style={tw`flex-1 justify-center items-center`}><LottieView style={tw`w-[${windowWidth}] h-[${windowHeight}]`} source={require('../../assets/lottie/eventAnimation.json')} autoPlay loop/></View>:null
     )
 }
 
