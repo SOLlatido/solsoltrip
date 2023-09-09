@@ -78,9 +78,11 @@ public class TripService {
 
         accompanyRepository.save(accompany);
 
+        Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
         final MemberAccompany memberAccompany = MemberAccompany.builder()
-                .member(memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
-                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")))
+                .member(member)
                 .accompany(accompany)
                 .isManager(true)
                 .isPaid(false)
