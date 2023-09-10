@@ -21,6 +21,7 @@ import InviteFriends from '../screens/RegisterAccount/InviteFriends';
 import MainPage from '../screens/MainPage';
 import MyTravelMates from '../screens/MyTravelMates';
 import TabNavigation from './TabNavigation';
+import ExpenseDetail from '../screens/ExpenseDetail';
 import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
@@ -105,7 +106,6 @@ const AppNavigation = () => {
             )
           }}
           />
-          
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
         <Stack.Screen name='AccountList' component={AccountList} 
           options={{
@@ -200,24 +200,24 @@ const AppNavigation = () => {
             ),
           }}
         />
+        <Stack.Screen name='ExpenseDetail'
+          options={{
+            presentation :"modal",
+            animation : "fade",
+            headerTitle : "지출 상세",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+            ),
+          }}
+        >
+          {(props) => <ExpenseDetail {...props}></ExpenseDetail>}
+        </Stack.Screen>
         <Stack.Screen name='TabNavigation' component={TabNavigation}
           options={{
             headerShown : false
           }}/>
-
-        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
-        <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
-        <Stack.Screen name='Mypage' component={Mypage} 
-          options={{
-            headerTitle : "마이페이지",
-            headerTransparent : true, 
-            headerBackTitleVisible : false,
-            headerLeft : () => (
-                <BackButton></BackButton>
-            )
-          }}
-          />
-
       </Stack.Navigator>
     </NavigationContainer>
   )
