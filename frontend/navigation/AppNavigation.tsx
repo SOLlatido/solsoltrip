@@ -25,6 +25,7 @@ import ExpenseDetail from '../screens/ExpenseDetail';
 import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
+import EndTimeOurStory from '../screens/EndTimeOurStory';
 
 
 const Stack = createNativeStackNavigator();
@@ -107,6 +108,12 @@ const AppNavigation = () => {
           }}
           />
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
+
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
+        <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
+        <Stack.Screen name='EndTimeOurStory' component={EndTimeOurStory} options={{headerShown:false}}/>
+        <Stack.Screen name='Mypage' component={Mypage} 
+
         <Stack.Screen name='AccountList' component={AccountList} 
           options={{
             headerTitle : "동행통장 만들기",
