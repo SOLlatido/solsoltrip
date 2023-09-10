@@ -13,7 +13,13 @@ import sol_charater2 from '../../assets/character/sol_character2.png';
 // 컴포넌트
 import EventMapAnimation from '../Animation/EventMapAnimation';
 
-function EventModal({ modalTitle, content}: CenterModalProps){
+interface EventModalProps {
+    modalTitle: string;
+    content: string;
+    onClose: () => void; // onClose 프로퍼티 추가
+  }
+
+const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: CenterModalProps) => {
     
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
@@ -26,7 +32,8 @@ function EventModal({ modalTitle, content}: CenterModalProps){
         <View style={tw`flex-1`}>
             
             {/* 모달창 뜰 때 배경 블러처리 */}
-            <Pressable onPress={()=>{
+            <Pressable style={tw`w-full h-full`}
+                onPress={()=>{
                 setModalVisible({
                     open:false,
                     event:false,
@@ -51,13 +58,6 @@ function EventModal({ modalTitle, content}: CenterModalProps){
                 onRequestClose={() => {
                     setModalVisible(!modalVisible.open);
                 }}>
-                {/* 실제 모달 위치 조정 */}
-                {/* <View style={tw`justify-center items-center mt-22 shadow-md`}>
-                    <Image
-                    source={sol_charater1} // 이미지를 직접 지정합니다.
-                    style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
-                />
-                </View> */}
                 <View style={tw`flex-1 justify-center items-center mt-2 shadow-md`}>
                     {/* 실제 모달 크기 조절*/}
                     <Image

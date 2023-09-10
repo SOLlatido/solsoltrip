@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
-import MapView, { Marker, AnimatedRegion, Animated, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE,Marker, AnimatedRegion, Animated, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import haversine from 'haversine';
 
@@ -18,7 +18,7 @@ import EventModal from '../components/Modals/EventModal';
 
 
 //500m는 근처에 관광지가 있다고 알림
-//10m는 포인트를 받을 수 있음
+//100m는 포인트를 받을 수 있음
 
 const EventMap = () => {
   const [location, setLocation] = useState<any>(null);
@@ -33,7 +33,11 @@ const EventMap = () => {
   const [eventMap, setEventMap] = useRecoilState(eventMapState);
   const { characterLocations } = eventMap;
 
+  const [isMapLocked, setIsMapLocked] = useState(false); // 지도 잠금 상태 여부를 추적
+
   const [point, setPoint] = useState<number>(10);
+
+  const [showImage,setShowImage] = useState<boolean>(true);
 
   // 모달
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
@@ -55,21 +59,28 @@ const EventMap = () => {
     return distance <= 0.5; // 500m = 0.5 km
   };
 
-  // 유저의 위치와 마커 간의 거리를 확인하는 함수 10m 알람범위
-  const isWithin10m = (markerLocation: any, userLocation: any) => {
+  // 유저의 위치와 마커 간의 거리를 확인하는 함수 100m 알람범위
+  const isWithin100m = (markerLocation: any, userLocation: any) => {
     const distance = calcDistance(markerLocation, userLocation);
-    return distance <= 0.05; // 50m = 0.05 km
+    return distance <= 0.1; // 100m = 0.1 km
   };
 
   // EventModal을 열거나 alert를 띄우는 함수를 작성
   const openEventModalOrAlert = (place: any) => {
-    if (isWithin10m(location, place)) {
-      // 거리가 10m 이내인 경우 EventModal 열기
+    if (isWithin100m(location, place)) {
+      // 거리가 100 이내인 경우 EventModal 열기
       getPoint(place?.title);
     } else {
-      // 거리가 10m 이내가 아닌 경우 alert 띄우기
-      alert("10m 이내가 아닙니다");
+      // 거리가 100m 이내가 아닌 경우 alert 띄우기
+      alert("100m 이내가 아닙니다");
     }
+  };
+
+  const toggleModalAndShowImage = (showImage: boolean) => {
+    // Modal이 열릴 때 지도 잠금 상태로 변경
+    setIsMapLocked(!showImage);
+    // Image 표시 여부를 상태로 관리
+    setShowImage(showImage);
   };
 
   // 내 위치를 찾는 함수
@@ -101,6 +112,7 @@ const EventMap = () => {
 
     })();
   }, []);
+
 
   // 이동 위치 추적
   useEffect(() => {
@@ -207,22 +219,29 @@ const EventMap = () => {
     setModalContent(`${title} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
+  useEffect(()=>{
+    console.log(location);
+  },[modalVisible.open])
+
 
   return (
     <View style={{flex:1}}>
       <MapView
+        // provider={PROVIDER_GOOGLE}
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: 36.3538693,
+          longitude: 127.3468555,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
         style={styles.map}
-        showsUserLocation
-        loadingEnabled={false}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        loadingEnabled={true}
         region={location}
+        scrollEnabled={!isMapLocked}
       >
-        <Polyline coordinates={routeCoordinates} strokeWidth={3} />
+        <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
         {characterLocations.map((place, index) => {
           if (!place || !place.latitude || !place.longitude) {
@@ -239,17 +258,19 @@ const EventMap = () => {
               }}
               title={place?.title}
               description={place?.description}
+              onPress={() => openEventModalOrAlert(place)}
             >
-              <TouchableOpacity onPress={() => openEventModalOrAlert(place)}>
-                <Image
-                  source={sol_charater1} // 이미지를 직접 지정합니다.
-                  style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
-                />
-              </TouchableOpacity>
+              
+              
+              <Image
+                source={sol_charater1} // 이미지를 직접 지정합니다.
+                style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
+              />
 
               <EventModal
                   modalTitle="감사합니다"
                   content={modalContent}
+                  onClose={() => toggleModalAndShowImage(true)}
               />
             </Marker>
           );
