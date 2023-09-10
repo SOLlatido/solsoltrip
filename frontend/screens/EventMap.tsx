@@ -15,6 +15,7 @@ import sol_charater1 from '../assets/character/sol_character1.png';
 
 // 컴포넌트
 import EventModal from '../components/Modals/EventModal';
+import EventMapPointAnimation from '../components/Animation/EventMapPointAnimation';
 
 
 //2000m는 근처에 관광지가 있다고 알림
@@ -83,6 +84,11 @@ const EventMap = () => {
     setShowImage(showImage);
   };
 
+  //포인트 페이지로 이동
+  const goPointPage = () => {
+    console.log("go point page");
+  }
+
   // 내 위치를 찾는 함수
   useEffect(() => {
     (async () => {
@@ -119,7 +125,7 @@ const EventMap = () => {
     const watchLocation = async () => {
       const locationOptions = {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 5000,
+        timeInterval: 10000,
         distanceInterval: 10,
       };
 
@@ -249,12 +255,10 @@ const EventMap = () => {
             return null;
           }
           return (
-            <Marker
+            <Marker key={index}
               coordinate={{
                 latitude: place?.latitude,
                 longitude: place?.longitude,
-                // latitudeDelta: place?.latitudeDelta,
-                // longitudeDelta: place?.longitudeDelta,
               }}
               title={place?.title}
               description={place?.description}
@@ -275,6 +279,9 @@ const EventMap = () => {
             </Marker>
           );
         })}
+          {/* 지역 경제를 살리고 있어요 statement */}
+          <TouchableOpacity style={tw`items-end items-end`} onPress={goPointPage}><EventMapPointAnimation/></TouchableOpacity>
+
       </MapView>
     </View>
   );

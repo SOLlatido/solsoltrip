@@ -30,17 +30,6 @@ const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: 
     return(
         // 전체 배경
         <View style={tw`flex-1`}>
-            
-            {/* 모달창 뜰 때 배경 블러처리 */}
-            <Pressable style={tw`w-full h-full`}
-                onPress={()=>{
-                setModalVisible({
-                    open:false,
-                    event:false,
-                })
-            }}>
-                {modalVisible&&<View style={tw`w-full h-full bg-black opacity-30`}></View>}
-            </Pressable>
 
             <Pressable onPress={()=>{
                 setModalVisible({
@@ -58,7 +47,7 @@ const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: 
                 onRequestClose={() => {
                     setModalVisible(!modalVisible.open);
                 }}>
-                <View style={tw`flex-1 justify-center items-center mt-2 shadow-md`}>
+                <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-2 shadow-md`}>
                     {/* 실제 모달 크기 조절*/}
                     <Image
                     source={sol_charater2} // 이미지를 직접 지정합니다.

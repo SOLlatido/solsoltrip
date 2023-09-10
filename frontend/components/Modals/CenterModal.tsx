@@ -19,16 +19,6 @@ function CenterModal({ modalTitle, content}: CenterModalProps){
     return(
         // 전체 배경
         <View style={tw`flex-1`}>
-            
-            {/* 모달창 뜰 때 배경 블러처리 */}
-            <Pressable onPress={()=>{
-                setModalVisible({
-                    open:false,
-                    event:false,
-                })
-            }}>
-                {modalVisible&&<View style={tw`w-full h-full bg-black opacity-30`}></View>}
-            </Pressable>
 
             <Modal
                 animationType="slide"
@@ -38,7 +28,7 @@ function CenterModal({ modalTitle, content}: CenterModalProps){
                     setModalVisible(!modalVisible.open);
                 }}>
                 {/* 실제 모달 위치 조정 */}
-                <View style={tw`flex-1 justify-center items-center mt-22 shadow-md`}>
+                <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-22 shadow-md`}>
                     {/* 실제 모달 크기 조절*/}
                     <View style={tw`m-20 bg-white rounded-2xl shadow-[#000] w-5/6 h-2/6`}>
 
