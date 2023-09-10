@@ -43,14 +43,14 @@ const EndTimeOurStory:React.FC<EndTimeOurStoryProps> = ({navigation}) => {
             
             <View style={tw`flex-1 items-center justify-center`}>
 
-                <Animatable.View ref={(ref) => setAnimation1(ref)} style={tw `flex-2 justify-center items-center`}>
-                    <Text style={tw `text-2xl text-white mt-10`}>우리의 Story</Text>
+                <Animatable.View ref={(ref) => setAnimation1(ref)} style={tw `flex-2 justify-center items-center pt-15`}>
+                    <Text style={tw `text-2xl text-white`}>우리의 스토리</Text>
                 </Animatable.View>
 
             </View>
 
             {/* 컨텐츠 */}
-            <Animatable.View ref={(ref) => setAnimation2(ref)} style={tw`flex-3 w-full items-center justify-center`}>
+            <Animatable.View ref={(ref) => setAnimation2(ref)} style={tw`flex-5 w-full items-center justify-center`}>
                 <StoryContainer/>
             </Animatable.View>
 
