@@ -21,7 +21,8 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [animation2, setAnimation2] = useState(null);
   const [animation3, setAnimation3] = useState(null);
 
-  const handleSavingMoney = () => {
+  const handleEndTimeHistory = () => {
+    console.log("11");
     navigation.navigate("EndTimeSavingMoney");
   }
 
@@ -39,7 +40,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
 
   return (
     <View style={tw `flex-1 bg-white w-full`}>
-      <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
+      <ImageBackground source={starrynight} style={tw `w-full h-full absolute`}></ImageBackground>
 
       {/* 동행통장 지출 금액 */}
       <Animatable.View
@@ -75,7 +76,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
       </View>
 
       <View style={tw `flex-0.7 flex-row items-end justify-center`}>
-        <LongButton content='다음' onPress={handleSavingMoney} />
+        <LongButton content='다음' onPress={handleEndTimeHistory} />
       </View>
     </View>
   );

@@ -83,7 +83,7 @@ const SavingMoneySlider = () => {
                     </View>
 
                     <View style={tw`items-center mt-10`}>
-                        <Text style={tw`text-[50px] font-3xl font-bold text-white`}>{people.money} 원</Text>
+                        <Text style={tw`text-[50px] text-5xl font-bold text-white`}>{people.money} 원</Text>
                     </View>
 
                     <View style={tw`flex-1 flex-row`}>
