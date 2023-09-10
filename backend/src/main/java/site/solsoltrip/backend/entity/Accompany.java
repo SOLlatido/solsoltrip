@@ -1,9 +1,7 @@
 package site.solsoltrip.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,10 +11,14 @@ import java.util.List;
 @Table(name = "accompany")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor
+@Builder
 public class Accompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accompanySeq;
+
+    private String name;
 
     private String account;
 
@@ -37,4 +39,8 @@ public class Accompany {
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
     private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
+
+    public void updateEndDatetime(final LocalDateTime endDatetime) {
+        this.endDatetime = endDatetime;
+    }
 }

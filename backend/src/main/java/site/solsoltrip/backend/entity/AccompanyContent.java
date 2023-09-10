@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,11 @@ public class AccompanyContent {
 
     private Integer cost;
 
-    private LocalDateTime acceptedDate;
+    private LocalDate acceptedDate;
 
     private String category;
+
+    private LocalDateTime acceptedDatetime;
 
     @OneToMany(mappedBy = "accompanyContent", fetch = FetchType.LAZY)
     private List<MemberAccompanyContent> memberAccompanyContentList = new ArrayList<>();

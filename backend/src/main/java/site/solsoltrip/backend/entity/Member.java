@@ -17,11 +17,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberSeq;
 
-    private String email;
+    private String id;
 
     private String password;
 
     private String name;
+
+    private int point;
 
     private String phone;
 
@@ -35,4 +37,11 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberAccompanyContent> accompanyContentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<RegistedAccount> registedAccountList = new ArrayList<>();
+
+    public void updatePoint(final int point) {
+        this.point = point;
+    }
 }

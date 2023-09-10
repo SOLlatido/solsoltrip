@@ -1,6 +1,5 @@
 package site.solsoltrip.backend.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,29 +18,30 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public boolean checkEmailExistence(final String email) {
-        return memberRepository.findByEmail(email).isPresent();
+    public boolean checkEmailExistence(final String id) {
+        return memberRepository.findById(id).isPresent();
     }
 
     @Transactional
     public void signup(final MemberRequestDto.signup requestDto) {
-        if (checkEmailExistence(requestDto.email())) {
+        if (checkEmailExistence(requestDto.id())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
         final Member member = Member.builder()
-                .email(requestDto.email())
+                .id(requestDto.id())
                 .password(passwordEncoder.encode(requestDto.password()))
                 .name(requestDto.name())
+                .point(0)
                 .phone(requestDto.phone())
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build();
 
         memberRepository.save(member);
     }
 
     public MemberResponseDto.login login(final MemberRequestDto.login requestDto) {
-        final Member member = memberRepository.findByEmail(requestDto.email()).orElseThrow(
+        final Member member = memberRepository.findById(requestDto.id()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
 
