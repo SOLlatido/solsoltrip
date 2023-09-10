@@ -21,6 +21,7 @@ import InviteFriends from '../screens/RegisterAccount/InviteFriends';
 import MainPage from '../screens/MainPage';
 import MyTravelMates from '../screens/MyTravelMates';
 import TabNavigation from './TabNavigation';
+import ExpenseDetail from '../screens/ExpenseDetail';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -195,6 +196,21 @@ const AppNavigation = () => {
             ),
           }}
         />
+        <Stack.Screen name='ExpenseDetail'
+          options={{
+            presentation :"modal",
+            animation : "fade",
+            headerTitle : "지출 상세",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+        
+            ),
+          }}
+        >
+          {(props) => <ExpenseDetail {...props}></ExpenseDetail>}
+        </Stack.Screen>
         <Stack.Screen name='TabNavigation' component={TabNavigation}
           options={{
             headerShown : false
