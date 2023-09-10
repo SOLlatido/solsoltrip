@@ -77,7 +77,7 @@ function MainPage() {
                         />
                 </View>
                 {/* expenseHistory */}
-                <View style={tw `bg-[#888] flex-7 items-center`}>
+                <View style={tw `flex-7 items-center`}>
                     <ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
                       <ExpenseItem></ExpenseItem>
                       <ExpenseItem></ExpenseItem>

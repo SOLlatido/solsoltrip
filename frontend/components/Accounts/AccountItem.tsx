@@ -24,7 +24,7 @@ const AccountItem = (props : { accountNumber:string, travelTitle:string, duratio
       </View>
       <View style={tw`mt-4 flex-row`}>
         <Text style={tw`text-gray-200 items-center mr-2`}>{numberOfPeople}명의 동행</Text>  
-        <TouchableOpacity onPress={()=>{navigation.navigate("MyTravelMates" as never)}} style={tw``}><FontAwesome5 name="user-friends" size={18} color="#ddd" /></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{navigation.navigate("MyTravelMates" as never)}} style={tw``}><FontAwesome5 name="user-friends" size={18} color="#FFF" /></TouchableOpacity>
       </View>
     </LinearGradient>
     </Pressable>
