@@ -112,7 +112,7 @@ const AppNavigation = () => {
         <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
         <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
         <Stack.Screen name='EndTimeOurStory' component={EndTimeOurStory} options={{headerShown:false}}/>
-        <Stack.Screen name='Mypage' component={Mypage} 
+        <Stack.Screen name='Mypage' component={Mypage} />
 
         <Stack.Screen name='AccountList' component={AccountList} 
           options={{
