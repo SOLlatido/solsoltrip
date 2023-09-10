@@ -32,7 +32,7 @@ function MyTravelMates() {
         {/* 동행 추가 버튼 */}
         <View style={tw `flex absolute bottom-10 w-3/4 p-4 self-center items-center justify-center`}>
       <TouchableOpacity
-        onPress={()=>{navigation.navigate("InviteFriends")}}
+        onPress={()=>{navigation.navigate("InviteFriends" as never)}}
         activeOpacity={0.8}
         style={tw`w-6/7 bg-[#7B5AF3] h-12 rounded-[4] justify-center items-center shadow-md`}
       >
@@ -48,7 +48,7 @@ const TravelMatesItem = (props: { name: string, status: string, balance: string 
   const circleColor = props.status === "나" ? "#7B5AF3" : "#3CADE5";
   return (
     <>
-      <View style={tw`flex-1 flex-row mb-3 h-18 justify-center`}>
+      <View style={tw`flex-1 flex-row mb-2 h-18 justify-center`}>
         <View style={tw`flex-1 justify-center items-center`}>
           <View style={[tw`w-12 h-12 rounded-full justify-center items-center`, { backgroundColor: circleColor }]}>
             <Text style={tw`text-white text-xl`}>{firstLetter}</Text>
@@ -56,7 +56,7 @@ const TravelMatesItem = (props: { name: string, status: string, balance: string 
         </View>
         <View style={tw`flex-2 flex-col justify-center`}>
           <Text style={tw`text-lg`}>{props.name}</Text>
-          <Text style={tw`text-md`}>{props.status}</Text>
+          <Text style={tw`text-sm`}>{props.status}</Text>
         </View>
         <View style={tw`flex-2 justify-end items-end p-2 pr-3`}>
           <Text style={tw`text-lg`}>{props.balance}원</Text>
