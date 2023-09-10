@@ -94,9 +94,9 @@ public class TripService {
     }
 
     @Transactional
-    public TripResponseDto.tripDetail movetoTripDetail(TripRequestDto.tripDetail requestDto) {
+    public TripResponseDto.tripDetail movetoTripDetail(final TripRequestDto.tripDetail requestDto) {
         final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않은 동행통장입니다.")
+                () -> new IllegalArgumentException("존재하지 않는 동행통장입니다.")
         );
 
         return TripResponseDto.tripDetail.builder()
