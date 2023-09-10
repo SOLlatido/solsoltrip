@@ -21,6 +21,10 @@ import InviteFriends from '../screens/RegisterAccount/InviteFriends';
 import MainPage from '../screens/MainPage';
 import MyTravelMates from '../screens/MyTravelMates';
 import TabNavigation from './TabNavigation';
+import Mypage from '../screens/Mypage';
+import EndTimeHistory from '../screens/EndTimeHistory';
+import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,6 +105,7 @@ const AppNavigation = () => {
             )
           }}
           />
+          
         <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
         <Stack.Screen name='AccountList' component={AccountList} 
           options={{
@@ -199,6 +204,20 @@ const AppNavigation = () => {
           options={{
             headerShown : false
           }}/>
+
+        <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
+        <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>
+        <Stack.Screen name='Mypage' component={Mypage} 
+          options={{
+            headerTitle : "마이페이지",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft : () => (
+                <BackButton></BackButton>
+            )
+          }}
+          />
+
       </Stack.Navigator>
     </NavigationContainer>
   )
