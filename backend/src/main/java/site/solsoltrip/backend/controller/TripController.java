@@ -30,7 +30,7 @@ public class TripController {
     }
 
     @PostMapping("/detail")
-    public ResponseEntity<Void> movetoTripDetail(@RequestBody @Validated final TripRequestDto.tripDetail requestDto) {
+    public ResponseEntity<TripResponseDto.tripDetail> movetoTripDetail(@RequestBody @Validated final TripRequestDto.tripDetail requestDto) {
         TripResponseDto.tripDetail responseDto = tripService.movetoTripDetail(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
