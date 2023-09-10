@@ -17,7 +17,7 @@ import sol_charater1 from '../assets/character/sol_character1.png';
 import EventModal from '../components/Modals/EventModal';
 
 
-//500m는 근처에 관광지가 있다고 알림
+//2000m는 근처에 관광지가 있다고 알림
 //100m는 포인트를 받을 수 있음
 
 const EventMap = () => {
@@ -53,10 +53,10 @@ const EventMap = () => {
     return haversine(markerLocation, userLocation) || 0;
   };
 
-  // 유저의 위치와 마커 간의 거리를 확인하는 함수 500m 알람범위
-  const isWithin500m = (markerLocation: any, userLocation: any) => {
+  // 유저의 위치와 마커 간의 거리를 확인하는 함수 2000m 알람범위
+  const isWithin2000m = (markerLocation: any, userLocation: any) => {
     const distance = calcDistance(markerLocation, userLocation);
-    return distance <= 0.5; // 500m = 0.5 km
+    return distance <= 2; // 2000m = 2 km
   };
 
   // 유저의 위치와 마커 간의 거리를 확인하는 함수 100m 알람범위
@@ -154,7 +154,7 @@ const EventMap = () => {
 
           // 500m 안에 들어왔는지 확인 -> alert
           let markerLocation = null;
-          let isWithin500mFlag = false;
+          let isWithin2000mFlag = false;
 
           for (let i = 0; i < characterLocations.length; i++) {
             markerLocation = characterLocations[i];
@@ -162,9 +162,9 @@ const EventMap = () => {
             // 이미 본 캐릭터는 처리하지 않음
             if (!markerLocation.display) continue;
           
-            isWithin500mFlag = isWithin500m(markerLocation,newCoordinate);
+            isWithin2000mFlag = isWithin2000m(markerLocation,newCoordinate);
           
-            if (isWithin500mFlag && markerLocation.display) {
+            if (isWithin2000mFlag && markerLocation.display) {
           
               // Recoil 상태를 업데이트하여 display 속성 변경
               setEventMap((prevEventMapState) => {
