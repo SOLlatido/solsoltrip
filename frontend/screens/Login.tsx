@@ -39,6 +39,7 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
           <TextInput
               style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
               placeholder="아이디 입력"
+              placeholderTextColor={"#999"}
               onChangeText={(text) => setId(text)}
               value={id}
             />
@@ -46,6 +47,7 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
             <TextInput
               style={tw`bg-white rounded-lg w-80 h-12 px-4`}
               placeholder="영문자, 숫자, 특수문자 혼용(8~15자)"
+              placeholderTextColor={"#999"}
               secureTextEntry={true} // This hides the input as it's a password
               onChangeText={(text) => setPassword(text)}
               value={password}
