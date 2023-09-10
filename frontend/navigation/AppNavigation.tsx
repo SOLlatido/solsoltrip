@@ -22,6 +22,10 @@ import MainPage from '../screens/MainPage';
 import MyTravelMates from '../screens/MyTravelMates';
 import TabNavigation from './TabNavigation';
 import ExpenseDetail from '../screens/ExpenseDetail';
+import Mypage from '../screens/Mypage';
+import EndTimeHistory from '../screens/EndTimeHistory';
+import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -205,7 +209,6 @@ const AppNavigation = () => {
             headerBackTitleVisible : false,
             headerLeft: () => (
               <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
-        
             ),
           }}
         >
