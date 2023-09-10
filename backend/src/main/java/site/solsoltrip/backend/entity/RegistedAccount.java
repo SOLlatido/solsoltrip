@@ -14,6 +14,10 @@ public class RegistedAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long registedAccountSeq;
 
+    @JoinColumn(name = "member_seq")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
     private String type;
 
     private String account;
@@ -21,8 +25,4 @@ public class RegistedAccount {
     private String name;
 
     private Integer balance;
-
-    @JoinColumn(name = "member_seq")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
 }

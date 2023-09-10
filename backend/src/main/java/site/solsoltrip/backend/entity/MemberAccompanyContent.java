@@ -29,4 +29,6 @@ public class MemberAccompanyContent {
     private String picture;
 
     private LocalDateTime createdDate;
+
+    private Integer individual;
 }
