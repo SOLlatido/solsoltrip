@@ -27,4 +27,6 @@ public class MemberAccompany {
     private Boolean isPaid;
 
     private Integer settlement;
+
+    private Integer expenditure;
 }
