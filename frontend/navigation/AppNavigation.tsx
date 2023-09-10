@@ -26,6 +26,7 @@ import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
 import EndTimeOurStory from '../screens/EndTimeOurStory';
+import MyPointList from '../screens/MyPointList';
 
 
 const Stack = createNativeStackNavigator();
@@ -225,6 +226,18 @@ const AppNavigation = () => {
           options={{
             headerShown : false
           }}/>
+
+        <Stack.Screen name='MyPointList' component={MyPointList} 
+          options={{
+            headerTitle : "신한 마이포인트",
+            animation : "fade_from_bottom",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <BackButton navigation={useNavigation()}></BackButton>
+            )
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
