@@ -32,9 +32,9 @@ const SignUp:React.FC<NavigationProps> = ({navigation}) => {
           <View style={tw `flex-2`}>
             <Text style={tw `pl-2 mb-2 text-[#555]`}>이름</Text>
             <TextInput
-            
                 style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
                 placeholder="이름을 입력해주세요"
+                placeholderTextColor={"#999"}
                 onChangeText={(text) => setId(text)}
                 value={id}
               />
@@ -42,6 +42,7 @@ const SignUp:React.FC<NavigationProps> = ({navigation}) => {
             <TextInput
               style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
               placeholder="아이디를 입력해주세요"
+              placeholderTextColor={"#999"}
               secureTextEntry={true} // This hides the input as it's a password
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -50,6 +51,7 @@ const SignUp:React.FC<NavigationProps> = ({navigation}) => {
             <TextInput
               style={tw`bg-white rounded-lg w-80 h-12 px-4 mb-4`}
               placeholder="비밀번호를 입력해주세요"
+              placeholderTextColor={"#999"}
               secureTextEntry={true} // This hides the input as it's a password
               onChangeText={(text) => setPassword(text)}
               value={password}
