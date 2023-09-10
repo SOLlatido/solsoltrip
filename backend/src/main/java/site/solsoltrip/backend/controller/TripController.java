@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.solsoltrip.backend.dto.TripRequestDto;
+import site.solsoltrip.backend.dto.TripResponseDto;
 import site.solsoltrip.backend.service.TripService;
 
 @RestController
