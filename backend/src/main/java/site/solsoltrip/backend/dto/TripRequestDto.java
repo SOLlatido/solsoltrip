@@ -35,4 +35,9 @@ public class TripRequestDto {
             @NotBlank
             String getMethod
     ) {}
+
+    public record tripDetail (
+            @NotNull
+            Long accompanySeq
+    ) {}
 }
