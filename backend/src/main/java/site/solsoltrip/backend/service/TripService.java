@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.ShbhackRequestDto;
 import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.dto.TripRequestDto;
+import site.solsoltrip.backend.dto.TripResponseDto;
 import site.solsoltrip.backend.entity.Accompany;
 import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.entity.MemberAccompany;
@@ -90,6 +91,23 @@ public class TripService {
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);
+    }
+
+    @Transactional
+    public TripResponseDto.tripDetail movetoTripDetail(final TripRequestDto.tripDetail requestDto) {
+        final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 동행통장입니다.")
+        );
+
+        return TripResponseDto.tripDetail.builder()
+                .account(accompany.getAccount())
+                .name(accompany.getName())
+                .startDate(accompany.getStartDatetime().toLocalDate())
+                .endDate(accompany.getEndDatetime().toLocalDate())
+                .availableAmount(accompany.getAvailableAmount())
+                .leftover(accompany.getLeftover())
+                .accompanyContents(accompany.getAccompanyContentList())
+                .build();
     }
 
     @Transactional
