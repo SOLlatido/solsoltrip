@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform} from 'react-native';
 import tw from "twrnc";
 import * as ImagePicker from 'expo-image-picker';
+import PlaceholderImage from "../assets/images/sol_expense_large.png"
+import ImageViewer from '../components/Accounts/ImageViewer';
 
 import { MaterialIcons, FontAwesome, Feather, MaterialCommunityIcons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 const ExpenseDetail = ({route}) => {
@@ -125,25 +127,6 @@ const ExpenseDetail = ({route}) => {
     );
   };
 
-//   이미지 렌더링하는 함수
-// const selectImage = () => {
-//     const options = {
-//     //   mediaType: 'photo',
-//       storageOptions: {
-//         skipBackup: true,
-//         path: 'images',
-//       },
-//     };
-
-//     ImagePicker.launchImageLibrary(options, (response?) => {
-//         if(response?.assets) {
-//             if (!response.didCancel && response.assets.length > 0) {
-//               // If an image is selected, set it as the new image source
-//               setImg({ uri: response.assets[0].uri });
-//             } 
-//         }
-//     });
-//   };
   const [img, setImg] = useState(imageSource);
   const pickImage = async() => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -152,9 +135,8 @@ const ExpenseDetail = ({route}) => {
     });
 
     if (!result.canceled) {
-      console.log(result);
+      setImg(result.assets[0].uri)
     } else {
-      alert('You did not select any image.');
     }
   }
   return (
@@ -176,7 +158,7 @@ const ExpenseDetail = ({route}) => {
           ]}
         >{memo}</TextInput>
       </View>
-      {/* 카테고리 */}
+
       <View style={tw `flex-1`}>
       <Text style={tw `font-bold`}>카테고리</Text>
       <ScrollView horizontal={true} contentContainerStyle={tw`flex-row mt-4`}>
@@ -201,30 +183,22 @@ const ExpenseDetail = ({route}) => {
           ))}
         </ScrollView>
     </View>
+
+
     <View style={tw `flex-1`}>
       <Text style={tw `mb-4 mt-4 font-bold`}>사진 등록(선택)</Text>
-      <View>
-        <TouchableOpacity
-          style={tw `bg-[#ddd] h-10`}
-          onPress={pickImage}
-        >
-          <Text>+</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity onPress={selectImage}>
-      {imageSource ? (
-        <Image
-          source={imageSource}
-          style={{ width: 100, height: 100 }} // Set the appropriate style for the image
+
+        <TouchableOpacity onPress={pickImage}>
+      <ImageViewer
+          placeholderImageSource={PlaceholderImage}
+          selectedImage={img}
         />
-      ) : (
-        
-        <View style={tw `w-30 h-30 bg-gray-300 justify-center items-center rounded-2`}>
-            <Text style={tw `text-white text-2xl font-bold`}>+</Text>
-        </View>
-      )}
-      </TouchableOpacity>
+        </TouchableOpacity>
     </View>
+
+
+
+
     <View style={tw `flex-1 mt-5`}>
       <Text style={tw `mb-4 font-bold`}>지출에 참여한 동행</Text>
         <FriendsExpenses></FriendsExpenses>
