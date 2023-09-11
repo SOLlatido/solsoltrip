@@ -196,7 +196,7 @@ const AppNavigation = () => {
             headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
-              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+              <BackButton></BackButton>
             ),
           }}
         />
