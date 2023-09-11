@@ -17,6 +17,7 @@ import tw from 'twrnc';
 import aurora from '../assets/images/aurora_background.png';
 import LongButton from '../components/ButtonItems/LongButton';
 import sol from '../assets/images/character_sol.png';
+import solGo from "../assets/images/sol_go_main.png";
 import CenterModal from '../components/Modals/CenterModal';
 import Mypage from './Mypage';
 import EventMap from './EventMap';

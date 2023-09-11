@@ -20,12 +20,12 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
     
     const [saving, setSaving] = useState("20,000");
 
-    const handleSavingMoney = () => {
-        navigation.navigate("EndTimeHistory");
+    const handleSavingMoney = (type:string) => {
+        if(type==="prev")
+            navigation.navigate("EndTimeHistory");
+        else if(type==="next")
+            navigation.navigate("EndTimeOurStory");
     }
-    // const handleSavingMoney = () => {
-    //     navigation.navigate("EndTimeSavingMoney");
-    // }
 
     const [animation1, setAnimation1] = useState(null);
     const [animation2, setAnimation2] = useState(null);
@@ -40,7 +40,8 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
 
     return(
         <View style={tw`flex-1`}>
-            <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}/>
+            
+            <ImageBackground source={starrynight} style={tw `w-full h-full absolute`}/>
             
             <Animatable.View ref={(ref) => setAnimation1(ref)} style={tw `flex-2 justify-center items-center`}>
                 <Text style={tw `text-xl text-white mt-10`}>동행통장 잔여 금액</Text>
@@ -52,8 +53,8 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
             </Animatable.View>
 
             <View style={tw `flex-1 flex-row`}>
-                <LongButton content='이전' onPress={handleSavingMoney}/>
-                <LongButton content='다음'/>
+                <LongButton content='이전' onPress={()=>handleSavingMoney("prev")}/>
+                <LongButton content='다음'onPress={()=>handleSavingMoney("next")} />
             </View>
         </View>
     )

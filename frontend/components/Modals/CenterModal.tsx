@@ -21,7 +21,7 @@ function CenterModal({ modalTitle, content}: CenterModalProps){
         <View style={tw`flex-1`}>
 
             <Modal
-                animationType="slide"
+                // animationType="slide"
                 transparent={true}
                 visible={modalVisible.open}
                 onRequestClose={() => {
@@ -29,6 +29,7 @@ function CenterModal({ modalTitle, content}: CenterModalProps){
                 }}>
                 {/* 실제 모달 위치 조정 */}
                 <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-22 shadow-md`}>
+
                     {/* 실제 모달 크기 조절*/}
                     <View style={tw`m-20 bg-white rounded-2xl shadow-[#000] w-5/6 h-2/6`}>
 
