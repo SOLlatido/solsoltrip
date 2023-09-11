@@ -233,7 +233,6 @@ const EventMap = () => {
   return (
     <View style={{flex:1}}>
       <MapView
-        // provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: 36.3538693,
           longitude: 127.3468555,
@@ -246,6 +245,7 @@ const EventMap = () => {
         loadingEnabled={true}
         region={location}
         scrollEnabled={!isMapLocked}
+        provider={PROVIDER_GOOGLE}
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
@@ -271,17 +271,17 @@ const EventMap = () => {
                 style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
               />
 
-              <EventModal
-                  modalTitle="감사합니다"
-                  content={modalContent}
-                  onClose={() => toggleModalAndShowImage(true)}
-              />
             </Marker>
           );
         })}
           {/* 지역 경제를 살리고 있어요 statement */}
           <TouchableOpacity style={tw`items-end items-end`} onPress={goPointPage}><EventMapPointAnimation/></TouchableOpacity>
 
+          <View><EventModal
+              modalTitle="감사합니다"
+              content={modalContent}
+              onClose={() => toggleModalAndShowImage(true)}
+          /></View>
       </MapView>
     </View>
   );
