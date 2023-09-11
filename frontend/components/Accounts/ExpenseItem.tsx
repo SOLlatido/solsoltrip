@@ -58,7 +58,7 @@ const ExpenseItem = () => {
     } as never)
   }
   return (
-    <TouchableOpacity onPress={handleExpensePress} style={tw.style('bg-[#F3F0FB] mb-3 rounded-2 h-19 flex-row')}>
+    <TouchableOpacity onPress={handleExpensePress} style={tw.style('bg-[#DFEEF3]/40 mb-3 rounded-2 h-19 flex-row')}>
       <View style={tw.style('ml-3 items-center justify-center')}>
         <ImageViewerSmall
           placeholderImageSource={imageSource? imageSource : PlaceholderImage}

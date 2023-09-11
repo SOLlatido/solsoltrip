@@ -25,6 +25,7 @@ import ExpenseDetail from '../screens/ExpenseDetail';
 import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
+import MainTabNavigator from './MainTabNavigator'
 
 
 const Stack = createNativeStackNavigator();
@@ -61,7 +62,7 @@ const CancelCreateAccountButton:React.FC<NavigationProps> = ({navigation}) => {
 };
 const CancelInviteButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
-  <Pressable onPress={()=>{navigation.navigate("MainPage")}}>
+  <Pressable onPress={()=>{navigation.navigate("MainTabNavigator")}}>
     <AntDesign name="close" size={26} color="black" />
   </Pressable>
   )
@@ -78,7 +79,7 @@ const MainButton:React.FC<NavigationProps> = ({navigation}) => {
 //지출 상세 수정 완료 버튼 컴포넌트
 const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
-  <Pressable onPress={()=>{navigation.navigate("MainPage")}}>
+  <Pressable onPress={()=>{navigation.navigate("MainTabNavigator")}}>
     <Feather name="check" size={28} color="black" />
   </Pressable>
   )
@@ -110,6 +111,17 @@ const AppNavigation = () => {
     <NavigationContainer>
       <Stack.Navigator 
         initialRouteName='Intro'>
+          <Stack.Screen
+            name="MainTabNavigator"
+            component={MainTabNavigator} // Use MainTabNavigator as the component
+            options={{
+              headerTitle: '', // You can set the header title if needed
+              headerTransparent: true,
+              headerBackTitleVisible: false,
+              headerLeft: () => <MainButton navigation={useNavigation()} />,
+              headerRight: () => <MainRightButtons navigation={useNavigation()} />,
+            }}
+          />
         <Stack.Screen name='Intro' component={Intro} options={{headerShown:false}} />
         <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
         <Stack.Screen name='SignUp' component={SignUp} options={{headerShown:false}} />
