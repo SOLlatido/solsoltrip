@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform} from 'react-native';
 import tw from "twrnc";
-import ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+import PlaceholderImage from "../assets/images/sol_expense_large.png"
+import ImageViewer from '../components/Accounts/ImageViewer';
+
 import { MaterialIcons, FontAwesome, Feather, MaterialCommunityIcons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 const ExpenseDetail = ({route}) => {
   const { imageSource, expenseTitle, memo, date, expense, category:initialCategory } = route.params;
@@ -26,10 +29,21 @@ const ExpenseDetail = ({route}) => {
   const FriendsExpenses = () => {
     const friendsList = ['석다영', '신산하', '이승현', '김민식'];
     const [selectedNames, setSelectedNames] = useState(friendsList);
-    const [expenses, setExpenses] = useState({});
-
-    console.log(expenses);
     const defaultExpense = 32000; // You can set your desired default expense here
+    const initialExpenses = friendsList.reduce((acc, friendName) => {
+      acc[friendName] = defaultExpense / friendsList.length;
+      return acc;
+    }, {});
+    const [shouldRenderInput, setShouldRenderInput] = useState(false);
+    // const [expenses, setExpenses] = useState(initialExpenses)
+    const [expenses, setExpenses] = useState(() => {
+      const dividedExpense = defaultExpense / friendsList.length;
+      const initialExpenses = {};
+      friendsList.forEach((friendName) => {
+        initialExpenses[friendName] = dividedExpense;
+      });
+      return initialExpenses;
+    });
     const handleExpenseChange = (friendName, value) => {
         if (selectedNames.includes(friendName)) {
           setExpenses({ ...expenses, [friendName]: value });
@@ -58,6 +72,7 @@ const ExpenseDetail = ({route}) => {
         
     useEffect(() => {
         const divided = (defaultExpense / selectedNames.length).toString()
+        console.log(selectedNames);
         friendsList.forEach((friendName) => {
             if(selectedNames.includes(friendName)){
                 handleExpenseChange(friendName, divided)
@@ -69,6 +84,8 @@ const ExpenseDetail = ({route}) => {
         //   const value = expenses[friendName] || (defaultExpense / selectedNames.length).toString();
         //   handleExpenseChange(friendName, value);
         // });
+        setShouldRenderInput(true);
+        console.log(expenses);
       }, [selectedNames]);
   
     return (
@@ -77,12 +94,14 @@ const ExpenseDetail = ({route}) => {
           <View key={friendName} style={tw`flex-row justify-between items-center mb-3`}>
             <View style={tw`flex-row items-center`}>
               <Text style={tw`text-base mr-4`}>{friendName}</Text>
+              {shouldRenderInput && (
               <TextInput
                 style={tw`w-40 border-[0.3] border-[#ddd] rounded-2 h-13 px-3`}
                 onChangeText={(value) => handleExpenseChange(friendName, value)}
-                value={expenses[friendName] ? expenses[friendName].toString() : (defaultExpense / selectedNames.length).toString()}
+                value={expenses[friendName].toString()}
                 keyboardType="numeric"
               />
+            )}
             </View>
             <View style={tw`flex-row items-center`}>
               <View
@@ -90,7 +109,16 @@ const ExpenseDetail = ({route}) => {
                   tw`w-6 h-6 ml-2 rounded-full border-[0.5] border-[#999]`,
                   { backgroundColor: selectedNames.includes(friendName) ? 'purple' : 'transparent' },
                 ]}
-                onTouchEnd={() => toggleFriendSelection(friendName)}
+                onTouchStart={() => 
+                  // if (selectedNames.includes(friendName)) {
+                  //   // 기존에 선택된 사람 빼기
+                  //   setSelectedNames(selectedNames.filter((name) => name !== friendName));
+                  // } else {
+                  //   // 없던 사람 집어넣기
+                  //   setSelectedNames([...selectedNames, friendName]);
+                  // }
+                  toggleFriendSelection(friendName)
+                }
               />
             </View>
           </View>
@@ -99,29 +127,23 @@ const ExpenseDetail = ({route}) => {
     );
   };
 
-//   이미지 렌더링하는 함수
-const selectImage = () => {
-    const options = {
-    //   mediaType: 'photo',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-
-    ImagePicker.launchImageLibrary(options, (response?) => {
-        if(response?.assets) {
-            if (!response.didCancel && response.assets.length > 0) {
-              // If an image is selected, set it as the new image source
-              setImg({ uri: response.assets[0].uri });
-            } 
-        }
-    });
-  };
   const [img, setImg] = useState(imageSource);
+  const pickImage = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
 
+    if (!result.canceled) {
+      setImg(result.assets[0].uri)
+    } else {
+    }
+  }
   return (
-    <ScrollView style={tw `mt-10 p-7 mb-10 flex-1`}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={tw`mt-10 p-7 mb-10 flex-1`}>
+    <ScrollView style={tw ``}>
     <View style={tw `flex-1 items-center p-3 justify-center rounded-3 mb-7 bg-[#E4E0F0]`}>
     <Text style={tw `font-bold text-base`}>{expenseTitle}</Text>
     <Text style={tw `font-bold text-2xl`}>{expense}</Text>
@@ -136,7 +158,7 @@ const selectImage = () => {
           ]}
         >{memo}</TextInput>
       </View>
-      {/* 카테고리 */}
+
       <View style={tw `flex-1`}>
       <Text style={tw `font-bold`}>카테고리</Text>
       <ScrollView horizontal={true} contentContainerStyle={tw`flex-row mt-4`}>
@@ -161,22 +183,22 @@ const selectImage = () => {
           ))}
         </ScrollView>
     </View>
+
+
     <View style={tw `flex-1`}>
       <Text style={tw `mb-4 mt-4 font-bold`}>사진 등록(선택)</Text>
-      <TouchableOpacity onPress={selectImage}>
-      {imageSource ? (
-        <Image
-          source={imageSource}
-          style={{ width: 100, height: 100 }} // Set the appropriate style for the image
-        />
-      ) : (
-        
-        <View style={tw `w-30 h-30 bg-gray-300 justify-center items-center rounded-2`}>
-            <Text style={tw `text-white text-2xl font-bold`}>+</Text>
-        </View>
-      )}
-      </TouchableOpacity>
+
+        <TouchableOpacity onPress={pickImage}>
+          <ImageViewer
+              placeholderImageSource={imageSource? imageSource : PlaceholderImage}
+              selectedImage={img}
+            />
+        </TouchableOpacity>
     </View>
+
+
+
+
     <View style={tw `flex-1 mt-5`}>
       <Text style={tw `mb-4 font-bold`}>지출에 참여한 동행</Text>
         <FriendsExpenses></FriendsExpenses>
@@ -187,6 +209,7 @@ const selectImage = () => {
       <Text>{expense}</Text> */}
       {/* Add more details as needed */}
     </ScrollView>
+    </KeyboardAvoidingView>
   );
   
   
