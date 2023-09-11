@@ -37,7 +37,16 @@ const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: 
                     event:false,
                 })
             }}>
-                <View style={tw`flex-1`}><EventMapAnimation/></View>
+                <View style={modalVisible.open?tw`w-[1000px] h-[1000px] mt-100`:null}><EventMapAnimation/></View>
+            </Pressable>
+
+            <Pressable onPress={()=>{
+                setModalVisible({
+                    open:false,
+                    event:false,
+                })
+            }}>
+                <View style={modalVisible.open?[tw`w-[10000px] h-[10000px] mt--50`, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]:null}><EventMapAnimation/></View>
             </Pressable>
 
             <Modal
@@ -47,7 +56,8 @@ const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: 
                 onRequestClose={() => {
                     setModalVisible(!modalVisible.open);
                 }}>
-                <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-2 shadow-md`}>
+                <View style={tw`flex-1 justify-center items-center mt-2 shadow-md`}>                    
+                    
                     {/* 실제 모달 크기 조절*/}
                     <Image
                     source={sol_charater2} // 이미지를 직접 지정합니다.
