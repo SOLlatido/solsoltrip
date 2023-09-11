@@ -27,7 +27,7 @@ function AccountDivision() {
                 keyboardType='numeric'
                 returnKeyType='done'
                 style={tw`bg-white rounded-lg w-full h-12 px-4 mb-0`}
-                placeholder="지출 예정 금액 (원 단위)"
+                placeholder="지출 예정 금액 (단위: 원)"
                 placeholderTextColor={"#999"}
                 onChangeText={(text) => setPlannedExpense(text)}
               >

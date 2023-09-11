@@ -189,10 +189,10 @@ const ExpenseDetail = ({route}) => {
       <Text style={tw `mb-4 mt-4 font-bold`}>사진 등록(선택)</Text>
 
         <TouchableOpacity onPress={pickImage}>
-      <ImageViewer
-          placeholderImageSource={PlaceholderImage}
-          selectedImage={img}
-        />
+          <ImageViewer
+              placeholderImageSource={imageSource? imageSource : PlaceholderImage}
+              selectedImage={img}
+            />
         </TouchableOpacity>
     </View>
 

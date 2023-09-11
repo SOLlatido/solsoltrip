@@ -3,6 +3,8 @@ import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome, Feather, MaterialIcons, Entypo} from '@expo/vector-icons';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
+import PlaceholderImage from "../../assets/images/sol_expense_large.png";
+import ImageViewerSmall from './ImageViewerSmall';
 const imageSource = null;
 const expenseTitle = "AKPLAZA 강릉점"
 const memo = "맛있는 스시를 먹었다! 여기서 다음 일정도 짰다"
@@ -15,25 +17,25 @@ const Category = ({categoryNum}:{categoryNum : number}) => {
     return (
         <>
         <View style={tw `pb-1 pt-1`}>
-        {categoryNum === 1 && (
+        {categoryNum === 0 && (
           <MaterialIcons name="hotel" size={20} color="black" />
         )}
-        {categoryNum === 2 && (
+        {categoryNum === 1 && (
         <FontAwesome name="plane" size={20} color="black" />
         )}
-        {categoryNum === 3 && (
+        {categoryNum === 2 && (
         <FontAwesome name="bus" size={20} color="black" />
         )}
-        {categoryNum === 4 && (
+        {categoryNum === 3 && (
         <Entypo name="location" size={20} color="black" />
         )}
-        {categoryNum === 5 && (
+        {categoryNum === 4 && (
         <MaterialCommunityIcons name="food-fork-drink" size={18} color="black" />
         )}
-        {categoryNum === 6 && (
+        {categoryNum === 5 && (
         <Feather name="shopping-bag" size={20} color="black" />
         )}
-        {categoryNum === 7 && (
+        {categoryNum === 6 && (
         <FontAwesome name="question" size={20} color="black" />
         )}
         </View>
@@ -58,15 +60,10 @@ const ExpenseItem = () => {
   return (
     <TouchableOpacity onPress={handleExpensePress} style={tw.style('bg-[#F3F0FB] mb-3 rounded-2 h-19 flex-row')}>
       <View style={tw.style('ml-3 items-center justify-center')}>
-      {imageSource ? (
-          <Image
-            source={imageSource}
-            style={tw.style('w-13 h-13 rounded-2')}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={tw.style('bg-gray-300 w-15 h-14 rounded-2')} />
-        )}
+        <ImageViewerSmall
+          placeholderImageSource={imageSource? imageSource : PlaceholderImage}
+        >
+        </ImageViewerSmall>
       </View>
       <View style={tw.style('flex-3 p-2 justify-center')}>
         <Text style={tw `font-bold text-[#333] mb-1`} numberOfLines={1} ellipsizeMode='tail'>{expenseTitle}</Text>

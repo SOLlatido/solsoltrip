@@ -33,7 +33,7 @@ const Tab = createBottomTabNavigator();
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
-//뒤로가기 버튼 컴포넌트
+//뒤로가기 버튼 화살표 컴포넌트
 const BackButton: React.FC = () => {
   const navigation = useNavigation();
   return (
@@ -42,8 +42,17 @@ const BackButton: React.FC = () => {
   </Pressable>
   )
 };
+//뒤로가기 버튼 x 컴포넌트
+const CancelButton: React.FC = () => {
+  const navigation = useNavigation();
+  return (
+  <Pressable onPress={()=>{navigation.goBack()}}>
+    <AntDesign name="close" size={26} color="black" />
+  </Pressable>
+  )
+};
 //취소버튼 컴포넌트
-const CancelButton:React.FC<NavigationProps> = ({navigation}) => {
+const CancelCreateAccountButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
   <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
     <AntDesign name="close" size={26} color="black" />
@@ -63,6 +72,14 @@ const MainButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
   <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
     <AntDesign name="home" size={26} color="black" />
+  </Pressable>
+  )
+};
+//지출 상세 수정 완료 버튼 컴포넌트
+const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
+  return (
+  <Pressable onPress={()=>{navigation.navigate("MainPage")}}>
+    <Feather name="check" size={28} color="black" />
   </Pressable>
   )
 };
@@ -116,7 +133,7 @@ const AppNavigation = () => {
               <BackButton></BackButton>
             ),
             headerRight : () => (
-              <CancelButton navigation={useNavigation()}></CancelButton>
+              <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
           )
           }}
         />
@@ -129,7 +146,7 @@ const AppNavigation = () => {
               <BackButton></BackButton>
             ),
             headerRight : () => (
-              <CancelButton navigation={useNavigation()}></CancelButton>
+              <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
           )
           }}
         />
@@ -142,7 +159,7 @@ const AppNavigation = () => {
               <BackButton></BackButton>
               ),
             headerRight : () => (
-                <CancelButton navigation={useNavigation()}></CancelButton>
+                <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
             )
           }}
         />
@@ -155,7 +172,7 @@ const AppNavigation = () => {
               <BackButton></BackButton>
             ),
             headerRight : () => (
-              <CancelButton navigation={useNavigation()}></CancelButton>
+              <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
           )
           }}
         />
@@ -208,8 +225,11 @@ const AppNavigation = () => {
             headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
-              <CancelInviteButton navigation={useNavigation()}></CancelInviteButton>
+              <CancelButton></CancelButton>
             ),
+            headerRight:()=>(
+              <ExpenseEditButton navigation={useNavigation()}></ExpenseEditButton>
+            )
           }}
         >
           {(props) => <ExpenseDetail {...props}></ExpenseDetail>}
