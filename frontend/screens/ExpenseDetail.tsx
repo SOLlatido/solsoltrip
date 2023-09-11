@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import tw from "twrnc";
-import ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+
 import { MaterialIcons, FontAwesome, Feather, MaterialCommunityIcons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 const ExpenseDetail = ({route}) => {
   const { imageSource, expenseTitle, memo, date, expense, category:initialCategory } = route.params;
@@ -125,26 +126,37 @@ const ExpenseDetail = ({route}) => {
   };
 
 //   이미지 렌더링하는 함수
-const selectImage = () => {
-    const options = {
-    //   mediaType: 'photo',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
+// const selectImage = () => {
+//     const options = {
+//     //   mediaType: 'photo',
+//       storageOptions: {
+//         skipBackup: true,
+//         path: 'images',
+//       },
+//     };
 
-    ImagePicker.launchImageLibrary(options, (response?) => {
-        if(response?.assets) {
-            if (!response.didCancel && response.assets.length > 0) {
-              // If an image is selected, set it as the new image source
-              setImg({ uri: response.assets[0].uri });
-            } 
-        }
-    });
-  };
+//     ImagePicker.launchImageLibrary(options, (response?) => {
+//         if(response?.assets) {
+//             if (!response.didCancel && response.assets.length > 0) {
+//               // If an image is selected, set it as the new image source
+//               setImg({ uri: response.assets[0].uri });
+//             } 
+//         }
+//     });
+//   };
   const [img, setImg] = useState(imageSource);
+  const pickImage = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
 
+    if (!result.canceled) {
+      console.log(result);
+    } else {
+      alert('You did not select any image.');
+    }
+  }
   return (
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -191,6 +203,14 @@ const selectImage = () => {
     </View>
     <View style={tw `flex-1`}>
       <Text style={tw `mb-4 mt-4 font-bold`}>사진 등록(선택)</Text>
+      <View>
+        <TouchableOpacity
+          style={tw `bg-[#ddd] h-10`}
+          onPress={pickImage}
+        >
+          <Text>+</Text>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={selectImage}>
       {imageSource ? (
         <Image
