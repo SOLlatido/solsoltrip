@@ -2,6 +2,17 @@ import React from 'react'
 import { View, Text, ImageBackground, ScrollView} from 'react-native'
 import main_aurora from "../assets/images/main_aurora.png"
 import tw from "twrnc"
+import { PieChart } from 'react-native-chart-kit'
+// const chartConfig = {
+//   backgroundGradientFrom: "#1E2923",
+//   backgroundGradientFromOpacity: 0,
+//   backgroundGradientTo: "#08130D",
+//   backgroundGradientToOpacity: 0.5,
+//   color: ()=>`rgba(26, 255, 146)`,
+//   strokeWidth: 6, // optional, default 3
+//   barPercentage: 0.5,
+//   useShadowColorFromDataset: false // optional
+// };
 const totalExpense = "980000"
 const myExpense = "300000"
 const colorList = ["#ac9be8", "#907ae1", "#7459d9", "#5d47ae", "#513e98", "#3a2d6d", "#2e2457"]
@@ -14,6 +25,17 @@ const expensesByPerson = [
 ];
 const category = ["숙소", "항공", "교통", "관광", "식비", "쇼핑", "기타"];
 const expensesByCategory = [10000, 30000, 50000, 65000, 25000, 0, 0];
+interface PieContent {
+  name : string,
+  population : number,
+  color : string
+}
+const pieData = category.map((name, index) => ({
+  name,
+  population: expensesByCategory[index],
+  color: colorList[index],
+}));
+
 
 function Report() {
   const calculateProportion = (expense:number) => (expense / totalExpense) * 100;
@@ -64,8 +86,50 @@ function Report() {
       </View>
       <Text style={tw `mb-2 font-bold text-[#444] ml-2 mt-5`}>나의 카테고리별 지출</Text>
       <View style={tw `w-full bg-[#fff]/40 rounded-2 p-5`}>
-        {/* <DonutChart></DonutChart> */}
+      <PieChart
+            data={pieData}
+            width={300}
+            height={200}
+            chartConfig={{
+              color : (opacity = 0.5) => `rgba(0,0,0,${opacity}`,
+            }}
+            accessor={"population"}
+            backgroundColor={"transparent"}
+            paddingLeft={"10"}
+            center={[10, 5]}
+            style={{
+              opacity: 0.9, // Make the pie chart 60% transparent
+            }}
+            hasLegend = {true}
+            
+            legendConfig={{
+              labelFontSize: 14,
+              labelColor: 'black', // Customize the legend label color
+              iconColor: 'black', // Customize the legend icon color
+              iconSize: 14,
+              legendOffsetX: -10, // Push the legends a little to the right
+            }}
+                />
+          {/* <PieChart
+            focusOnPress
+            shadow={true}
+            donut
+            innerCircleColor="#DBE4E1"
+            innerRadius={70}
+            showText={true}
+            showValuesAsLabels={true}
+            labelsPosition='onBorder'
+            textColor="#444"
+            radius={100}
+            textSize={15}
+            // showTextBackground
+            textBackgroundRadius={26}
+            data={pieData}
+            centerLabelComponent={()=>{<Text>hi</Text>}}
+            /> */}
       </View>
+      <Text style={tw `mb-2 font-bold text-[#444] ml-2 mt-5`}>동행 통장 지출 목표 비교</Text>
+      <View style={tw `w-full bg-[#fff]/40 rounded-2 p-5`}></View>
     </ScrollView>
     </View>
     </>
