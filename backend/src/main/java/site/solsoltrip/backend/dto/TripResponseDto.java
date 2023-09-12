@@ -1,6 +1,7 @@
 package site.solsoltrip.backend.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 import site.solsoltrip.backend.entity.AccompanyContent;
 
 import java.time.LocalDate;
@@ -23,4 +24,16 @@ public class TripResponseDto {
 
             List<AccompanyContent> accompanyContents
     ) {}
+
+    @Builder
+    public record validation(List<TripResponseVO> responseVOList) {}
+
+    @Getter
+    @Builder
+    public static class TripResponseVO {
+        private final Long registedAccountseq;
+        private final String account;
+        private final String name;
+        private final String balance;
+    }
 }
