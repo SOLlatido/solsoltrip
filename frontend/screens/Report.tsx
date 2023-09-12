@@ -2,17 +2,8 @@ import React from 'react'
 import { View, Text, ImageBackground, ScrollView} from 'react-native'
 import main_aurora from "../assets/images/main_aurora.png"
 import tw from "twrnc"
+import GoalGraph from '../components/Graph/GoalGraph'
 import { PieChart } from 'react-native-chart-kit'
-// const chartConfig = {
-//   backgroundGradientFrom: "#1E2923",
-//   backgroundGradientFromOpacity: 0,
-//   backgroundGradientTo: "#08130D",
-//   backgroundGradientToOpacity: 0.5,
-//   color: ()=>`rgba(26, 255, 146)`,
-//   strokeWidth: 6, // optional, default 3
-//   barPercentage: 0.5,
-//   useShadowColorFromDataset: false // optional
-// };
 const totalExpense = "980000"
 const myExpense = "300000"
 const colorList = ["#ac9be8", "#907ae1", "#7459d9", "#5d47ae", "#513e98", "#3a2d6d", "#2e2457"]
@@ -35,7 +26,11 @@ const pieData = category.map((name, index) => ({
   population: expensesByCategory[index],
   color: colorList[index],
 }));
-
+const goal = "50,0000"
+const goalData = [
+  {value : 60, color : "#5d47ae", text : '60%'},
+  {value : 40, color : "white", text : null},
+]
 
 function Report() {
   const calculateProportion = (expense:number) => (expense / totalExpense) * 100;
@@ -129,7 +124,15 @@ function Report() {
             /> */}
       </View>
       <Text style={tw `mb-2 font-bold text-[#444] ml-2 mt-5`}>동행 통장 지출 목표 비교</Text>
-      <View style={tw `w-full bg-[#fff]/40 rounded-2 p-5`}></View>
+      <View style={tw `w-full bg-[#fff]/40 rounded-2 p-5 pt-10 h-45 flex-row`}>
+          <GoalGraph data={goalData}></GoalGraph>
+          <View style={tw `items-center`}>
+            <Text style={tw `text-xs font-bold text-[#333]`}>총 지출 목표</Text>
+            <Text style={tw `text-sm font-bold mb-3`}>{goal}</Text>
+            <Text style={tw `text-xs font-bold text-[#5d47ae]`}>누적 지출액</Text>
+            <Text style={tw `text-sm font-bold text-[#5d47ae]`}>{myExpense}</Text>
+          </View>
+      </View>
     </ScrollView>
     </View>
     </>
