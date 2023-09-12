@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,6 +7,10 @@ import { Pressable, View, Text, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo, AntDesign, Feather, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 import tw from "twrnc";
+
+//recoil
+import { useRecoilState } from 'recoil';
+import { centerModalState } from '../recoil/centerModal/atom';
 
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
@@ -29,6 +33,7 @@ import EventMap from '../screens/EventMap';
 import MainTabNavigator from './MainTabNavigator'
 import EndTimeOurStory from '../screens/EndTimeOurStory';
 import MyPointList from '../screens/MyPointList';
+import TwoBtnModal from '../components/Modals/TwoBtnModal';
 
 // 이미지
 import coin from "../assets/icons/coin.png";
@@ -39,6 +44,8 @@ const Tab = createBottomTabNavigator();
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
+
+
 //뒤로가기 버튼 화살표 컴포넌트
 const BackButton: React.FC = () => {
   const navigation = useNavigation();
@@ -100,14 +107,28 @@ const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
 };
 
 const MainRightButtons : React.FC<NavigationProps> = ({navigation}) => {
+  // 모달 recoil
+  const [modalVisible, setModalVisible] = useRecoilState<ModalParams>(centerModalState);
+  const [modalContent, setModalContent] = useState('');
+
+  //정산하기 모달
+  // const endTravelModal = () => {
+  //   return(
+  //     <CenterModal modalTitle='정산' content={`정산하시겠습니까?\n정산 후 동행통장 기록이 종료됩니다.`}/>
+  //   )
+  // }
+
   return (
     <>
+    {modalVisible.open&&<TwoBtnModal modalTitle='정산' content={`정산하시겠습니까?\n정산 후 동행통장 기록이 종료됩니다.`}/>}
     <View style={tw `flex-row`}>
       <Pressable style={tw `ml-3 items-center`} onPress={()=>{navigation.navigate("InviteFriends")}}>
       <Ionicons name="person-add" size={20.5} color="black" />
       <View><Text style={tw `text-xs tracking-tighter`}>동행추가</Text></View>
       </Pressable>
-      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
+      <Pressable style={tw `ml-3 items-center`} 
+        onPress={()=>{setModalVisible({open:true, event:false})}}
+      >
       <MaterialCommunityIcons name="airplane-landing" size={22} color="black" />
       <View><Text style={tw `text-xs tracking-tighter`}>정산하기</Text></View>
       </Pressable>
@@ -328,10 +349,16 @@ type EndTimeResetParams = {
     key : string;
 };
 
+type ModalParams = {
+  open:boolean;
+  event:boolean;
+};
+
 export type RootStackParamList = {
   Intro: IntroParams;
   Login: LoginParams;
   EndTimeReset : EndTimeResetParams;
+  Modal : ModalParams;
 };
 
 export const defaultNavigationOptions: NativeStackNavigationOptions = {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, ImageBackground, SafeAreaView, ScrollView} from 'react-native';
+import {View, Text, ImageBackground} from 'react-native';
 import tw from 'twrnc'; 
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
