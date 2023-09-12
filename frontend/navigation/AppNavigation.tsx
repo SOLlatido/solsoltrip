@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Pressable, View, Text, Alert } from 'react-native';
+import { Pressable, View, Text, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Entypo, AntDesign, Feather, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 import tw from "twrnc";
@@ -30,6 +30,8 @@ import MainTabNavigator from './MainTabNavigator'
 import EndTimeOurStory from '../screens/EndTimeOurStory';
 import MyPointList from '../screens/MyPointList';
 
+// 이미지
+import coin from "../assets/icons/coin.png";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -70,6 +72,15 @@ const CancelInviteButton:React.FC<NavigationProps> = ({navigation}) => {
   </Pressable>
   )
 };
+
+//포인트 페이지 이동 버튼
+const PointButton:React.FC<NavigationProps> = ({navigation}) => {
+  return(
+    <Pressable onPress={()=>{navigation.navigate("MyPointList")}}>
+      <Image source={coin} style={tw`w-[40px] h-[40px]`}/>
+    </Pressable>
+  )
+}
 
 //메인화면 버튼 컴포넌트
 const MainButton:React.FC<NavigationProps> = ({navigation}) => {
@@ -185,14 +196,17 @@ const AppNavigation = () => {
           }}
           />
           <Stack.Screen name='EventMap' component={EventMap} 
-          options={{
-            headerTitle : "SOL을 찾아라",
-            headerTransparent : true, 
-            headerBackTitleVisible : false,
-            headerLeft : () => (
-                <BackButton></BackButton>
-            )
-          }}
+            options={{
+              headerTitle : "SOL을 찾아라",
+              headerTransparent : true, 
+              headerBackTitleVisible : false,
+              headerLeft : () => (
+                  <BackButton></BackButton>
+              ),
+              headerRight: () => (
+                <PointButton navigation={useNavigation()}/>
+              )
+            }}
           />
         <Stack.Screen name='BalanceDivision' component={BalanceDivision} 
           options={{
@@ -272,7 +286,7 @@ const AppNavigation = () => {
 
         <Stack.Screen name='MyPointList' component={MyPointList} 
           options={{
-            headerTitle : "신한 마이포인트",
+            headerTitle : "신한 지역상생 포인트",
             animation : "fade_from_bottom",
             headerTransparent : true, 
             headerBackTitleVisible : false,

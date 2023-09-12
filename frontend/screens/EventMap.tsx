@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, Image, TouchableOpacity, Text } from 'react-native';
 import * as Location from 'expo-location';
-import MapView, { PROVIDER_GOOGLE,Marker, AnimatedRegion, Animated, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE,Marker, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import haversine from 'haversine';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 // recoil
 import { useRecoilState } from 'recoil';
@@ -12,16 +13,20 @@ import { centerModalState } from '../recoil/centerModal/atom';
 
 // 캐릭터 이미지
 import sol_charater1 from '../assets/character/sol_character1.png';
+import coin from '../assets/icons/coin.png';
 
 // 컴포넌트
 import EventModal from '../components/Modals/EventModal';
-import EventMapPointAnimation from '../components/Animation/EventMapPointAnimation';
 
 
 //2000m는 근처에 관광지가 있다고 알림
 //100m는 포인트를 받을 수 있음
 
-const EventMap = () => {
+type EventMap = {
+  navigation: StackNavigationProp<any>;
+}
+
+const EventMap:React.FC<EventMap> = ({navigation}) => {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
@@ -86,7 +91,7 @@ const EventMap = () => {
 
   //포인트 페이지로 이동
   const goPointPage = () => {
-    console.log("go point page");
+    navigation.navigate("MyPointList");
   }
 
   // 내 위치를 찾는 함수
@@ -268,20 +273,26 @@ const EventMap = () => {
               
               <Image
                 source={sol_charater1} // 이미지를 직접 지정합니다.
-                style={{ width: 40, height: 40 }} // 이미지 크기를 조정하세요.
+                style={tw`w-[40px] h-[40px]`} // 이미지 크기를 조정하세요.
               />
 
             </Marker>
           );
         })}
-          {/* 지역 경제를 살리고 있어요 statement */}
-          <TouchableOpacity style={tw`items-end items-end`} onPress={goPointPage}><EventMapPointAnimation/></TouchableOpacity>
+     
+          {/* <TouchableOpacity style={tw`items-end items-end justify-center`} onPress={goPointPage} activeOpacity={0.7}>
+            <Image source={coin} style={tw`w-[40px] h-[40px] mr-5 mt-12`}/>
+            <Text style={tw`mr-5 w-[40px] items-center justify-center bg-white text-center rounded-lg`}>100P</Text>
+          </TouchableOpacity> */}
+        
 
-          <View><EventModal
+          <View>
+            <EventModal
               modalTitle="감사합니다"
               content={modalContent}
               onClose={() => toggleModalAndShowImage(true)}
-          /></View>
+            />
+          </View>
       </MapView>
     </View>
   );
