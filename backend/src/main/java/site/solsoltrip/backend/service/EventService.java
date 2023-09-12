@@ -6,12 +6,15 @@ import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.EventRequestDto;
 import site.solsoltrip.backend.dto.EventResponseDto;
 import site.solsoltrip.backend.entity.Event;
+import site.solsoltrip.backend.entity.EventPoint;
 import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.entity.MemberEvent;
+import site.solsoltrip.backend.repository.EventPointRepository;
 import site.solsoltrip.backend.repository.EventRepository;
 import site.solsoltrip.backend.repository.MemberEventRepository;
 import site.solsoltrip.backend.repository.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +24,7 @@ import java.util.Random;
 @Transactional(readOnly = true)
 public class EventService {
     private final EventRepository eventRepository;
+    private final EventPointRepository eventPointRepository;
     private final MemberRepository memberRepository;
     private final MemberEventRepository memberEventRepository;
 
@@ -32,6 +36,7 @@ public class EventService {
 
         final Event event = Event.builder()
                 .name(requestDto.name())
+                .description(requestDto.description())
                 .x(requestDto.x())
                 .y(requestDto.y())
                 .build();
@@ -51,6 +56,7 @@ public class EventService {
             return null;
         }
 
+        final List<EventResponseDto.TotalEventResponseVO> totalResponseVOList = new ArrayList<>();
         final List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
 
         boolean isArrived = false;
@@ -72,13 +78,22 @@ public class EventService {
 
             final double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
 
-            if (dist > Event.NEARBY_UNIT) {
-                continue;
-            }
-
             if (dist < Event.ARRIVAL_UNIT) {
                 eventPoint = arrivalInform(requestDto.memberSeq(), event.getEventSeq());
                 isArrived = true;
+                continue;
+            }
+
+            final EventResponseDto.TotalEventResponseVO totalResponseVO = EventResponseDto.TotalEventResponseVO.builder()
+                    .name(event.getName())
+                    .description(event.getDescription())
+                    .x(event.getX())
+                    .y(event.getY())
+                    .build();
+
+            totalResponseVOList.add(totalResponseVO);
+
+            if (dist > Event.NEARBY_UNIT) {
                 continue;
             }
 
@@ -90,9 +105,37 @@ public class EventService {
         }
 
         return EventResponseDto.nearbyOrArrivalInform.builder()
+                .totalResponseVOList(totalResponseVOList)
+                .responseVOList(responseVOList)
                 .isArrived(isArrived)
                 .point(eventPoint)
-                .responseVOList(responseVOList)
+                .build();
+    }
+
+    public EventResponseDto.myPointList myPointList(final EventRequestDto.myPointList requestDto) {
+        final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
+        final int myPoint = member.getPoint();
+
+        final List<EventPoint> eventPointList = eventPointRepository.findByMemberSeq(requestDto.memberSeq());
+
+        final List<EventResponseDto.PointVO> pointVOList = new ArrayList<>();
+
+        for (final EventPoint eventPoint : eventPointList) {
+            final EventResponseDto.PointVO pointVO = EventResponseDto.PointVO.builder()
+                    .name(eventPoint.getName())
+                    .point(eventPoint.getPoint())
+                    .acceptedDate(eventPoint.getAcceptedDate())
+                    .build();
+
+            pointVOList.add(pointVO);
+        }
+
+        return EventResponseDto.myPointList.builder()
+                .myPoint(myPoint)
+                .pointVOList(pointVOList)
                 .build();
     }
 
@@ -111,6 +154,19 @@ public class EventService {
         final int myPoint = member.getPoint();
 
         final int eventPoint = generatePoint();
+
+        final Event event = eventRepository.findByEventSeq(eventSeq).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 이벤트가 없습니다.")
+        );
+
+        final EventPoint eventPointLog = EventPoint.builder()
+                .member(member)
+                .name(event.getName())
+                .point(eventPoint)
+                .acceptedDate(LocalDateTime.now())
+                .build();
+
+        eventPointRepository.save(eventPointLog);
 
         member.updatePoint(myPoint + eventPoint);
 
