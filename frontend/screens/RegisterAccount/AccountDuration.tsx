@@ -1,20 +1,16 @@
 import React, { useState } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
-import { View, Text, TouchableOpacity, TextInput, Pressable} from 'react-native'
+import { View, Text, TouchableOpacity, Pressable} from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 function AccountDuration() {
-    const [startText, setStartText] = useState<string>("시작 날짜")
+    const [startText, setStartText] = useState<string>("2023-09-12")
     const [endText, setEndText] = useState<string>("종료 날짜")
     const [selectedDate, setSelectedDate] = useState<Date>();
-    const [stage, setStage] = useState<number>(0);
-    const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    //체크 로직
-    // 종료날짜가 시작날짜보다 뒤에 있어야 함
-    // 현재 날짜보다 시작날짜가 먼저 있으면 안됨?
+
     const showDatePicker = () => {
         setDatePickerVisibility(true);
     };
@@ -23,17 +19,35 @@ function AccountDuration() {
         setDatePickerVisibility(false);
     };
     const handleConfirm = (date:Date) => {
-        if(stage === 0){
-            setStartDate(date);
-            setStartText(String(date.toISOString().slice(0,10)));
-        } else {
-            setEndDate(date);
-            setEndText(String(date.toISOString().slice(0,10)));
 
-        }
-        hideDatePicker();
-        console.log(date);
-    };
+      let flag:boolean = true;
+
+      const start_year:number = parseInt(startText.slice(0,4));
+      const start_month:number = parseInt(startText.slice(5,7));
+      const start_day:number = parseInt(startText.slice(8,10));
+
+      
+      
+      // 년도가 크거나 같냐
+      if(start_year<=parseInt(date.toISOString().slice(0,4))){
+          //월이 크거나 같냐
+          if(start_month<=parseInt(date.toISOString().slice(5,7))){
+              //일이 크거나 같냐
+              if(start_day<=parseInt(date.toISOString().slice(8,10))){
+                  setEndDate(date);
+                  setEndText(String(date.toISOString().slice(0,10)));
+              }else flag = false;
+          }else flag = false;
+      }else flag = false;
+
+      if(!flag){
+          alert("시작 날짜보다 이전 날짜는\n선택하실 수 없습니다.");
+      }
+
+      hideDatePicker();
+  };
+
+
   return (
     <>
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
@@ -45,14 +59,14 @@ function AccountDuration() {
 
       <View style={tw `flex flex-row w-5/6 self-center items-center mt-15`}>
 
-      <Pressable style={[tw `flex-1 self-center items-center`]} onPress={()=>{showDatePicker(); setStage(0)}}>
+      <Pressable style={[tw `flex-1 self-center items-center`]} onPress={()=>{alert(`시작 날짜는 변경하실 수 없습니다.\n통행 통장 시작 날짜입니다.`);}}>
         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>
             {startText}
         </Text>
       </Pressable>
 
       <MaterialCommunityIcons name="train-car-passenger" size={24} color="#51C0C7" />
-      <TouchableOpacity style={tw `flex-1 rounded-lg items-center`} onPress={()=>{showDatePicker(); setStage(1)}}>
+      <TouchableOpacity style={tw `flex-1 rounded-lg items-center`} onPress={()=>{showDatePicker()}}>
         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>
             {endText}
         </Text>
