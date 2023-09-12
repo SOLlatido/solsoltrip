@@ -28,6 +28,7 @@ import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
 import MainTabNavigator from './MainTabNavigator'
 import EndTimeOurStory from '../screens/EndTimeOurStory';
 import MyPointList from '../screens/MyPointList';
+import Report from '../screens/Report';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,35 @@ const Tab = createBottomTabNavigator();
 
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
+};
+const MainRightButtons : React.FC<NavigationProps> = ({navigation}) => {
+  return (
+    <>
+    <View style={tw `flex-row`}>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{navigation.navigate("InviteFriends")}}>
+      <Ionicons name="person-add" size={20.5} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>동행추가</Text></View>
+      </Pressable>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
+      <MaterialCommunityIcons name="airplane-landing" size={22} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>정산하기</Text></View>
+      </Pressable>
+      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
+      <Feather name="log-out" size={22} color="black" />
+      <View><Text style={tw `text-xs tracking-tighter`}>로그아웃</Text></View>
+      </Pressable>
+    </View>
+    </>
+  )
+};
+
+//메인화면 버튼 컴포넌트
+const MainButton:React.FC<NavigationProps> = ({navigation}) => {
+  return (
+  <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
+    <AntDesign name="home" size={26} color="black" />
+  </Pressable>
+  )
 };
 //뒤로가기 버튼 화살표 컴포넌트
 const BackButton: React.FC = () => {
@@ -70,14 +100,7 @@ const CancelInviteButton:React.FC<NavigationProps> = ({navigation}) => {
   )
 };
 
-//메인화면 버튼 컴포넌트
-const MainButton:React.FC<NavigationProps> = ({navigation}) => {
-  return (
-  <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
-    <AntDesign name="home" size={26} color="black" />
-  </Pressable>
-  )
-};
+
 //지출 상세 수정 완료 버튼 컴포넌트
 const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
@@ -87,26 +110,7 @@ const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
   )
 };
 
-const MainRightButtons : React.FC<NavigationProps> = ({navigation}) => {
-  return (
-    <>
-    <View style={tw `flex-row`}>
-      <Pressable style={tw `ml-3 items-center`} onPress={()=>{navigation.navigate("InviteFriends")}}>
-      <Ionicons name="person-add" size={20.5} color="black" />
-      <View><Text style={tw `text-xs tracking-tighter`}>동행추가</Text></View>
-      </Pressable>
-      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
-      <MaterialCommunityIcons name="airplane-landing" size={22} color="black" />
-      <View><Text style={tw `text-xs tracking-tighter`}>정산하기</Text></View>
-      </Pressable>
-      <Pressable style={tw `ml-3 items-center`} onPress={()=>{Alert.alert("로그아웃 하시겠습니까?")}}>
-      <Feather name="log-out" size={22} color="black" />
-      <View><Text style={tw `text-xs tracking-tighter`}>로그아웃</Text></View>
-      </Pressable>
-    </View>
-    </>
-  )
-};
+
 
 const AppNavigation = () => {
   return (
@@ -117,7 +121,7 @@ const AppNavigation = () => {
             name="MainTabNavigator"
             component={MainTabNavigator} // Use MainTabNavigator as the component
             options={{
-              headerTitle: '', // You can set the header title if needed
+              headerTitle: '',
               headerTransparent: true,
               headerBackTitleVisible: false,
               headerLeft: () => <MainButton navigation={useNavigation()} />,
@@ -266,7 +270,7 @@ const AppNavigation = () => {
             headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
-              <BackButton navigation={useNavigation()}></BackButton>
+              <BackButton></BackButton>
             )
           }}
         />

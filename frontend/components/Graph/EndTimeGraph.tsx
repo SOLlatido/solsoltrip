@@ -36,10 +36,8 @@ const chartConfig = {
 
 
 function EndTimeGraph(){
-
     return(
         <View>
-
             <View style={tw `pl-2`}>
                 <Text style={tw `text-white font-bold ml-1`}>단위 : 천 원</Text>
             </View>
