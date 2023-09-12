@@ -2,7 +2,8 @@ package site.solsoltrip.backend.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import site.solsoltrip.backend.entity.AccompanyContent;
+import site.solsoltrip.backend.entity.AccompanyMemberDeposit;
+import site.solsoltrip.backend.entity.AccompanyMemberWithdraw;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,11 +19,11 @@ public class TripResponseDto {
 
             LocalDate endDate,
 
-            int availableAmount,
+            Integer peopleNum,
 
-            int leftover,
+            List<AccompanyMemberDeposit> depositList,
 
-            List<AccompanyContent> accompanyContents
+            List<AccompanyMemberWithdraw> withdrawList
     ) {}
 
     @Builder

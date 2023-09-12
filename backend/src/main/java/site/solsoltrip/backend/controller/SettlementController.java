@@ -9,13 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.solsoltrip.backend.dto.SettlementRequestDto;
 import site.solsoltrip.backend.dto.SettlementResponseDto;
-import site.solsoltrip.backend.entity.AccompanyContent;
-import site.solsoltrip.backend.entity.Category;
 import site.solsoltrip.backend.service.SettlementService;
-import site.solsoltrip.backend.util.NumberFormatUtility;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/settlement")

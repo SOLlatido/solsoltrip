@@ -2,7 +2,6 @@ package site.solsoltrip.backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import site.solsoltrip.backend.entity.AccompanyContent;
 
 import java.time.LocalDate;
 import java.util.List;

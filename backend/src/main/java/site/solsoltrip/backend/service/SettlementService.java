@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.SettlementRequestDto;
 import site.solsoltrip.backend.dto.SettlementResponseDto;
 import site.solsoltrip.backend.entity.Accompany;
-import site.solsoltrip.backend.entity.AccompanyContent;
 import site.solsoltrip.backend.entity.Category;
 import site.solsoltrip.backend.repository.AccompanyContentRepository;
 import site.solsoltrip.backend.repository.AccompanyRepository;
