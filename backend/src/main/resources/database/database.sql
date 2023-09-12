@@ -10,6 +10,8 @@ CREATE TABLE `member` (
 	`point` INT NOT NULL,
 	`phone` VARCHAR(11) NOT NULL,
 	`role` VARCHAR(5) NOT NULL DEFAULT 'USER',
+	`kakao_email` VARCHAR(255) NULL,
+	`kakao_refresh_token` VARCHAR(255) NULL,
     PRIMARY KEY (`member_seq`)
 );
 
