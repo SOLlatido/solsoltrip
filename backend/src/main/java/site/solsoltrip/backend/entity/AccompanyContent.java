@@ -29,7 +29,7 @@ public class AccompanyContent {
 
     private LocalDate acceptedDate;
 
-    private String category;
+    private Integer category;
 
     private LocalDateTime acceptedDatetime;
 

@@ -26,9 +26,11 @@ public class Accompany {
 
     private LocalDate endDate;
 
+    private Integer individual;
+
     private Integer availableAmount;
 
-    private Integer leftover;
+    private Integer used;
 
     private Boolean isChecked;
 
