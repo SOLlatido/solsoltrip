@@ -4,7 +4,7 @@ import tw from "twrnc";
 import LongButton from '../components/ButtonItems/LongButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import aurora from '../assets/images/aurora_background.png';
-import LoadingAnimation from "../components/Animation/LoadingAnimation";
+import LoadingAnimation from "../components/Animation/LoadingAnimation_morning";
 
 type NavigationProps = {
     navigation: StackNavigationProp<any>;
@@ -23,8 +23,18 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
     navigation.navigate("SignUp");
   }
 
+  // 로딩 페이지를 제어하고 있습니다.
   useEffect(()=>{
-    // setLoading(false);
+    async function prepare(){
+      try{
+        await new Promise(resolve => setTimeout(resolve,2000));
+        setLoading(false);
+      } catch(e){
+        console.log(e);
+      }
+    }
+
+    prepare();
   },[])
 
   return (
