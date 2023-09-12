@@ -20,7 +20,7 @@ import java.util.List;
 public class AccompanyMemberWithdraw {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accompanyWithdrawSeq;
+    private Long accompanyMemberWithdrawSeq;
 
     @JoinColumn(name = "accompany_seq")
     @ManyToOne(fetch = FetchType.LAZY)
