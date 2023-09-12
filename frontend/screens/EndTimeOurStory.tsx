@@ -10,6 +10,7 @@ import starrynight from '../assets/images/starrynight_bg.jpg';
 // 컴포넌트
 import StoryContainer from '../components/Container/StoryContainer';
 import LongButton from '../components/ButtonItems/LongButton';
+// import LoadingAnimation_morning from '../components/Animation/LoadingAnimation_morning';
 
 type EndTimeOurStoryProps = {
     navigation: StackNavigationProp<any>;
@@ -18,13 +19,26 @@ type EndTimeOurStoryProps = {
 const EndTimeOurStory:React.FC<EndTimeOurStoryProps> = ({navigation}) => {
     const [animation1, setAnimation1] = useState(null);
     const [animation2, setAnimation2] = useState(null);
+    // const [loading, setLoading] = useState(true);
+
+    // useEffect(()=>{
+    //     async function prepare(){
+    //       try{
+    //         await new Promise(resolve => setTimeout(resolve,2000));
+    //         setLoading(false);
+    //       } catch(e){
+    //         console.log(e);
+    //       }
+    //     }
+    
+    //     prepare();
+    // },[])
 
     const handleEndTimeOutStory = (type:string) => {
         if(type==="prev")
             navigation.navigate("EndTimeSavingMoney");
         else if(type==="end")
-            console.log("다영언니의 지출 내역 페이지로 이동")
-            // navigation.navigate("EndTimeOurStory");
+            navigation.navigate("MyAccounts");
     }
 
     useEffect(() => {
@@ -37,30 +51,32 @@ const EndTimeOurStory:React.FC<EndTimeOurStoryProps> = ({navigation}) => {
     
 
     return(
-        <View style={tw`flex-1`}>
-            
-            <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}/>
-            
-            <View style={tw`flex-1 items-center justify-center`}>
+        <>
+            <View style={tw`flex-1`}>
+                
+                <ImageBackground source={starrynight} style={tw `w-full h-full bg-cover absolute`}/>
+                
+                <View style={tw`flex-1 items-center justify-center`}>
 
-                <Animatable.View ref={(ref) => setAnimation1(ref)} style={tw `flex-2 justify-center items-center pt-15`}>
-                    <Text style={tw `text-2xl text-white`}>우리의 스토리</Text>
+                    <Animatable.View ref={(ref) => setAnimation1(ref)} style={tw `flex-2 justify-center items-center pt-15`}>
+                        <Text style={tw `text-2xl text-white`}>우리의 스토리</Text>
+                    </Animatable.View>
+
+                </View>
+
+                {/* 컨텐츠 */}
+                <Animatable.View ref={(ref) => setAnimation2(ref)} style={tw`flex-5 w-full items-center justify-center`}>
+                    <StoryContainer/>
                 </Animatable.View>
 
+                <View style={tw`flex-1 flex-row items-center justify-center`}>
+                <LongButton content='이전' onPress={()=>handleEndTimeOutStory("prev")}/>
+                    <LongButton content='종료'onPress={()=>handleEndTimeOutStory("end")} />
+                </View>
+
+
             </View>
-
-            {/* 컨텐츠 */}
-            <Animatable.View ref={(ref) => setAnimation2(ref)} style={tw`flex-5 w-full items-center justify-center`}>
-                <StoryContainer/>
-            </Animatable.View>
-
-            <View style={tw`flex-1 flex-row items-center justify-center`}>
-            <LongButton content='이전' onPress={()=>handleEndTimeOutStory("prev")}/>
-                <LongButton content='종료'onPress={()=>handleEndTimeOutStory("end")} />
-            </View>
-
-
-        </View>
+        </>
     )
 }
 
