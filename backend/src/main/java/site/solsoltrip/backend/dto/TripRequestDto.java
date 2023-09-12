@@ -4,7 +4,7 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class TripRequestDto {
     public record validation (
@@ -16,6 +16,9 @@ public class TripRequestDto {
             @NotNull
             Long memberSeq,
 
+            @NotNull
+            Long registerAccountSeq,
+
             @NotBlank
             String name,
 
@@ -23,17 +26,14 @@ public class TripRequestDto {
             String account,
 
             @NotNull
-            LocalDateTime startDateTime,
+            LocalDate startDate,
 
             @NotNull
             @FutureOrPresent
-            LocalDateTime endDateTime,
-
-            @NotNull
-            int availableAmount,
+            LocalDate endDate,
 
             @NotBlank
-            String getMethod
+            String personalAmount
     ) {}
 
     public record tripDetail (
