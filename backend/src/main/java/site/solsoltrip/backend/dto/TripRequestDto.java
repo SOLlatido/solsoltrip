@@ -22,9 +22,6 @@ public class TripRequestDto {
             @NotBlank
             String name,
 
-            @NotBlank
-            String account,
-
             @NotNull
             LocalDate startDate,
 
@@ -33,7 +30,7 @@ public class TripRequestDto {
             LocalDate endDate,
 
             @NotBlank
-            String personalAmount
+            Integer personalAmount
     ) {}
 
     public record tripDetail (
