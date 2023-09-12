@@ -25,4 +25,6 @@ public class RegistedAccount {
     private String name;
 
     private Integer balance;
+
+    private Boolean isAccompanyAccount;
 }
