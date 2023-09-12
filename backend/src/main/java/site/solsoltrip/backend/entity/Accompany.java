@@ -28,17 +28,20 @@ public class Accompany {
 
     private Integer individual;
 
-    private Integer availableAmount;
+    private Integer totalDeposit;
 
-    private Integer used;
+    private Integer totalWithdraw;
 
     private Boolean isChecked;
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
-    private List<AccompanyContent> accompanyContentList = new ArrayList<>();
+    private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
-    private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
+    private List<AccompanyMemberDeposit> accompanyMemberDepositList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
+    private List<AccompanyMemberWithdraw> accompanyMemberWithdrawList = new ArrayList<>();
 
     public void updateEndDate(final LocalDate endDate) {
         this.endDate = endDate;

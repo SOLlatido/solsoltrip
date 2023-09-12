@@ -16,10 +16,10 @@ public class TripController {
     private final TripService tripService;
 
     @PostMapping("/validation")
-    public ResponseEntity<Void> validation(@RequestBody @Validated final TripRequestDto.validation requestDto) {
-        tripService.validation(requestDto);
+    public ResponseEntity<TripResponseDto.validation> validation(@RequestBody @Validated final TripRequestDto.validation requestDto) {
+        TripResponseDto.validation responseDto = tripService.validation(requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PostMapping("/regist")
