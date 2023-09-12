@@ -4,6 +4,9 @@ import tw from 'twrnc';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
 import { StackNavigationProp } from '@react-navigation/stack';
 
+import AppLoading from 'expo-app-loading';
+import { StatusBar } from 'expo-status-bar';
+
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
 
@@ -20,9 +23,25 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [animation1, setAnimation1] = useState(null);
   const [animation2, setAnimation2] = useState(null);
   const [animation3, setAnimation3] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [isReady, setIsReady] = useState(false);
+  const onFinish = () => setIsReady(true);
+  const startLoading = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 10000))
+  };
+  if (!isReady) {
+    return (
+      <AppLoading 
+        startAsync={startLoading}
+        onFinish={onFinish}
+        onError={console.error}
+      />
+    )
+  }
+
 
   const handleEndTimeHistory = () => {
-    console.log("11");
     navigation.navigate("EndTimeSavingMoney");
   }
 
@@ -40,6 +59,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
 
   return (
     <View style={tw `flex-1 bg-white w-full`}>
+      <StatusBar style="auto" />
       <ImageBackground source={starrynight} style={tw `w-full h-full absolute`}></ImageBackground>
 
       {/* 동행통장 지출 금액 */}

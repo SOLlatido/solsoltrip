@@ -6,10 +6,10 @@ import tw from 'twrnc';
 
 import { useRecoilState} from 'recoil';
 import {centerModalState} from '../../recoil/centerModal/atom';
-
+import { useNavigation } from '@react-navigation/native';
 
 function TwoBtnModal({ modalTitle, content}: CenterModalProps){
-    
+    const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
     useEffect(()=>{
@@ -60,14 +60,16 @@ function TwoBtnModal({ modalTitle, content}: CenterModalProps){
 
                                 <Pressable
                                     style={tw`flex-1 rounded-br-lg xl bg-[#7B5AF3] h-full`}
-                                    onPress={() => setModalVisible(()=>{
+                                    onPress={() => {setModalVisible(()=>{
                                         const newValue={
                                             open : false,
                                             event : false,
                                         }
 
                                         return newValue;
-                                    })}>
+                                    })
+                                    navigation.navigate("EndTimeHistory" as never);
+                                }}>
                                         <View style={tw`text-white bg-[#7B5AF3] rounded-br-lg`}>
                                             <Text style={tw`text-white font-bold text-center text-xl pt-3`}>정산</Text>
                                         </View>
