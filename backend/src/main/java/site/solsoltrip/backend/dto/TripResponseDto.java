@@ -31,7 +31,7 @@ public class TripResponseDto {
     @Getter
     @Builder
     public static class TripResponseVO {
-        private final Long registedAccountseq;
+        private final Long registedAccountSeq;
         private final String account;
         private final String name;
         private final String balance;

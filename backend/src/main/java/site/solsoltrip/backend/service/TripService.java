@@ -3,6 +3,7 @@ package site.solsoltrip.backend.service;
 import com.google.gson.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class TripService {
     }
 
     @Transactional
-    public void validation(final TripRequestDto.validation requestDto) {
+    public TripResponseDto.validation validation(final TripRequestDto.validation requestDto) {
         if (registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq()).isEmpty()) {
             final String bankListObject = sendRequest(requestDto.memberSeq(), "/v1/account");
 
@@ -62,7 +63,28 @@ public class TripService {
             }
         }
 
-        // Todo : 동행통장으로 계좌를 사용할 수 있는지 여부에 대한 로직
+        final String[] notAllowedKeyword = new String[]{"증권", "보험", "대출", "적금"};
+
+        final List<TripResponseDto.TripResponseVO> responseVOList = new ArrayList<>();
+
+        final List<RegistedAccount> registedAccountList = registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq());
+
+        for (RegistedAccount account : registedAccountList) {
+            if (!StringUtils.containsAny(account.getName(), notAllowedKeyword)) {
+                TripResponseDto.TripResponseVO responseVO = TripResponseDto.TripResponseVO.builder()
+                        .registedAccountSeq(account.getRegistedAccountSeq())
+                        .account(account.getAccount())
+                        .name(account.getName())
+                        .balance(account.getBalance())
+                        .build();
+
+                responseVOList.add(responseVO);
+            }
+        }
+
+        return TripResponseDto.validation.builder()
+                .responseVOList(responseVOList)
+                .build();
     }
 
     @Transactional
