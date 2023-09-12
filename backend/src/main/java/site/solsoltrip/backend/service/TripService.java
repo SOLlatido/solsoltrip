@@ -75,7 +75,7 @@ public class TripService {
                         .registedAccountSeq(account.getRegistedAccountSeq())
                         .account(account.getAccount())
                         .name(account.getName())
-                        .balance(account.getBalance())
+                        .balance(String.valueOf(account.getBalance()))
                         .build();
 
                 responseVOList.add(responseVO);
