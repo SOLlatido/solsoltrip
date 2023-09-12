@@ -42,6 +42,6 @@ public class AccompanyMemberWithdraw {
 
     private LocalDateTime memoDateTime;
 
-    @OneToMany(mappedBy = "individualWithdraw", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "accompanyMemberWithdraw", fetch = FetchType.LAZY)
     private List<IndividualWithdraw> individualWithdrawList = new ArrayList<>();
 }
