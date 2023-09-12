@@ -17,15 +17,11 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberSeq;
 
-    private String id;
-
-    private String password;
+    private String uuid;
 
     private String name;
 
     private int point;
-
-    private String phone;
 
     private Role role;
 
