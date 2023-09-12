@@ -7,7 +7,7 @@ import site.solsoltrip.backend.dto.SettlementRequestDto;
 import site.solsoltrip.backend.entity.Accompany;
 import site.solsoltrip.backend.repository.AccompanyRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +21,7 @@ public class SettlementService {
                 () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
         );
 
-        accompany.updateEndDatetime(requestDto.endDateTime());
+        accompany.updateEndDate(requestDto.endDate());
     }
 
     @Transactional
@@ -30,6 +30,6 @@ public class SettlementService {
                 () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
         );
 
-        accompany.updateEndDatetime(LocalDateTime.now());
+        accompany.updateEndDate(LocalDate.now());
     }
 }
