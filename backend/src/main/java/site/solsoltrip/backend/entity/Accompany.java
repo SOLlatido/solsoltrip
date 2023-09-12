@@ -28,9 +28,9 @@ public class Accompany {
 
     private Integer individual;
 
-    private Integer availableAmount;
+    private Integer totalDeposit;
 
-    private Integer used;
+    private Integer totalWithdraw;
 
     private Boolean isChecked;
 
