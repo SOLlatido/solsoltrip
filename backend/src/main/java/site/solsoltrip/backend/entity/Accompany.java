@@ -3,7 +3,7 @@ package site.solsoltrip.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +22,13 @@ public class Accompany {
 
     private String account;
 
-    private LocalDateTime startDatetime;
+    private LocalDate startDate;
 
-    private LocalDateTime endDatetime;
+    private LocalDate endDate;
 
     private Integer availableAmount;
 
     private Integer leftover;
-
-    private String getMethod;
 
     private Boolean isChecked;
 
@@ -40,7 +38,7 @@ public class Accompany {
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
     private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
 
-    public void updateEndDatetime(final LocalDateTime endDatetime) {
-        this.endDatetime = endDatetime;
+    public void updateEndDate(final LocalDate endDate) {
+        this.endDate = endDate;
     }
 }
