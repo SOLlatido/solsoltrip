@@ -194,7 +194,6 @@ const AppNavigation = () => {
             )
           }}
           />
-        />
         <Stack.Screen name='BalanceDivision' component={BalanceDivision} 
           options={{
             headerTitle : "동행통장 만들기",
