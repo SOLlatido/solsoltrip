@@ -18,9 +18,9 @@ public class IndividualWithdraw {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "accompany_member_withdraw")
+    @JoinColumn(name = "accompany_member_withdraw_seq")
     @ManyToOne(fetch = FetchType.LAZY)
     private AccompanyMemberWithdraw accompanyMemberWithdraw;
 
-    private int individual;
+    private Integer individual;
 }

@@ -46,4 +46,8 @@ public class Accompany {
     public void updateEndDate(final LocalDate endDate) {
         this.endDate = endDate;
     }
+
+    public void updateTotalWithdraw(final Integer totalWithdraw) {
+        this.totalWithdraw = totalWithdraw;
+    }
 }

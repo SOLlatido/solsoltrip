@@ -6,8 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.SettlementRequestDto;
 import site.solsoltrip.backend.dto.SettlementResponseDto;
 import site.solsoltrip.backend.entity.Accompany;
+import site.solsoltrip.backend.entity.AccompanyMemberDeposit;
+import site.solsoltrip.backend.entity.AccompanyMemberWithdraw;
 import site.solsoltrip.backend.entity.Category;
-import site.solsoltrip.backend.repository.AccompanyContentRepository;
+import site.solsoltrip.backend.repository.AccompanyMemberDepositRepository;
+import site.solsoltrip.backend.repository.AccompanyMemberWithdrawRepository;
 import site.solsoltrip.backend.repository.AccompanyRepository;
 import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.util.NumberFormatUtility;
@@ -21,8 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SettlementService {
     private final AccompanyRepository accompanyRepository;
-    private final AccompanyContentRepository accompanyContentRepository;
-    private final MemberAccompanyRepository memberAccompanyRepository;
+    private final AccompanyMemberWithdrawRepository accompanyMemberWithdrawRepository;
 
     @Transactional
     public void resetEndTime(final SettlementRequestDto.resetEndTime requestDto) {
@@ -42,43 +44,29 @@ public class SettlementService {
         accompany.updateEndDate(LocalDate.now());
     }
 
+    @Transactional
     public SettlementResponseDto.showTripResult showTripResult(final SettlementRequestDto.showTripResult requestDto) {
+        // 총 지출 금액
+        final List<AccompanyMemberWithdraw> totalAccompanyMemberWithdrawList =
+                accompanyMemberWithdrawRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        int checkedTotalCost = 0;
+
+        for (final AccompanyMemberWithdraw accompanyMemberWithdraw : totalAccompanyMemberWithdrawList) {
+            checkedTotalCost += accompanyMemberWithdraw.getCost();
+        }
+
         final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
         );
 
-        final int accompanySize = memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).size();
+        final int savedTotalCost = accompany.getTotalWithdraw();
 
-        final int totalCost = accompany.getIndividual() * accompanySize - accompany.getUsed();
-
-        final List<SettlementResponseDto.ShowTripResultCategoryVO> categoryVOList = new ArrayList<>();
-
-        for (final Category category : Category.values()) {
-            final int categorySeq = Integer.parseInt(category.getNumber());
-
-            final List<AccompanyContent> accompanyContentList =
-                    accompanyContentRepository.findByAccompanySeqAndCategory(requestDto.accompanySeq(), categorySeq);
-
-            if (accompanyContentList.isEmpty()) {
-                continue;
-            }
-
-            int categoryCost = 0;
-
-            for (final AccompanyContent accompanyContent : accompanyContentList) {
-                categoryCost += accompanyContent.getCost();
-            }
-
-            final SettlementResponseDto.ShowTripResultCategoryVO categoryVO =
-                    SettlementResponseDto.ShowTripResultCategoryVO.builder()
-                            .category(categorySeq)
-                            .cost(categoryCost)
-                            .formattedCost(NumberFormatUtility.formatter(categoryCost))
-                            .build();
-
-            categoryVOList.add(categoryVO);
+        if (checkedTotalCost != savedTotalCost) {
+            accompany.updateTotalWithdraw(checkedTotalCost);
         }
 
+        // 날짜별 지출 금액
         final List<SettlementResponseDto.ShowTripResultDailyVO> dailyVOList = new ArrayList<>();
 
         LocalDate startDate = accompany.getStartDate();
@@ -86,13 +74,13 @@ public class SettlementService {
         final LocalDate endDate = accompany.getEndDate();
 
         while (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
-            final List<AccompanyContent> accompanyContentList =
-                    accompanyContentRepository.findByAccompanySeqAndAcceptedDate(requestDto.accompanySeq(), startDate);
+            final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+                    accompanyMemberWithdrawRepository.findByAccompanySeqAndAcceptedDate(requestDto.accompanySeq(), startDate);
 
             int dailyCost = 0;
 
-            for (final AccompanyContent accompanyContent : accompanyContentList) {
-                dailyCost += accompanyContent.getCost();
+            for (final AccompanyMemberWithdraw accompanyMemberWithdraw : accompanyMemberWithdrawList) {
+                dailyCost += accompanyMemberWithdraw.getCost();
             }
 
             final SettlementResponseDto.ShowTripResultDailyVO dailyVO =
@@ -107,10 +95,39 @@ public class SettlementService {
             startDate = startDate.plusDays(1);
         }
 
+        // 카테고리별 지출 금액
+        final List<SettlementResponseDto.ShowTripResultCategoryVO> categoryVOList = new ArrayList<>();
+
+        for (final Category category : Category.values()) {
+            final int categorySeq = Integer.parseInt(category.getNumber());
+
+            final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+                    accompanyMemberWithdrawRepository.findByAccompanySeqAndCategory(requestDto.accompanySeq(), categorySeq);
+
+            if (accompanyMemberWithdrawList.isEmpty()) {
+                continue;
+            }
+
+            int categoryCost = 0;
+
+            for (final AccompanyMemberWithdraw accompanyMemberWithdraw : accompanyMemberWithdrawList) {
+                categoryCost += accompanyMemberWithdraw.getCost();
+            }
+
+            final SettlementResponseDto.ShowTripResultCategoryVO categoryVO =
+                    SettlementResponseDto.ShowTripResultCategoryVO.builder()
+                            .category(categorySeq)
+                            .cost(categoryCost)
+                            .formattedCost(NumberFormatUtility.formatter(categoryCost))
+                            .build();
+
+            categoryVOList.add(categoryVO);
+        }
+
         return SettlementResponseDto.showTripResult.builder()
-                .totalCost(totalCost)
-                .categoryVOList(categoryVOList)
+                .totalCost(checkedTotalCost)
                 .dailyVOList(dailyVOList)
+                .categoryVOList(categoryVOList)
                 .build();
     }
 }
