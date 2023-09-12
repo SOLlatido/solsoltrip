@@ -25,6 +25,7 @@ import ExpenseDetail from '../screens/ExpenseDetail';
 import Mypage from '../screens/Mypage';
 import EndTimeHistory from '../screens/EndTimeHistory';
 import EndTimeSavingMoney from '../screens/EndTimeSavingMoney';
+import EventMap from '../screens/EventMap';
 import MainTabNavigator from './MainTabNavigator'
 import EndTimeOurStory from '../screens/EndTimeOurStory';
 import MyPointList from '../screens/MyPointList';
@@ -182,6 +183,17 @@ const AppNavigation = () => {
                 <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
             )
           }}
+          />
+          <Stack.Screen name='EventMap' component={EventMap} 
+          options={{
+            headerTitle : "SOL을 찾아라",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft : () => (
+                <BackButton></BackButton>
+            )
+          }}
+          />
         />
         <Stack.Screen name='BalanceDivision' component={BalanceDivision} 
           options={{

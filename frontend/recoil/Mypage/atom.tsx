@@ -8,7 +8,7 @@ const initialState = {
 }
 
 export const MypageState = atom<CenterModalType>({
-    key:'MypageState',
+    key:'mypageState',
     default:initialState,
 });
 
