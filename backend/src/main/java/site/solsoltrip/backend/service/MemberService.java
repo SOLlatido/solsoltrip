@@ -1,7 +1,6 @@
 package site.solsoltrip.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.MemberRequestDto;
@@ -21,38 +20,25 @@ public class MemberService {
 
     private final KakaoOAuth2 kakaoOAuth2;
 
-    private final PasswordEncoder passwordEncoder;
-
-    public boolean checkEmailExistence(final String id) {
-        return memberRepository.findById(id).isPresent();
-    }
-
-    @Transactional
     public void signup(final MemberRequestDto.signup requestDto) {
-        if (checkEmailExistence(requestDto.id())) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        if (memberRepository.findByUuid(requestDto.uuid()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 유저입니다.");
         }
 
         final Member member = Member.builder()
-                .id(requestDto.id())
-                .password(passwordEncoder.encode(requestDto.password()))
+                .uuid(requestDto.uuid())
                 .name(requestDto.name())
                 .point(0)
-                .phone(requestDto.phone())
-                .role(Role.ADMIN)
+                .role(Role.USER)
                 .build();
 
         memberRepository.save(member);
     }
 
     public MemberResponseDto.login login(final MemberRequestDto.login requestDto) {
-        final Member member = memberRepository.findById(requestDto.id()).orElseThrow(
+        final Member member = memberRepository.findByUuid(requestDto.uuid()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
-
-        if (!passwordEncoder.matches(requestDto.password(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
 
         String accessToken = "access-token";
 
@@ -68,11 +54,17 @@ public class MemberService {
 
         return kakaoTokenInfo == null ?
                 MemberResponseDto.login.builder()
+                        .memberSeq(member.getMemberSeq())
+                        .uuid(member.getUuid())
                         .name(member.getName())
+                        .point(member.getPoint())
                         .accessToken(accessToken)
                         .build() :
                 MemberResponseDto.login.builder()
+                        .memberSeq(member.getMemberSeq())
+                        .uuid(member.getUuid())
                         .name(member.getName())
+                        .point(member.getPoint())
                         .accessToken(accessToken)
                         .kakaoAccessToken(kakaoTokenInfo.kakaoAccessToken())
                         .build();
