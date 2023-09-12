@@ -12,14 +12,8 @@ import site.solsoltrip.backend.dto.ShbhackRequestDto;
 import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.dto.TripRequestDto;
 import site.solsoltrip.backend.dto.TripResponseDto;
-import site.solsoltrip.backend.entity.Accompany;
-import site.solsoltrip.backend.entity.Member;
-import site.solsoltrip.backend.entity.MemberAccompany;
-import site.solsoltrip.backend.entity.RegistedAccount;
-import site.solsoltrip.backend.repository.AccompanyRepository;
-import site.solsoltrip.backend.repository.MemberAccompanyRepository;
-import site.solsoltrip.backend.repository.MemberRepository;
-import site.solsoltrip.backend.repository.RegistedAccountRepository;
+import site.solsoltrip.backend.entity.*;
+import site.solsoltrip.backend.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +26,8 @@ public class TripService {
     private final MemberRepository memberRepository;
     private final MemberAccompanyRepository memberAccompanyRepository;
     private final AccompanyRepository accompanyRepository;
+    private final AccompanyMemberDepositRepository accompanyMemberDepositRepository;
+    private final AccompanyMemberWithdrawRepository accompanyMemberWithdrawRepository;
 
     private WebClient webClient;
 
@@ -124,14 +120,18 @@ public class TripService {
                 () -> new IllegalArgumentException("존재하지 않는 동행통장입니다.")
         );
 
+        final List<AccompanyMemberDeposit> depositList = accompanyMemberDepositRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        final List<AccompanyMemberWithdraw> withdrawList = accompanyMemberWithdrawRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        // Todo: peopleNum 추가해야 함.
         return TripResponseDto.tripDetail.builder()
                 .account(accompany.getAccount())
                 .name(accompany.getName())
-                .startDate(accompany.getStartDatetime().toLocalDate())
-                .endDate(accompany.getEndDatetime().toLocalDate())
-                .availableAmount(accompany.getAvailableAmount())
-                .leftover(accompany.getLeftover())
-                .accompanyContents(accompany.getAccompanyContentList())
+                .startDate(accompany.getStartDate())
+                .endDate(accompany.getEndDate())
+                .depositList(depositList)
+                .withdrawList(withdrawList)
                 .build();
     }
 
