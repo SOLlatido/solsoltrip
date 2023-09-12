@@ -39,7 +39,7 @@ public class Member {
     private List<MemberAccompany> accompanyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<MemberAccompanyContent> accompanyContentList = new ArrayList<>();
+    private List<IndividualWithdraw> individualWithdrawList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<RegistedAccount> registedAccountList = new ArrayList<>();
