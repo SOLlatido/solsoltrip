@@ -15,6 +15,13 @@ import site.solsoltrip.backend.service.MemberService;
 public class MemberController {
     private final MemberService memberService;
 
+    @PostMapping("/signup")
+    public ResponseEntity<MemberResponseDto.signup> signup(@RequestBody @Validated final MemberRequestDto.signup requestDto) {
+        memberService.signup(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/login")
     public ResponseEntity<MemberResponseDto.login> login(@RequestBody @Validated final MemberRequestDto.login requestDto) {
         MemberResponseDto.login responseDto = memberService.login(requestDto);
@@ -22,7 +29,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/kakao")
+    @GetMapping("/kakao")
     public ResponseEntity<MemberResponseDto.KakaoTokenInfo> kakaoSync(@RequestParam final String code, @RequestParam final Long state) {
         MemberResponseDto.KakaoTokenInfo responseDto = memberService.kakaoSync(code, state);
 

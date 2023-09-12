@@ -33,6 +33,9 @@ public class Member {
     private List<MemberEvent> eventList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<EventPoint> eventPointList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberAccompany> accompanyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)

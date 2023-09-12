@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.MemberRequestDto;
 import site.solsoltrip.backend.dto.MemberResponseDto;
 import site.solsoltrip.backend.entity.Member;
+import site.solsoltrip.backend.entity.Role;
 import site.solsoltrip.backend.oauth.KakaoOAuth2;
 import site.solsoltrip.backend.repository.MemberRepository;
 
@@ -18,6 +19,21 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final KakaoOAuth2 kakaoOAuth2;
+
+    public void signup(final MemberRequestDto.signup requestDto) {
+        if (memberRepository.findByUuid(requestDto.uuid()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 유저입니다.");
+        }
+
+        final Member member = Member.builder()
+                .uuid(requestDto.uuid())
+                .name(requestDto.name())
+                .point(0)
+                .role(Role.USER)
+                .build();
+
+        memberRepository.save(member);
+    }
 
     public MemberResponseDto.login login(final MemberRequestDto.login requestDto) {
         final Member member = memberRepository.findByUuid(requestDto.uuid()).orElseThrow(

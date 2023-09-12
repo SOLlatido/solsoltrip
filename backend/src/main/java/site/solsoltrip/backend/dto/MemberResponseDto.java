@@ -4,6 +4,10 @@ import lombok.Builder;
 
 public class MemberResponseDto {
     @Builder
+    public record signup(String uuid,
+                         String name) {}
+
+    @Builder
     public record login(Long memberSeq,
                         String uuid,
                         String name,
