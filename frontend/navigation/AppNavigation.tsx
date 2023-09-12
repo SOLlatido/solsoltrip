@@ -149,7 +149,16 @@ const AppNavigation = () => {
             )
           }}
           />
-        <Stack.Screen name='EndTimeReset' component={EndTimeReset} />
+        <Stack.Screen name='EndTimeReset' component={EndTimeReset} 
+          options={{
+            headerTitle : "종료날짜 재설정",
+            headerTransparent : true, 
+            headerBackTitleVisible : false,
+            headerLeft: () => (
+              <CancelCreateAccountButton navigation={useNavigation()}></CancelCreateAccountButton>
+            ),
+          }}
+        />
 
         <Stack.Screen name='EndTimeHistory' component={EndTimeHistory} options={{headerShown:false}}/>
         <Stack.Screen name='EndTimeSavingMoney' component={EndTimeSavingMoney} options={{headerShown:false}}/>

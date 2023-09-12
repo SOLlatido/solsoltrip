@@ -20,7 +20,16 @@ const AccountItem = (props : { accountNumber:string, travelTitle:string, duratio
       <View style={tw`flex justify-between`}>
         <Text style={tw`text-[#fff]`}>{accountNumber}</Text>
         <Text style={tw`text-xl font-bold text-white`}>{travelTitle}</Text>
-        <Text style={tw`text-gray-300 text-xs font-bold tracking-wider`}>{duration}</Text>
+
+        <View style={tw`flex-row`}>
+          <Text style={tw`text-gray-300 text-xs font-bold tracking-wider pr-2`}>{duration}</Text>
+          
+          <TouchableOpacity onPress={()=>{navigation.navigate("EndTimeReset" as never)}} style={tw``}>
+            <FontAwesome5 name="pen" size={15} color="#D1D5DB" />
+          </TouchableOpacity>
+        
+        </View>
+      
       </View>
       <View style={tw`mt-4 flex-row`}>
         <Text style={tw`text-gray-200 items-center mr-2`}>{numberOfPeople}명의 동행</Text>  
