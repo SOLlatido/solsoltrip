@@ -1,4 +1,8 @@
 spring:
+  config:
+    import:
+      - classpath:properties/oauth2.yml
+
   # H2
 #  h2:
 #    console:
