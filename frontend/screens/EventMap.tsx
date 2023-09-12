@@ -13,7 +13,6 @@ import { centerModalState } from '../recoil/centerModal/atom';
 
 // 캐릭터 이미지
 import sol_charater1 from '../assets/character/sol_character1.png';
-import coin from '../assets/icons/coin.png';
 
 // 컴포넌트
 import EventModal from '../components/Modals/EventModal';
@@ -89,10 +88,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     setShowImage(showImage);
   };
 
-  //포인트 페이지로 이동
-  const goPointPage = () => {
-    navigation.navigate("MyPointList");
-  }
 
   // 내 위치를 찾는 함수
   useEffect(() => {
