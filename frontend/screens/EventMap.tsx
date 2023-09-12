@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Image, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Dimensions, Image, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { PROVIDER_GOOGLE,Marker, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
@@ -78,7 +78,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       getPoint(place?.title);
     } else {
       // 거리가 100m 이내가 아닌 경우 alert 띄우기
-      alert("100m 이내가 아닙니다");
+      Alert.alert("100m 이내가 아닙니다");
     }
   };
 
@@ -189,7 +189,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
                     if (index === i && characterLocation.display) {
                       // 유저가 500m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
                       if (characterLocation.title != null) {
-                        alert(`500m 이내에 ${characterLocation.title} 관광지가 보입니다!`);
+                        Alert.alert(`500m 이내에 ${characterLocation.title} 관광지가 보입니다!`);
                       }
                       // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
                       return { ...characterLocation, display: false };
@@ -279,11 +279,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
             </Marker>
           );
         })}
-     
-          {/* <TouchableOpacity style={tw`items-end items-end justify-center`} onPress={goPointPage} activeOpacity={0.7}>
-            <Image source={coin} style={tw`w-[40px] h-[40px] mr-5 mt-12`}/>
-            <Text style={tw`mr-5 w-[40px] items-center justify-center bg-white text-center rounded-lg`}>100P</Text>
-          </TouchableOpacity> */}
         
 
           <View>
