@@ -111,16 +111,9 @@ const MainRightButtons : React.FC<NavigationProps> = ({navigation}) => {
   const [modalVisible, setModalVisible] = useRecoilState<ModalParams>(centerModalState);
   const [modalContent, setModalContent] = useState('');
 
-  //정산하기 모달
-  // const endTravelModal = () => {
-  //   return(
-  //     <CenterModal modalTitle='정산' content={`정산하시겠습니까?\n정산 후 동행통장 기록이 종료됩니다.`}/>
-  //   )
-  // }
-
   return (
     <>
-    {modalVisible.open&&<TwoBtnModal modalTitle='정산' content={`정산하시겠습니까?\n정산 후 동행통장 기록이 종료됩니다.`}/>}
+    {modalVisible.open&&<View style={tw`-z-50`}><TwoBtnModal modalTitle='정산' content={`정산하시겠습니까?\n동행통장 기록이 종료됩니다.`}/></View>}
     <View style={tw `flex-row`}>
       <Pressable style={tw `ml-3 items-center`} onPress={()=>{navigation.navigate("InviteFriends")}}>
       <Ionicons name="person-add" size={20.5} color="black" />

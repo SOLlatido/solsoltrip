@@ -18,7 +18,7 @@ function TwoBtnModal({ modalTitle, content}: CenterModalProps){
 
     return(
         // 전체 배경
-        <View style={tw`flex-1`}>
+        <View style={tw`z-50 flex-1`}>
 
             <Modal
                 // animationType="slide"
@@ -26,12 +26,13 @@ function TwoBtnModal({ modalTitle, content}: CenterModalProps){
                 visible={modalVisible.open}
                 onRequestClose={() => {
                     setModalVisible(!modalVisible.open);
-                }}>
+                }}
+            >
                 {/* 실제 모달 위치 조정 */}
-                <View style={tw`bg-white/50 w-full h-full flex-1 justify-center items-center mt-22 shadow-md`}>
+                <View style={tw`bg-black/50 w-full h-full flex-1 justify-center items-center shadow-md`}>
 
                     {/* 실제 모달 크기 조절*/}
-                    <View style={tw`m-20 bg-white shadow-[#000] w-5/6 h-2/6`}>
+                    <View style={tw`m-20 bg-white shadow-[#000] w-5/6 h-2/6 rounded-lg`}>
 
                             <View style={tw `flex-2`}>
                                 <Text style={tw`mb-5 text-left text-3xl font-black p-5`}>{modalTitle}</Text>
@@ -53,7 +54,7 @@ function TwoBtnModal({ modalTitle, content}: CenterModalProps){
                                         return newValue;
                                     })}>
                                         <View style={tw`text-white bg-[#7B5AF3]`}>
-                                            <Text style={tw`text-white font-bold text-center text-xl pt-2`}>취소</Text>
+                                            <Text style={tw`text-white font-bold text-center text-xl mt-3`}>취소</Text>
                                         </View>
                                 </Pressable>
 
@@ -68,7 +69,7 @@ function TwoBtnModal({ modalTitle, content}: CenterModalProps){
                                         return newValue;
                                     })}>
                                         <View style={tw`text-white bg-[#7B5AF3] rounded-br-lg`}>
-                                            <Text style={tw`text-white font-bold text-center text-xl pt-2`}>정산</Text>
+                                            <Text style={tw`text-white font-bold text-center text-xl pt-3`}>정산</Text>
                                         </View>
                                 </Pressable>
                             </View>
