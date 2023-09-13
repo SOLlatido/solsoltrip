@@ -20,4 +20,11 @@ public class SettlementRequestDto {
     public record showTripResult(
             @NotNull
             Long accompanySeq) {}
+
+    public record settleUp(
+            @NotNull
+            Long accompanySeq,
+
+            @NotNull
+            Long memberSeq) {}
 }
