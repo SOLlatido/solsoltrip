@@ -100,15 +100,6 @@ const PointButton:React.FC<NavigationProps> = ({navigation}) => {
   )
 }
 
-//메인화면 버튼 컴포넌트
-const MainButton:React.FC<NavigationProps> = ({navigation}) => {
-  return (
-  <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
-    <AntDesign name="home" size={26} color="black" />
-  </Pressable>
-  )
-};
-
 //지출 상세 수정 완료 버튼 컴포넌트
 const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
