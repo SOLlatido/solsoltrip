@@ -33,7 +33,9 @@ import EventMap from '../screens/EventMap';
 import MainTabNavigator from './MainTabNavigator'
 import EndTimeOurStory from '../screens/EndTimeOurStory';
 import MyPointList from '../screens/MyPointList';
+import Report from '../screens/Report';
 import TwoBtnModal from '../components/Modals/TwoBtnModal';
+
 
 // 이미지
 import coin from "../assets/icons/coin.png";
@@ -45,6 +47,15 @@ type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
 
+
+//메인화면 버튼 컴포넌트
+const MainButton:React.FC<NavigationProps> = ({navigation}) => {
+  return (
+  <Pressable onPress={()=>{navigation.navigate("MyAccounts")}}>
+    <AntDesign name="home" size={26} color="black" />
+  </Pressable>
+  )
+};
 
 //뒤로가기 버튼 화살표 컴포넌트
 const BackButton: React.FC = () => {
@@ -97,6 +108,7 @@ const MainButton:React.FC<NavigationProps> = ({navigation}) => {
   </Pressable>
   )
 };
+
 //지출 상세 수정 완료 버튼 컴포넌트
 const ExpenseEditButton:React.FC<NavigationProps> = ({navigation}) => {
   return (
@@ -143,7 +155,7 @@ const AppNavigation = () => {
             name="MainTabNavigator"
             component={MainTabNavigator} // Use MainTabNavigator as the component
             options={{
-              headerTitle: '', // You can set the header title if needed
+              headerTitle: '',
               headerTransparent: true,
               headerBackTitleVisible: false,
               headerLeft: () => <MainButton navigation={useNavigation()} />,
@@ -314,7 +326,7 @@ const AppNavigation = () => {
             headerTransparent : true, 
             headerBackTitleVisible : false,
             headerLeft: () => (
-              <BackButton navigation={useNavigation()}></BackButton>
+              <BackButton></BackButton>
             )
           }}
         />
