@@ -108,7 +108,9 @@ public class TripService {
                 .accompany(accompany)
                 .isManager(true)
                 .isPaid(false)
-                .expenditure(0)
+                .settlement(0)
+                .individualDeposit(0)
+                .individualWithdraw(0)
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);
