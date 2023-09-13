@@ -1,15 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, ImageBackground, TextInput} from 'react-native'
 import tw from "twrnc";
 import LongButton from '../components/ButtonItems/LongButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import aurora from '../assets/images/aurora_background.png';
+import LoadingAnimation from "../components/Animation/LoadingAnimation_morning";
+
 type NavigationProps = {
     navigation: StackNavigationProp<any>;
   };
 const Login:React.FC<NavigationProps> = ({navigation}) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
   const handleMain = () =>{
     navigation.goBack();
   }
@@ -20,8 +23,23 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
     navigation.navigate("SignUp");
   }
 
+  // 로딩 페이지를 제어하고 있습니다.
+  useEffect(()=>{
+    async function prepare(){
+      try{
+        await new Promise(resolve => setTimeout(resolve,2000));
+        setLoading(false);
+      } catch(e){
+        console.log(e);
+      }
+    }
+
+    prepare();
+  },[])
+
   return (
     <>
+    {loading?<LoadingAnimation/>:
     <View style={tw `flex flex-1 items-center justify-center`}>
       <ImageBackground source={aurora} style={tw `w-full h-full absolute`}></ImageBackground>
 
@@ -61,7 +79,7 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
       {/* <LongButton content='메인으로' onPress={handleMain}></LongButton> */}
       <LongButton content='로그인' onPress={handleLogin}></LongButton>
   
-    </View>
+    </View>}
     </>
   )
 }

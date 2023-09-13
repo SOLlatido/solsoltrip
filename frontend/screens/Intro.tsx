@@ -88,10 +88,6 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       </View>
 
       <LongButton content="시작하기" onPress={handleNavigate} />
-        <View style={tw `mb-10`}>
-            <Button onPress={()=>{navigation.navigate("EventMap")}} title='산하하던거'></Button>
-        </View>
-
     </View>
   );
 }

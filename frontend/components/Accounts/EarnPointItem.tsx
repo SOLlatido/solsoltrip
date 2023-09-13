@@ -10,7 +10,7 @@ const EarnPointItem = () => {
 
   return (
     
-    <View style={tw.style('bg-[#F3F0FB] mb-3 rounded-2 h-19 flex-row p-3')}>  
+    <View style={tw.style('bg-[#DFEEF3]/40 mb-3 rounded-2 h-19 flex-row p-3')}>  
       <View style={tw.style('flex-3 p-2 justify-center')}>
         <Text style={tw `font-bold text-[#333] mb-1`} numberOfLines={1} ellipsizeMode='tail'>{expenseTitle}</Text>
         <Text style={tw `text-xs`} numberOfLines={1} ellipsizeMode='tail'>{date}</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, SafeAreaView, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -11,6 +11,7 @@ import starrynight from '../assets/images/starrynight_bg.jpg';
 import EndTimeGraph from '../components/Graph/EndTimeGraph';
 import LongButton from '../components/ButtonItems/LongButton';
 import EndTimeBarGraph from '../components/Graph/EndTimeBarGraph';
+import LoadingAnimation_night from "../components/Animation/LoadingAnimation_night";
 
 type EndTimeHistoryProps = {
   navigation: StackNavigationProp<any>;
@@ -20,9 +21,24 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [animation1, setAnimation1] = useState(null);
   const [animation2, setAnimation2] = useState(null);
   const [animation3, setAnimation3] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    async function prepare(){
+      try{
+        await new Promise(resolve => setTimeout(resolve,2000));
+        setLoading(false);
+      } catch(e){
+        console.log(e);
+      }
+    }
+
+    prepare();
+  },[])
+  
+
 
   const handleEndTimeHistory = () => {
-    console.log("11");
     navigation.navigate("EndTimeSavingMoney");
   }
 
@@ -39,46 +55,48 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   }, [animation3]);
 
   return (
-    <View style={tw `flex-1 bg-white w-full`}>
-      <ImageBackground source={starrynight} style={tw `w-full h-full absolute`}></ImageBackground>
+    <>
+      {loading?<LoadingAnimation_night/>:<View style={tw `flex-1 bg-white w-full`}>
+        <ImageBackground source={starrynight} style={tw `w-full h-full absolute`}></ImageBackground>
 
-      {/* 동행통장 지출 금액 */}
-      <Animatable.View
-        ref={(ref) => setAnimation1(ref)}
-        style={tw `flex-3`}
-      >
-        <Animatable.View style={tw `flex-1 items-center mt-10`}>
-          <Text style={tw `text-xl text-white mt-10`}>동행통장 지출 금액</Text>
-          <Text style={tw `text-5xl font-bold text-white`}>980,000원</Text>
+        {/* 동행통장 지출 금액 */}
+        <Animatable.View
+          ref={(ref) => setAnimation1(ref)}
+          style={tw `flex-3`}
+        >
+          <Animatable.View style={tw `flex-1 items-center mt-10`}>
+            <Text style={tw `text-xl text-white mt-10`}>동행통장 지출 금액</Text>
+            <Text style={tw `text-5xl font-bold text-white`}>980,000원</Text>
+          </Animatable.View>
         </Animatable.View>
-      </Animatable.View>
 
-      {/* 스크롤 영역 */}
-      <View style={tw `flex-10`}>
-        <SafeAreaView>
-          <ScrollView>
-            {/* 그래프 */}
-            <Animatable.View
-              ref={(ref) => setAnimation2(ref)}
-              style={tw `flex-1`}
-            >
-              <EndTimeGraph />
-            </Animatable.View>
+        {/* 스크롤 영역 */}
+        <View style={tw `flex-10`}>
+          <SafeAreaView>
+            <ScrollView>
+              {/* 그래프 */}
+              <Animatable.View
+                ref={(ref) => setAnimation2(ref)}
+                style={tw `flex-1`}
+              >
+                <EndTimeGraph />
+              </Animatable.View>
 
-            <Animatable.View
-              ref={(ref) => setAnimation3(ref)}
-              style={tw `flex-1`}
-            >
-              <EndTimeBarGraph />
-            </Animatable.View>
-          </ScrollView>
-        </SafeAreaView>
-      </View>
+              <Animatable.View
+                ref={(ref) => setAnimation3(ref)}
+                style={tw `flex-1`}
+              >
+                <EndTimeBarGraph />
+              </Animatable.View>
+            </ScrollView>
+          </SafeAreaView>
+        </View>
 
-      <View style={tw `flex-0.7 flex-row items-end justify-center`}>
-        <LongButton content='다음' onPress={handleEndTimeHistory} />
-      </View>
-    </View>
+        <View style={tw `flex-0.7 flex-row items-end justify-center`}>
+          <LongButton content='다음' onPress={handleEndTimeHistory} />
+        </View>
+      </View>}
+    </>
   );
 }
 
