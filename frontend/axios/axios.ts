@@ -145,6 +145,24 @@ function endTrip(){
         // }
     }
 
+    //4. 최종 여행 기록 안내 페이지 1회 확인
+    async function EndTripHistoryCheck(data:EndTripRequest): Promise<void> {
+        try {
+
+            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`api/settlement/checked`, data);
+            const result: EndTripResponse = response.data; //{status, message}
+            
+            if(result){
+              console.log(result.message);
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            const err = error as AxiosError
+            console.log(err);
+        }
+    }
+
 
 }
 
