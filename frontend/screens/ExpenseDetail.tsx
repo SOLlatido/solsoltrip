@@ -49,11 +49,26 @@ const ExpenseDetail = ({route}) => {
     },
   ]
   const FriendsExpenses = (props : {friendList:any}) => {
-    const [expenses, setExpenses] = useState(friendList.map((friend) => friend.expense));
-    const [participants, setParticipants] = useState(friendList.map(() => true));
+    const [expenses, setExpenses] = useState(
+      friendList.map((friend) => friend.expense)
+    );
+    const [showExpenses, setShowExpenses] = useState(
+      friendList.map((friend) => Math.ceil(friend.expense))
+    );
+    const [participants, setParticipants] = useState(
+      friendList.map(() => true)
+    );
     const [toggledFriendIndex, setToggledFriendIndex] = useState(-1);
-    const totalExpense =  32000
-    const editParticipants = (index) => {
+    const totalExpense = 32000;
+  
+    const editParticipants = (index: number) => {
+      if (participants[index]) {
+        if (participants.filter((p) => p == true).length === 1) {
+          alert("한 명 이상이 선택되어야 합니다.");
+          return;
+        }
+      }
+      console.log(participants.filter((p) => p == true).length);
       const updatedParticipants = [...participants];
       updatedParticipants[index] = !participants[index];
       setParticipants(updatedParticipants);
@@ -66,64 +81,62 @@ const ExpenseDetail = ({route}) => {
         const updatedExpenses = [...expenses];
         updatedExpenses[index] = value;
         setExpenses(updatedExpenses);
-      } else {
-        // If the friend is not participating, set the input value to zero
-        const updatedExpenses = [...expenses];
-        updatedExpenses[index] = '0'; // Set the input value to '0'
-        setExpenses(updatedExpenses);
+        setShowExpenses(updatedExpenses);
       }
     };
   
     useEffect(() => {
-      //친구가 선택되었
       if (toggledFriendIndex !== -1) {
         const participatingFriends = participants.filter((participant) => participant);
         const totalParticipants = participatingFriends.length;
         const distributedExpense = totalExpense / totalParticipants;
+        console.log(distributedExpense);
         const updatedExpenses = expenses.map((expense, i) => {
           if (participants[i]) {
             return distributedExpense;
           } else {
-            return 0
+            return 0; // Keep the original value for non-participating friends
           }
-        })
-        console.log(updatedExpenses);
-        if(updatedExpenses){
+        });
+        if (updatedExpenses) {
           setExpenses(updatedExpenses);
+          setShowExpenses(updatedExpenses);
         }
+        console.log(updatedExpenses);
+        console.log(showExpenses);
         setToggledFriendIndex(-1);
-      } 
+      }
     }, [participants, toggledFriendIndex]);
   
     return (
       <View style={tw`flex-1 p-4 justify-center`}>
         {friendList.map((friend, index) => (
           <View key={index} style={tw`flex-row items-center mb-4`}>
-            <Text style={tw`flex-1 text-lg`}>{friend.name}</Text>
+            <Text style={tw`flex-1 text-lg font-bold text-[#555]`}>
+              {friend.name}
+            </Text>
             <TextInput
+              editable={participants[index]} // Make the input editable only for participating friends
               style={tw`flex-1 h-10 border border-gray-400 rounded px-2`}
-              value={expenses[index].toString()}
+              value={showExpenses[index].toString()}
               onChangeText={(value) => handleExpenseChange(value, index)}
               keyboardType="numeric"
             />
             <TouchableOpacity
-              style={tw`w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center ml-2`}
+              style={[
+                tw`w-9 h-7 rounded-full flex items-center justify-center ml-2`,
+                participants[index]
+                  ? tw`bg-[#8273BE]`
+                  : tw`bg-transparent border-[0.3] border-[#8273BE]`
+              ]}
               onPress={() => editParticipants(index)}
             >
               <Text style={tw`text-white`}>{participants[index] ? '✓' : ''}</Text>
             </TouchableOpacity>
           </View>
         ))}
-        <TouchableOpacity
-          style={tw`bg-purple-600 rounded p-3 mt-4`}
-          // onPress={() => handleSaveExpenses()}
-        >
-          <Text style={tw`text-white text-lg font-bold`}>Save Expenses</Text>
-        </TouchableOpacity>
       </View>
     );
-
-
 
 
 
@@ -227,7 +240,7 @@ const ExpenseDetail = ({route}) => {
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     style={tw`mt-10 p-7 mb-10 flex-1`}>
-    <ScrollView style={tw ``}>
+    <ScrollView style={tw `flex-1`}>
     <View style={tw `flex-1 items-center p-3 justify-center rounded-3 mb-7 bg-[#E4E0F0]`}>
     <Text style={tw `font-bold text-base`}>{expenseTitle}</Text>
     <Text style={tw `font-bold text-2xl`}>{expense}</Text>
@@ -256,8 +269,8 @@ const ExpenseDetail = ({route}) => {
                   backgroundColor: '#ddd',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderWidth: selectedCategory === index ? 2 : 0, // Add a strong purple border for the selected category
-                  borderColor: '#7B5AF3', // Purple border color
+                  borderWidth: selectedCategory === index ? 2 : 0, 
+                  borderColor: '#7B5AF3', 
                 },
               ]}
             >
@@ -293,6 +306,9 @@ const ExpenseDetail = ({route}) => {
       <Text>{expense}</Text> */}
       {/* Add more details as needed */}
     </ScrollView>
+      <TouchableOpacity style={tw `p-2 bg-[#7B5AF3]/100 rounded-2 items-center mx-15 mt-2`}>
+        <Text style={tw `text-base font-bold text-white`}>저장하기</Text>
+       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
   
