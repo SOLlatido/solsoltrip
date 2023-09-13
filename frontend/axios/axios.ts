@@ -53,6 +53,7 @@ function event(){
             }
 
         } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
             const err = error as AxiosError
             console.log(err);
         }
@@ -72,7 +73,7 @@ function event(){
             }
             
         } catch (error) {
-            Alert.alert("죄송합니다. 빠른 시일 내 조치를 취하겠습니다.");
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
             const err = error as AxiosError
             console.log(err);
         }
@@ -90,21 +91,58 @@ function endTrip(){
 
     const [endTrip, setEndTrip] = useRecoilState(endTripState);
 
-    //1. 이벤트 장소 설정
-    async function setEventArea(data:EventAreaData): Promise<void> {
+    //1. 종료시간 재설정
+    async function setEventArea(data:EndTripEndTimeResetRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EventResponse> = await http.post<EventResponse>(`/api/event/regist`, data);
-            const result: EventResponse = response.data; //{status, message}
+            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/reset`, data);
+            const result: EndTripResponse = response.data; //{status, message}
             
             if(result){
               console.log(result.message);
             }
 
         } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
             const err = error as AxiosError
             console.log(err);
         }
+    }
+
+    //2. 수동 종료
+    async function manualEndTrip(data:EndTripRequest): Promise<void> {
+        try {
+
+            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/manual`, data);
+            const result: EndTripResponse = response.data; //{status, message}
+            
+            if(result){
+              console.log(result.message);
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            const err = error as AxiosError
+            console.log(err);
+        }
+    }
+
+    //3. 최종 여행 기록 안내 페이지 -> 아직 백엔드에 적용 안됨
+    async function getEndTripHistory(data:EndTripRequest): Promise<void> {
+        // try {
+
+        //     const response: AxiosResponse<EndTripHistoryResponse|EndTripResponse> = await http.post<EndTripHistoryResponse|EndTripResponse>(`/api/settlement/resultl`, data);
+        //     const result: EndTripHistoryResponse|EndTripResponse = response.data; //{status, message}
+            
+        //     if(result){
+        //       console.log(result.message);
+        //     }
+
+        // } catch (error) {
+        //     Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        //     const err = error as AxiosError
+        //     console.log(err);
+        // }
     }
 
 
@@ -148,3 +186,25 @@ type EventArrivalResponse = {
 type ResponseVOList = {
     name : number,
 }
+
+
+// 여행종료
+type EndTripRequest = {
+    accompanySeq : number,
+}
+type EndTripResponse = {
+    status : number,
+    message : string,
+}
+
+//1. 종료시간 재설정
+type EndTripEndTimeResetRequest = EndTripRequest& {
+	endDate : string,
+}
+
+
+//3. 최종 여행 기록 안내 페이지
+// type EndTripHistoryResponse = EndTripResponse& {
+// 	userId: number,
+// 	name : string,
+// }
