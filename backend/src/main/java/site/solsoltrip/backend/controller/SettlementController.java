@@ -37,4 +37,11 @@ public class SettlementController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @PatchMapping("/settle")
+    public ResponseEntity<SettlementResponseDto.settleUp> settleUp(final SettlementRequestDto.settleUp requestDto) {
+        final SettlementResponseDto.settleUp responseDto = settlementService.settleUp(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
