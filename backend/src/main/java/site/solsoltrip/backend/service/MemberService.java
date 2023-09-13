@@ -13,7 +13,7 @@ import site.solsoltrip.backend.repository.MemberRepository;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -29,7 +29,7 @@ public class MemberService {
                 .uuid(requestDto.uuid())
                 .name(requestDto.name())
                 .point(0)
-                .role(Role.USER)
+                .role(Role.USER.name())
                 .build();
 
         memberRepository.save(member);
@@ -70,7 +70,6 @@ public class MemberService {
                         .build();
     }
 
-    @Transactional
     public MemberResponseDto.KakaoTokenInfo kakaoSync(final String code, final Long state) {
         final MemberResponseDto.KakaoInfo userInfo = kakaoOAuth2.kakaoSync(code);
 

@@ -23,7 +23,7 @@ public class Member {
 
     private int point;
 
-    private Role role;
+    private String role;
 
     private String kakaoEmail;
 
