@@ -181,6 +181,25 @@ function endTrip(){
         }
     }
 
+    //6. 남은 금액 정산
+    async function EndTripSettle(data:EndTripSettleRequest): Promise<void> {
+        try {
+
+            const response: AxiosResponse<EndTripSettleResponse|EndTripResponse> = await http.patch<EndTripSettleResponse|EndTripResponse>(`/api/settlement/settle`, data);
+            const result: EndTripSettleResponse|EndTripResponse = response.data; //{status, message}
+            
+            if(result){
+              console.log(result.message);
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            const err = error as AxiosError
+            console.log(err);
+        }
+    }
+
+
 
 }
 
@@ -247,10 +266,29 @@ type EndTripEndTimeResetRequest = EndTripRequest& {
 
 //5. 최종 여행 타임라인 페이지
 type EndTripTimeLineResponse = EndTripResponse & {
-    list : SettlementTimelineResponseDto
+    list : SettlementTimelineResponseDto[]
 }
 type SettlementTimelineResponseDto = {
     picture: string,
     memo : string,
     createdDate : string, 
+}
+
+//6. 남은 금액 정산
+type EndTripSettleRequest = EndTripRequest & {
+    memberSeq : number,
+}
+
+type EndTripSettleResponse = EndTripResponse & {
+    left : number,//전체 남은 금액 숫자
+    formattedLeft : string, //전체 남은 금액 규격 표시 (,)
+    settlementList:SettlementList[]
+}
+
+type SettlementList = { //각 참여자의 정산 금액
+    name : string,
+    isManager : boolean,
+    isPositive : boolean,
+    settlement : number,
+    formattedSettlement : string
 }
