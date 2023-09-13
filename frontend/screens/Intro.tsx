@@ -20,6 +20,7 @@ import sol from '../assets/images/character_sol.png';
 import solGo from "../assets/images/sol_go_main.png";
 import CenterModal from '../components/Modals/CenterModal';
 import Mypage from './Mypage';
+import EventMap from './EventMap';
 
 import { useRecoilState} from 'recoil';
 import {centerModalState} from '../recoil/centerModal/atom'
@@ -87,10 +88,6 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       </View>
 
       <LongButton content="시작하기" onPress={handleNavigate} />
-        <View style={tw `mb-10`}>
-            <Button onPress={()=>{navigation.navigate("MyPointList")}} title='산하하던거'></Button>
-        </View>
-
     </View>
   );
 }

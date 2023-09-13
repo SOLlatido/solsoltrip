@@ -45,7 +45,7 @@ const MyPointList = () => {
             ></PointItem>
         </View>
             {/* 내용이 들어가는 View */}
-            <View style={tw `-mt-20 flex-col w-full flex-1 bg-white rounded-7`}> 
+            <View style={tw`-mt-20 flex-col w-full flex-1 bg-white rounded-t-7`}> 
                 {/* 검색 */}
                 <View style={tw `mt-19 w-7/8 self-center`}>
                     <PointSearchBar onChangeText={handleSearch} value={searchText} />

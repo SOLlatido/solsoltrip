@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MainPage from '../screens/MainPage';
 import Report from '../screens/Report';
-import Event from '../screens/Event';
-import Mypage from '../screens/Mypage';
+import Event from '../screens/EventMap';
+import MyPointList from '../screens/MyPointList';
 import {Ionicons} from '@expo/vector-icons';
 import { Feather, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { Text, Pressable, View, Alert } from 'react-native';
@@ -56,8 +56,8 @@ const MainTabNavigator = () => {
               label = '그래프';
             } else if (route.name === 'Event') {
               label = '이벤트';
-            } else if (route.name === 'MyPage') {
-              label = '마이페이지';
+            } else if (route.name === 'MyPointList') {
+              label = '상생포인트';
             }
   
             return (
@@ -80,7 +80,7 @@ const MainTabNavigator = () => {
               iconName = focused ? 'document' : 'document-outline';
             } else if (route.name === 'Event') {
               iconName = focused ? 'gift' : 'gift-outline';
-            } else if (route.name === 'MyPage') {
+            } else if (route.name === 'MyPointList') {
                 iconName = focused? 'person' : 'person-outline';
             }
   
@@ -96,7 +96,7 @@ const MainTabNavigator = () => {
           options={{ headerShown: false }}
         />
         <MainTab.Screen name="Event" component={Event} />
-        <MainTab.Screen name="MyPage" component={Mypage} />
+        <MainTab.Screen name="MyPointList" component={MyPointList} />
       </MainTab.Navigator>
     );
   };

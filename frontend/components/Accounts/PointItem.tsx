@@ -17,7 +17,7 @@ const PointItem = (props : { accountNumber:string, point:number }) => {
 
         <View style={tw`flex justify-between pb-3`}>
             <Text style={tw`text-[#fff]`}>{accountNumber}</Text>
-            <Text style={tw`text-[#fff] text-lg font-bold`}>마이신한포인트</Text>
+            <Text style={tw`text-[#fff] text-lg font-bold`}>신한 지역상생 포인트</Text>
         </View>
 
         <View style={tw`flex justify-between`}>
