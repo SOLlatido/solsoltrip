@@ -149,8 +149,26 @@ function endTrip(){
     async function EndTripHistoryCheck(data:EndTripRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`api/settlement/checked`, data);
+            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/checked`, data);
             const result: EndTripResponse = response.data; //{status, message}
+            
+            if(result){
+              console.log(result.message);
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            const err = error as AxiosError
+            console.log(err);
+        }
+    }
+
+    //5. 최종 여행 타임라인 페이지
+    async function EndTripTimeLine(data:EndTripRequest): Promise<void> {
+        try {
+
+            const response: AxiosResponse<EndTripTimeLineResponse|EndTripResponse> = await http.patch<EndTripTimeLineResponse|EndTripResponse>(`/api/settlement/timeline`, data);
+            const result: EndTripTimeLineResponse|EndTripResponse = response.data; //{status, message}
             
             if(result){
               console.log(result.message);
@@ -226,3 +244,13 @@ type EndTripEndTimeResetRequest = EndTripRequest& {
 // 	userId: number,
 // 	name : string,
 // }
+
+//5. 최종 여행 타임라인 페이지
+type EndTripTimeLineResponse = EndTripResponse & {
+    list : SettlementTimelineResponseDto
+}
+type SettlementTimelineResponseDto = {
+    picture: string,
+    memo : string,
+    createdDate : string, 
+}
