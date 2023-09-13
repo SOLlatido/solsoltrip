@@ -298,9 +298,6 @@ const AppNavigation = () => {
             headerLeft: () => (
               <CancelButton></CancelButton>
             ),
-            headerRight:()=>(
-              <ExpenseEditButton navigation={useNavigation()}></ExpenseEditButton>
-            )
           }}
         >
           {(props) => <ExpenseDetail {...props}></ExpenseDetail>}
