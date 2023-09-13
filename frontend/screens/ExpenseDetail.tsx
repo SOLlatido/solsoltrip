@@ -48,167 +48,129 @@ const ExpenseDetail = ({route}) => {
       expense : 8000,
     },
   ]
+  const [expenses, setExpenses] = useState(
+    friendList.map((friend) => friend.expense)
+  );
+  const [showExpenses, setShowExpenses] = useState(
+    friendList.map((friend) => Math.ceil(friend.expense))
+  );
+  const [participants, setParticipants] = useState(
+    friendList.map(() => true)
+  );
+  const [toggledFriendIndex, setToggledFriendIndex] = useState(-1);
+  const totalExpense = friendList.reduce((acc, friend) => {
+    return acc + friend.expense;
+  }, 0);
+  const [calculated, setCalculated] = useState(totalExpense);
+
   const FriendsExpenses = (props : {friendList:any}) => {
-    const [expenses, setExpenses] = useState(friendList.map((friend) => friend.expense));
-    const [participants, setParticipants] = useState(friendList.map(() => true));
-    const [toggledFriendIndex, setToggledFriendIndex] = useState(-1);
-    const totalExpense =  32000
-    const editParticipants = (index) => {
+  
+    const editParticipants = (index: number) => {
+      if (participants[index]) {
+        if (participants.filter((p) => p == true).length === 1) {
+          alert("한 명 이상이 선택되어야 합니다.");
+          return;
+        }
+      }
       const updatedParticipants = [...participants];
       updatedParticipants[index] = !participants[index];
       setParticipants(updatedParticipants);
       setToggledFriendIndex(index);
     };
   
-    const handleExpenseChange = (value, index) => {
+    const handleExpenseChange = (value:number, index:number) => {
       if (participants[index]) {
-        // Only update the expenses if the friend is participating
-        const updatedExpenses = [...expenses];
+        console.log(value, index);
+        const updatedExpenses = [...showExpenses];
         updatedExpenses[index] = value;
+        let sum = updatedExpenses.reduce((acc,b) => Number(acc)+Number(b));
+        console.log("sum", sum)
+        setCalculated(Number(sum).toFixed(2) as unknown as number);
         setExpenses(updatedExpenses);
-      } else {
-        // If the friend is not participating, set the input value to zero
-        const updatedExpenses = [...expenses];
-        updatedExpenses[index] = '0'; // Set the input value to '0'
-        setExpenses(updatedExpenses);
+        console.log(updatedExpenses);
+        setShowExpenses(updatedExpenses);
       }
     };
   
     useEffect(() => {
-      //친구가 선택되었
       if (toggledFriendIndex !== -1) {
         const participatingFriends = participants.filter((participant) => participant);
         const totalParticipants = participatingFriends.length;
         const distributedExpense = totalExpense / totalParticipants;
+
         const updatedExpenses = expenses.map((expense, i) => {
           if (participants[i]) {
             return distributedExpense;
           } else {
-            return 0
+            return 0; 
           }
-        })
-        console.log(updatedExpenses);
-        if(updatedExpenses){
+        });
+        const updatedShowExpenses = expenses.map((expense, i) => {
+          if (participants[i]) {
+            return distributedExpense.toFixed(2)
+          } else {
+            return 0; 
+          }
+        });
+        //실제 서버로 보낼 값에 대한 합계
+        let calculation = updatedExpenses.reduce((acc, a) => acc+a)
+        setCalculated(calculation)
+        console.log(calculated);
+
+        if (updatedExpenses) {
           setExpenses(updatedExpenses);
+          setShowExpenses(updatedShowExpenses);
         }
+        console.log("update", updatedExpenses);
+        console.log(showExpenses);
         setToggledFriendIndex(-1);
-      } 
-    }, [participants, toggledFriendIndex]);
+      }
+    }, [participants, toggledFriendIndex, calculated]);
   
     return (
       <View style={tw`flex-1 p-4 justify-center`}>
         {friendList.map((friend, index) => (
           <View key={index} style={tw`flex-row items-center mb-4`}>
-            <Text style={tw`flex-1 text-lg`}>{friend.name}</Text>
+            <Text style={tw`flex-1 text-lg font-bold text-[#333]`}>
+              {friend.name}
+            </Text>
             <TextInput
+              editable={participants[index]}
               style={tw`flex-1 h-10 border border-gray-400 rounded px-2`}
-              value={expenses[index].toString()}
+              value={showExpenses[index].toString()}
               onChangeText={(value) => handleExpenseChange(value, index)}
               keyboardType="numeric"
             />
             <TouchableOpacity
-              style={tw`w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center ml-2`}
+              style={[
+                tw`w-9 h-7 rounded-full flex items-center justify-center ml-2`,
+                participants[index]
+                  ? tw`bg-[#7459d9]/80`
+                  : tw`bg-transparent border-[0.3] border-[#7459d9]`
+              ]}
               onPress={() => editParticipants(index)}
             >
               <Text style={tw`text-white`}>{participants[index] ? '✓' : ''}</Text>
             </TouchableOpacity>
           </View>
         ))}
-        <TouchableOpacity
-          style={tw`bg-purple-600 rounded p-3 mt-4`}
-          // onPress={() => handleSaveExpenses()}
-        >
-          <Text style={tw`text-white text-lg font-bold`}>Save Expenses</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    <View>
+    <View style={tw `items-center p-3 px-7 bg-[#7459d9]/10 rounded-2`}>
+        <View style={tw `flex-row mb-2`}>
+          <Text style={tw `font-bold`} >실제 지출</Text>
+          <View style={tw `w-10`}></View>
+          <Text style={tw `font-bold text-[#443]`} >{totalExpense} 원</Text>
+        </View>
 
-
-
-
-
-
-
-    // const friendsList = ['석다영', '신산하', '이승현', '김민식'];
-    // const [selectedNames, setSelectedNames] = useState(friendsList);
-    // const defaultExpense = 32000; // You can set your desired default expense here
-    // const initialExpenses = friendsList.reduce((acc, friendName) => {
-    //   acc[friendName] = defaultExpense / friendsList.length;
-    //   return acc;
-    // }, {});
-    // const [shouldRenderInput, setShouldRenderInput] = useState(false);
-    // // const [expenses, setExpenses] = useState(initialExpenses)
-    // const [expenses, setExpenses] = useState(() => {
-    //   const dividedExpense = defaultExpense / friendsList.length;
-    //   const initialExpenses = {};
-    //   friendsList.forEach((friendName) => {
-    //     initialExpenses[friendName] = dividedExpense;
-    //   });
-    //   return initialExpenses;
-    // });
-    // const handleExpenseChange = (friendName, value) => {
-    //     if (selectedNames.includes(friendName)) {
-    //       setExpenses({ ...expenses, [friendName]: value });
-    //     } else {
-    //       setExpenses({ ...expenses, [friendName]: '0' }); // Set the expense to 0 when the circle is empty
-    //     }
-    //   };
-
-    // const toggleFriendSelection = (friendName) => {
-    //     if (selectedNames.includes(friendName)) {
-    //         // If the friend is already selected, remove them
-    //         setSelectedNames(selectedNames.filter((name) => name !== friendName));
-    //       } else {
-    //         // If the friend is not selected, add them
-    //         setSelectedNames([...selectedNames, friendName]);
-    //       }
-    // };
-        
-    // useEffect(() => {
-    //     const divided = (defaultExpense / selectedNames.length).toString()
-    //     console.log(selectedNames);
-    //     friendsList.forEach((friendName) => {
-    //         if(selectedNames.includes(friendName)){
-    //             handleExpenseChange(friendName, divided)
-    //         } else {
-    //             handleExpenseChange(friendName, "0")
-    //         }
-    //     })
- 
-    //     setShouldRenderInput(true);
-    //     console.log(expenses);
-    //   }, [selectedNames]);
-  
-    // return (
-    //   <View >
-    //     {friendsList.map((friendName) => (
-    //       <View key={friendName} style={tw`flex-row justify-between items-center mb-3`}>
-    //         <View style={tw`flex-row items-center`}>
-    //           <Text style={tw`text-base mr-4`}>{friendName}</Text>
-    //           {shouldRenderInput && (
-    //           <TextInput
-    //             style={tw`w-40 border-[0.3] border-[#ddd] rounded-2 h-13 px-3`}
-    //             onChangeText={(value) => handleExpenseChange(friendName, value)}
-    //             value={expenses[friendName].toString()}
-    //             keyboardType="numeric"
-    //           />
-    //         )}
-    //         </View>
-    //         <View style={tw`flex-row items-center`}>
-    //           <View
-    //             style={[
-    //               tw`w-6 h-6 ml-2 rounded-full border-[0.5] border-[#999]`,
-    //               { backgroundColor: selectedNames.includes(friendName) ? 'purple' : 'transparent' },
-    //             ]}
-    //             onTouchStart={() => 
-    //               toggleFriendSelection(friendName)
-    //             }
-    //           />
-    //         </View>
-    //       </View>
-    //     ))}
-    //   </View>
-    // );
+        <View style={tw `flex-row `}>
+          <Text style={tw `font-bold text-[#7459d9]`} >입력한 합계</Text>
+          <View style={tw `w-6.5`}></View>
+          <Text style={tw `font-bold text-[#7459d9]`} >{calculated} 원</Text>
+        </View>
+    </View>
+    </View>
+  </View>
+  )
   };
 
   const [img, setImg] = useState(imageSource);
@@ -223,11 +185,16 @@ const ExpenseDetail = ({route}) => {
     } else {
     }
   }
+  const handleSave = () => {
+    if(calculated > totalExpense + 0.1 || calculated < totalExpense-0.1){
+      alert("실제 지출과 입력한 합계가 다릅니다.\n (오차범위 0.1까지 허용)")
+    }
+  }
   return (
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     style={tw`mt-10 p-7 mb-10 flex-1`}>
-    <ScrollView style={tw ``}>
+    <ScrollView style={tw `flex-1`}>
     <View style={tw `flex-1 items-center p-3 justify-center rounded-3 mb-7 bg-[#E4E0F0]`}>
     <Text style={tw `font-bold text-base`}>{expenseTitle}</Text>
     <Text style={tw `font-bold text-2xl`}>{expense}</Text>
@@ -256,8 +223,8 @@ const ExpenseDetail = ({route}) => {
                   backgroundColor: '#ddd',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderWidth: selectedCategory === index ? 2 : 0, // Add a strong purple border for the selected category
-                  borderColor: '#7B5AF3', // Purple border color
+                  borderWidth: selectedCategory === index ? 2 : 0, 
+                  borderColor: '#7B5AF3', 
                 },
               ]}
             >
@@ -293,9 +260,13 @@ const ExpenseDetail = ({route}) => {
       <Text>{expense}</Text> */}
       {/* Add more details as needed */}
     </ScrollView>
+      <TouchableOpacity onPress={handleSave} style={tw `p-2 bg-[#7B5AF3]/100 rounded-2 items-center mx-15 mt-2`}>
+        <Text style={tw `text-base font-bold text-white`}>저장하기</Text>
+       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
   
+ 
   
 
 
@@ -303,5 +274,6 @@ const ExpenseDetail = ({route}) => {
 
 
 };
+
 
 export default ExpenseDetail;
