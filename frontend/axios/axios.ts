@@ -4,6 +4,8 @@ import {useRecoilState} from 'recoil';
 import {eventMapState} from '../recoil/eventMap/atom';
 import {endTripState} from '../recoil/endTrip/atom';
 
+import NationalTouristInformation from '../Data/NationalTouristInformation.json';
+
 
 const http : AxiosInstance = axios.create({
     // baseURL : import.meta.env.VITE_APP_SERVER as string,
@@ -43,6 +45,12 @@ function event(){
 
     //1. 이벤트 장소 설정
     async function setEventArea(data:EventAreaData): Promise<void> {
+        //data form
+        // {"경도": "128.9024348", "공공편익시설정보": "음식점+화장실+주차장+의무실", "관광지구분": "관광지", "관광지명": 
+        // "가야랜드", "관광지소개": "가야테마파크 건너편에 자리한 어드벤처 놀이동산", "관리기관명": "경상남도 김해시청", "관리기관전화번호": "055-330-3241", "데이터기준일자": "2023-06-29", "면적": "1352.91", "소재지도로명주소": "경상남도 김해시 인제로 368(삼방동)", "소재지 
+        // 지번주소": "경상남도 김해시 삼방동 1391-2", "수용인원수": "1000", "숙박시설정보": "카라반+글램핑+오토캠핑장", "운동및오락시설정보": 
+        // "14종의 유기기구", "위도": "35.25817158", "접객시설정보": "", "제공기관명": "경상남도 김해시", "제공기관코드": "5350000", "주차가능 
+        // 수": "398", "지원시설정보": "", "지정일자": "1991-10-05", "휴양및문화시설정보": ""}
         try {
 
             const response: AxiosResponse<EventResponse> = await http.post<EventResponse>(`/api/event/regist`, data);
