@@ -13,6 +13,11 @@ public class SettlementResponseDto {
             List<ShowTripResultCategoryVO> categoryVOList,
             List<ShowTripResultDailyVO> dailyVOList) {}
 
+    @Builder
+    public record settleUp(Integer left,
+                           String formattedLeft,
+                           List<SettlementResponseVO> settlementList) {}
+
     @Getter
     public static class ShowTripResultCategoryVO {
         private final Integer category;
@@ -38,6 +43,40 @@ public class SettlementResponseDto {
             this.acceptedDate = acceptedDate;
             this.cost =  cost;
             this.formattedCost = formattedCost;
+        }
+    }
+
+    @Getter
+    public static class SettlementResponseVO {
+        private final String name;
+        private final Boolean isManager;
+        private final Boolean isPositive;
+        private final Integer settlement;
+        private final String formattedSettlement;
+        private final Integer individualWithdraw;
+        private final String formattedIndividualWithdraw;
+        private final Integer individualDeposit;
+        private final String formattedIndividualDeposit;
+
+        @Builder
+        SettlementResponseVO(final String name,
+                             final Boolean isManager,
+                             final Boolean isPositive,
+                             final Integer settlement,
+                             final String formattedSettlement,
+                             final Integer individualWithdraw,
+                             final String formattedIndividualWithdraw,
+                             final Integer individualDeposit,
+                             final String formattedIndividualDeposit) {
+            this.name = name;
+            this.isManager = isManager;
+            this.isPositive = isPositive;
+            this.settlement = settlement;
+            this.formattedSettlement = formattedSettlement;
+            this.individualWithdraw = individualWithdraw;
+            this.formattedIndividualWithdraw = formattedIndividualWithdraw;
+            this.individualDeposit = individualDeposit;
+            this.formattedIndividualDeposit = formattedIndividualDeposit;
         }
     }
 }

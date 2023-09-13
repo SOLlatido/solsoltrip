@@ -22,5 +22,5 @@ public class IndividualWithdraw {
     @ManyToOne(fetch = FetchType.LAZY)
     private AccompanyMemberWithdraw accompanyMemberWithdraw;
 
-    private Integer individual;
+    private Double individual;
 }

@@ -28,5 +28,19 @@ public class MemberAccompany {
 
     private Integer settlement;
 
-    private Integer expenditure;
+    private Integer individualDeposit;
+
+    private Integer individualWithdraw;
+
+    public void updateSettlement(final Integer settlement) {
+        this.settlement = settlement;
+    }
+
+    public void updateIndividualDeposit(final Integer individualDeposit) {
+        this.individualDeposit = individualDeposit;
+    }
+
+    public void updateIndividualWithdraw(final Integer individualWithdraw) {
+        this.individualWithdraw = individualWithdraw;
+    }
 }

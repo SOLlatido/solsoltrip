@@ -50,4 +50,8 @@ public class Accompany {
     public void updateTotalWithdraw(final Integer totalWithdraw) {
         this.totalWithdraw = totalWithdraw;
     }
+
+    public void updateTotalDeposit(final Integer totalDeposit) {
+        this.totalDeposit = totalDeposit;
+    }
 }
