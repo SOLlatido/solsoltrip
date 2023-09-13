@@ -16,7 +16,7 @@ public class Event {
     public static final double COORDINATE_TO_METER_UNIT = 60 * 1.1515 * 1609.344;
 
     public static final int NEARBY_UNIT = 500;
-    public static final int ARRIVAL_UNIT = 5;
+    public static final int ARRIVAL_UNIT = 100;
 
     public static final int FIRST_SECTION_PERCENTAGE = 60;
     public static final int SECOND_SECTION_PERCENTAGE = 90;
@@ -29,6 +29,8 @@ public class Event {
     private Long eventSeq;
 
     private String name;
+
+    private String description;
 
     private Double x;
 

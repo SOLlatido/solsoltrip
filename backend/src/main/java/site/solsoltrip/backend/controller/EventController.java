@@ -28,4 +28,11 @@ public class EventController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @GetMapping("/point")
+    public ResponseEntity<EventResponseDto.myPointList> myPointList(@RequestBody @Validated final EventRequestDto.myPointList requestDto) {
+        final EventResponseDto.myPointList responseDto = eventService.myPointList(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }

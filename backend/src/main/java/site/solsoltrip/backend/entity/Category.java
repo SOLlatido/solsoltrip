@@ -1,5 +1,12 @@
 package site.solsoltrip.backend.entity;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum Category {
-    숙소, 항공, 교통, 관광, 식비, 쇼핑, 기타
+    숙소("0"), 항공("1"), 교통("2"), 관광("3"), 식비("4"), 쇼핑("5"), 기타("6");
+
+    private final String number;
 }

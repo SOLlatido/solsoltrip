@@ -10,6 +10,9 @@ public class EventRequestDto {
             @NotBlank
             String name,
 
+            @NotBlank
+            String description,
+
             @DecimalMax("131.872222")
             @DecimalMin("125.066667")
             Double x,
@@ -30,5 +33,10 @@ public class EventRequestDto {
             @DecimalMax("38.450000")
             @DecimalMin("33.100000")
             Double y
+    ) {}
+
+    public record myPointList(
+            @NotNull
+            Long memberSeq
     ) {}
 }
