@@ -16,4 +16,9 @@ public interface AccompanyMemberWithdrawRepository extends JpaRepository<Accompa
 
     @Query("select a from AccompanyMemberWithdraw a join fetch a.accompany where a.accompany.accompanySeq = :accompanySeq and a.acceptedDate = :acceptedDate")
     List<AccompanyMemberWithdraw> findByAccompanySeqAndAcceptedDate(final Long accompanySeq, final LocalDate acceptedDate);
+
+    @Query("select a from AccompanyMemberWithdraw a" +
+            "join fetch a.accompany join fetch a.member" +
+            "where a.accompany.accompanySeq = :accompanySeq and a.member.memberSeq = :memberSeq")
+    List<AccompanyMemberWithdraw> findByAccompanySeqAndMemberSeq(final Long accompanySeq, final Long memberSeq);
 }
