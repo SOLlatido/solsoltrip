@@ -9,6 +9,7 @@ import NationalTouristInformation from '../Data/NationalTouristInformation.json'
 
 const http : AxiosInstance = axios.create({
     // baseURL : import.meta.env.VITE_APP_SERVER as string,
+    baseURL : 'http://15.164.169.244:8080',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -45,12 +46,29 @@ function event(){
 
     //1. 이벤트 장소 설정
     async function setEventArea(data:EventAreaData): Promise<void> {
-        //data form
+        //data form ()
         // {"경도": "128.9024348", "공공편익시설정보": "음식점+화장실+주차장+의무실", "관광지구분": "관광지", "관광지명": 
         // "가야랜드", "관광지소개": "가야테마파크 건너편에 자리한 어드벤처 놀이동산", "관리기관명": "경상남도 김해시청", "관리기관전화번호": "055-330-3241", "데이터기준일자": "2023-06-29", "면적": "1352.91", "소재지도로명주소": "경상남도 김해시 인제로 368(삼방동)", "소재지 
         // 지번주소": "경상남도 김해시 삼방동 1391-2", "수용인원수": "1000", "숙박시설정보": "카라반+글램핑+오토캠핑장", "운동및오락시설정보": 
         // "14종의 유기기구", "위도": "35.25817158", "접객시설정보": "", "제공기관명": "경상남도 김해시", "제공기관코드": "5350000", "주차가능 
         // 수": "398", "지원시설정보": "", "지정일자": "1991-10-05", "휴양및문화시설정보": ""}
+
+        // {
+        //     "name" : "한밭수목원", //관광지명
+        //     "description" : "가야테마파크 건너편에 자리한 어드벤처 놀이동산",
+        //     "x" : "128.9024348", //경도
+        //     "y" : "35.25817158", //위도
+        // }
+
+        //pick List
+        // 경상북도(집중호우 피해) 울진군(산불피해 - 관광객 받는중) 군위군 의성군 청송군
+        // 전라남도(집중호우 피해) 고흥, 강진군, 구례군
+        // 강원도 춘천 원주 속초 제외 전 지역
+        // 경상남도 
+
+        // 충청남도(집중호우 피해) 서천 청양 부여
+        // 충청북도(집중호우 피해) 괴산 보은
+        // 경기도 가평 양평 연천 여주 포천
         try {
 
             const response: AxiosResponse<EventResponse> = await http.post<EventResponse>(`/api/event/regist`, data);
@@ -70,11 +88,30 @@ function event(){
     //2. 이벤트 장소 주변 알림/도착 알림/포인트
     async function getArrival(data:EventArrivalRequest): Promise<void> {
         try {
-            const response: AxiosResponse<EventArrivalResponse|EventResponse> = await http.post<EventArrivalResponse>(`api/event/nearbyOrArrivalInform`, data);
-            const result: EventResponse = response.data;
+            const response: AxiosResponse<EventArrivalResponse> = await http.post<EventArrivalResponse>(`api/event/nearbyOrArrivalInform`, data);
+            const result = response.data;
 
             if(Number(result.status)===200){
-                // setEventMap()
+                let characterLocations:oneCharacter[] = eventMap.characterLocations;
+
+                setEventMap(()=>{
+                    result.totalResponseVOList.map((data, index)=>{
+                        if(characterLocations[index].x===data.x && characterLocations[index].y===data.y){
+                            characterLocations.push({
+                                name:data.name,
+                                discription:data.discription,
+                                y:data.y,
+                                x:data.x,
+                                Arrived:true,
+                                point:result.point
+                            })
+                            
+                            return characterLocations
+
+                        }
+                    })
+
+                })
                 
             }else{
                 Alert.alert(result?.message);
@@ -89,6 +126,7 @@ function event(){
 
 
     //3. 이벤트 포인트 확인  (요청 url / 형식 모름)
+    // -> 안만들어도 됨
 
 
 }
@@ -239,10 +277,10 @@ type EventArrivalResponse = {
     // display가 true인 전체 장소 다
 	status : number,
     message : string,
-    isArrived : boolean,
+    Arrived : boolean,
     point : number,
-    totalResponseVOList : EventAreaData[], //이벤트 1번 참고
-    responseVOList : ResponseVOList[]
+    totalResponseVOList : EventAreaData[], //전체 이벤트 지역 리스트
+    responseVOList : ResponseVOList[] //모달용 이름
 }
 
 
@@ -250,6 +288,15 @@ type ResponseVOList = {
     name : number,
 }
 
+//한 캐릭터의 정보
+type oneCharacter = {
+    name: string, //title->name
+    discription: string,
+    y: number,
+    x: number,
+    Arrived : boolean, //display + getPoint = status
+    point:number,
+}
 
 // 여행종료
 type EndTripRequest = {
