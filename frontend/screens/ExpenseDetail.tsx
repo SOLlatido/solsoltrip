@@ -26,105 +26,189 @@ const ExpenseDetail = ({route}) => {
     setSelectedCategory(index);
     console.log(index);
   };
-  const FriendsExpenses = () => {
-    const friendsList = ['석다영', '신산하', '이승현', '김민식'];
-    const [selectedNames, setSelectedNames] = useState(friendsList);
-    const defaultExpense = 32000; // You can set your desired default expense here
-    const initialExpenses = friendsList.reduce((acc, friendName) => {
-      acc[friendName] = defaultExpense / friendsList.length;
-      return acc;
-    }, {});
-    const [shouldRenderInput, setShouldRenderInput] = useState(false);
-    // const [expenses, setExpenses] = useState(initialExpenses)
-    const [expenses, setExpenses] = useState(() => {
-      const dividedExpense = defaultExpense / friendsList.length;
-      const initialExpenses = {};
-      friendsList.forEach((friendName) => {
-        initialExpenses[friendName] = dividedExpense;
-      });
-      return initialExpenses;
-    });
-    const handleExpenseChange = (friendName, value) => {
-        if (selectedNames.includes(friendName)) {
-          setExpenses({ ...expenses, [friendName]: value });
-        } else {
-          setExpenses({ ...expenses, [friendName]: '0' }); // Set the expense to 0 when the circle is empty
-        }
-      };
-    // const handleExpenseChange = (friendName, value) => {
-    // if (selectedNames.includes(friendName)) {
-    //     setExpenses({ ...expenses, [friendName]: value });
-    //     } else {
-    //     setExpenses({ ...expenses, [friendName]: '0' });
-    //     }
-    //     console.log(expenses)
-    // };
 
-    const toggleFriendSelection = (friendName) => {
-        if (selectedNames.includes(friendName)) {
-            // If the friend is already selected, remove them
-            setSelectedNames(selectedNames.filter((name) => name !== friendName));
-          } else {
-            // If the friend is not selected, add them
-            setSelectedNames([...selectedNames, friendName]);
-          }
+  ////////////////////
+  //동행별 지출 모듈 //
+  ////////////////////
+  const friendList = [
+    {
+      name : "석다영",
+      expense : 8000,
+    },
+    {
+      name : "신산하",
+      expense : 8000,
+    },
+    {
+      name : "이승현",
+      expense : 8000,
+    },
+    {
+      name : "김민식",
+      expense : 8000,
+    },
+  ]
+  const FriendsExpenses = (props : {friendList:any}) => {
+    const [expenses, setExpenses] = useState(friendList.map((friend) => friend.expense));
+    const [participants, setParticipants] = useState(friendList.map(() => true));
+    const [toggledFriendIndex, setToggledFriendIndex] = useState(-1);
+    const totalExpense =  32000
+    const editParticipants = (index) => {
+      const updatedParticipants = [...participants];
+      updatedParticipants[index] = !participants[index];
+      setParticipants(updatedParticipants);
+      setToggledFriendIndex(index);
     };
-        
+  
+    const handleExpenseChange = (value, index) => {
+      if (participants[index]) {
+        // Only update the expenses if the friend is participating
+        const updatedExpenses = [...expenses];
+        updatedExpenses[index] = value;
+        setExpenses(updatedExpenses);
+      } else {
+        // If the friend is not participating, set the input value to zero
+        const updatedExpenses = [...expenses];
+        updatedExpenses[index] = '0'; // Set the input value to '0'
+        setExpenses(updatedExpenses);
+      }
+    };
+  
     useEffect(() => {
-        const divided = (defaultExpense / selectedNames.length).toString()
-        console.log(selectedNames);
-        friendsList.forEach((friendName) => {
-            if(selectedNames.includes(friendName)){
-                handleExpenseChange(friendName, divided)
-            } else {
-                handleExpenseChange(friendName, "0")
-            }
+      //친구가 선택되었
+      if (toggledFriendIndex !== -1) {
+        const participatingFriends = participants.filter((participant) => participant);
+        const totalParticipants = participatingFriends.length;
+        const distributedExpense = totalExpense / totalParticipants;
+        const updatedExpenses = expenses.map((expense, i) => {
+          if (participants[i]) {
+            return distributedExpense;
+          } else {
+            return 0
+          }
         })
-        // friendsList.forEach((friendName) => {
-        //   const value = expenses[friendName] || (defaultExpense / selectedNames.length).toString();
-        //   handleExpenseChange(friendName, value);
-        // });
-        setShouldRenderInput(true);
-        console.log(expenses);
-      }, [selectedNames]);
+        console.log(updatedExpenses);
+        if(updatedExpenses){
+          setExpenses(updatedExpenses);
+        }
+        setToggledFriendIndex(-1);
+      } 
+    }, [participants, toggledFriendIndex]);
   
     return (
-      <View >
-        {friendsList.map((friendName) => (
-          <View key={friendName} style={tw`flex-row justify-between items-center mb-3`}>
-            <View style={tw`flex-row items-center`}>
-              <Text style={tw`text-base mr-4`}>{friendName}</Text>
-              {shouldRenderInput && (
-              <TextInput
-                style={tw`w-40 border-[0.3] border-[#ddd] rounded-2 h-13 px-3`}
-                onChangeText={(value) => handleExpenseChange(friendName, value)}
-                value={expenses[friendName].toString()}
-                keyboardType="numeric"
-              />
-            )}
-            </View>
-            <View style={tw`flex-row items-center`}>
-              <View
-                style={[
-                  tw`w-6 h-6 ml-2 rounded-full border-[0.5] border-[#999]`,
-                  { backgroundColor: selectedNames.includes(friendName) ? 'purple' : 'transparent' },
-                ]}
-                onTouchStart={() => 
-                  // if (selectedNames.includes(friendName)) {
-                  //   // 기존에 선택된 사람 빼기
-                  //   setSelectedNames(selectedNames.filter((name) => name !== friendName));
-                  // } else {
-                  //   // 없던 사람 집어넣기
-                  //   setSelectedNames([...selectedNames, friendName]);
-                  // }
-                  toggleFriendSelection(friendName)
-                }
-              />
-            </View>
+      <View style={tw`flex-1 p-4 justify-center`}>
+        {friendList.map((friend, index) => (
+          <View key={index} style={tw`flex-row items-center mb-4`}>
+            <Text style={tw`flex-1 text-lg`}>{friend.name}</Text>
+            <TextInput
+              style={tw`flex-1 h-10 border border-gray-400 rounded px-2`}
+              value={expenses[index].toString()}
+              onChangeText={(value) => handleExpenseChange(value, index)}
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              style={tw`w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center ml-2`}
+              onPress={() => editParticipants(index)}
+            >
+              <Text style={tw`text-white`}>{participants[index] ? '✓' : ''}</Text>
+            </TouchableOpacity>
           </View>
         ))}
+        <TouchableOpacity
+          style={tw`bg-purple-600 rounded p-3 mt-4`}
+          // onPress={() => handleSaveExpenses()}
+        >
+          <Text style={tw`text-white text-lg font-bold`}>Save Expenses</Text>
+        </TouchableOpacity>
       </View>
     );
+
+
+
+
+
+
+
+    // const friendsList = ['석다영', '신산하', '이승현', '김민식'];
+    // const [selectedNames, setSelectedNames] = useState(friendsList);
+    // const defaultExpense = 32000; // You can set your desired default expense here
+    // const initialExpenses = friendsList.reduce((acc, friendName) => {
+    //   acc[friendName] = defaultExpense / friendsList.length;
+    //   return acc;
+    // }, {});
+    // const [shouldRenderInput, setShouldRenderInput] = useState(false);
+    // // const [expenses, setExpenses] = useState(initialExpenses)
+    // const [expenses, setExpenses] = useState(() => {
+    //   const dividedExpense = defaultExpense / friendsList.length;
+    //   const initialExpenses = {};
+    //   friendsList.forEach((friendName) => {
+    //     initialExpenses[friendName] = dividedExpense;
+    //   });
+    //   return initialExpenses;
+    // });
+    // const handleExpenseChange = (friendName, value) => {
+    //     if (selectedNames.includes(friendName)) {
+    //       setExpenses({ ...expenses, [friendName]: value });
+    //     } else {
+    //       setExpenses({ ...expenses, [friendName]: '0' }); // Set the expense to 0 when the circle is empty
+    //     }
+    //   };
+
+    // const toggleFriendSelection = (friendName) => {
+    //     if (selectedNames.includes(friendName)) {
+    //         // If the friend is already selected, remove them
+    //         setSelectedNames(selectedNames.filter((name) => name !== friendName));
+    //       } else {
+    //         // If the friend is not selected, add them
+    //         setSelectedNames([...selectedNames, friendName]);
+    //       }
+    // };
+        
+    // useEffect(() => {
+    //     const divided = (defaultExpense / selectedNames.length).toString()
+    //     console.log(selectedNames);
+    //     friendsList.forEach((friendName) => {
+    //         if(selectedNames.includes(friendName)){
+    //             handleExpenseChange(friendName, divided)
+    //         } else {
+    //             handleExpenseChange(friendName, "0")
+    //         }
+    //     })
+ 
+    //     setShouldRenderInput(true);
+    //     console.log(expenses);
+    //   }, [selectedNames]);
+  
+    // return (
+    //   <View >
+    //     {friendsList.map((friendName) => (
+    //       <View key={friendName} style={tw`flex-row justify-between items-center mb-3`}>
+    //         <View style={tw`flex-row items-center`}>
+    //           <Text style={tw`text-base mr-4`}>{friendName}</Text>
+    //           {shouldRenderInput && (
+    //           <TextInput
+    //             style={tw`w-40 border-[0.3] border-[#ddd] rounded-2 h-13 px-3`}
+    //             onChangeText={(value) => handleExpenseChange(friendName, value)}
+    //             value={expenses[friendName].toString()}
+    //             keyboardType="numeric"
+    //           />
+    //         )}
+    //         </View>
+    //         <View style={tw`flex-row items-center`}>
+    //           <View
+    //             style={[
+    //               tw`w-6 h-6 ml-2 rounded-full border-[0.5] border-[#999]`,
+    //               { backgroundColor: selectedNames.includes(friendName) ? 'purple' : 'transparent' },
+    //             ]}
+    //             onTouchStart={() => 
+    //               toggleFriendSelection(friendName)
+    //             }
+    //           />
+    //         </View>
+    //       </View>
+    //     ))}
+    //   </View>
+    // );
   };
 
   const [img, setImg] = useState(imageSource);
