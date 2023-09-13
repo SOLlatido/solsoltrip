@@ -16,14 +16,20 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier":"com.SOLlatido.solsoltrip"
+      "bundleIdentifier":"com.SOLlatido.solsoltrip",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "allowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "pakage":"com.SOLlatido.solsoltrip",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions" : ["INTERNET"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
