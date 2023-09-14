@@ -17,8 +17,7 @@ public class EventRequestDto {
 
             @DecimalMax("38.450000")
             @DecimalMin("33.100000")
-            Double y
-    ) {}
+            Double y) {}
 
     public record inform(
             @NotNull
@@ -30,11 +29,24 @@ public class EventRequestDto {
 
             @DecimalMax("38.450000")
             @DecimalMin("33.100000")
-            Double y
-    ) {}
+            Double y) {}
+
+    public record arrivalInform(
+            @NotNull
+            Long memberSeq,
+
+            @NotNull
+            Long eventSeq,
+
+            @DecimalMax("131.872222")
+            @DecimalMin("125.066667")
+            Double x,
+
+            @DecimalMax("38.450000")
+            @DecimalMin("33.100000")
+            Double y) {}
 
     public record myPointList(
             @NotNull
-            Long memberSeq
-    ) {}
+            Long memberSeq) {}
 }
