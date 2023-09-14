@@ -64,7 +64,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
   }
 
   const map = () =>{
-    navigation.navigate("EventMap", {
+    navigation.navigate("EndTimeHistory", {
       animation : 'fadeIn'
     });
   }
