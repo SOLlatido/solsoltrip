@@ -1,4 +1,4 @@
-import {View, ImageBackground, TouchableOpacity, TextInput, ScrollView, Alert} from "react-native"
+import {View, ImageBackground, TouchableOpacity, TextInput, ScrollView, Alert, Text} from "react-native"
 import React, { useEffect, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import main_aurora from "../assets/images/main_aurora.png"
@@ -98,15 +98,18 @@ const MyPointList = () => {
                 
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center mt-5`}>
-                    <ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                    {searchList?.length===0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                        
                         {searchList?.map((pointData, index)=>{
 
                             return(
                                 <EarnPointItem key={index}  expenseTitle={pointData.name} date={pointData.acceptedDate} expense={pointData.point}/>
                             );
                         })}
+                        
 
-                    </ScrollView>
+                    </ScrollView>:
+                    <Text style={tw`mt-40`}>상생포인트 조회 내역이 없습니다.</Text>}
                 </View>
             </View>
         </View>
