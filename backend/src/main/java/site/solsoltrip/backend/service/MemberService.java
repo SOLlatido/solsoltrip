@@ -8,6 +8,7 @@ import site.solsoltrip.backend.dto.MemberResponseDto;
 import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.entity.Role;
 import site.solsoltrip.backend.oauth.KakaoOAuth2;
+import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.repository.MemberRepository;
 
 import java.util.Optional;
@@ -90,4 +91,5 @@ public class MemberService {
                 .kakaoAccessToken(userInfo.kakaoAccessToken())
                 .build();
     }
+
 }
