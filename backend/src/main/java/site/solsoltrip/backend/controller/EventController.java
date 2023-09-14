@@ -22,14 +22,14 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/nearbyOrArrivalInform")
-    public ResponseEntity<EventResponseDto.nearbyOrArrivalInform> nearbyOrArrivalInform(@RequestBody @Validated final EventRequestDto.nearbyOrArrivalInform requestDto) {
-        final EventResponseDto.nearbyOrArrivalInform responseDto = eventService.nearbyOrArrivalInform(requestDto);
+    @PostMapping("/inform")
+    public ResponseEntity<EventResponseDto.inform> inform(@RequestBody @Validated final EventRequestDto.inform requestDto) {
+        final EventResponseDto.inform responseDto = eventService.inform(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/point")
+    @PostMapping("/point")
     public ResponseEntity<EventResponseDto.myPointList> myPointList(@RequestBody @Validated final EventRequestDto.myPointList requestDto) {
         final EventResponseDto.myPointList responseDto = eventService.myPointList(requestDto);
 
