@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EventResponseDto {
     @Builder
-    public record nearbyOrArrivalInform(List<TotalEventResponseVO> totalResponseVOList,
+    public record inform(List<TotalEventResponseVO> totalResponseVOList,
                                         List<EventResponseVO> responseVOList,
                                         Boolean isArrived,
                                         Integer point) {}

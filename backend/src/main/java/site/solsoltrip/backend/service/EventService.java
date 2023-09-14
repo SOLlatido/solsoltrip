@@ -45,7 +45,7 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponseDto.nearbyOrArrivalInform nearbyOrArrivalInform(final EventRequestDto.nearbyOrArrivalInform requestDto) {
+    public EventResponseDto.inform inform(final EventRequestDto.inform requestDto) {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
@@ -104,7 +104,7 @@ public class EventService {
             responseVOList.add(responseVO);
         }
 
-        return EventResponseDto.nearbyOrArrivalInform.builder()
+        return EventResponseDto.inform.builder()
                 .totalResponseVOList(totalResponseVOList)
                 .responseVOList(responseVOList)
                 .isArrived(isArrived)

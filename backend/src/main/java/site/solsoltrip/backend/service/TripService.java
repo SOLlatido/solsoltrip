@@ -95,7 +95,6 @@ public class TripService {
                 .startDate(requestDto.startDate())
                 .endDate(requestDto.endDate())
                 .individual(requestDto.personalAmount())
-                .isChecked(false)
                 .build();
 
         accompanyRepository.save(accompany);
@@ -107,10 +106,6 @@ public class TripService {
                 .member(member)
                 .accompany(accompany)
                 .isManager(true)
-                .isPaid(false)
-                .settlement(0)
-                .individualDeposit(0)
-                .individualWithdraw(0)
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);

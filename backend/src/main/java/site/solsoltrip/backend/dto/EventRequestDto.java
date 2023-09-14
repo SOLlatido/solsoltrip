@@ -1,9 +1,6 @@
 package site.solsoltrip.backend.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 public class EventRequestDto {
     public record registEvent(
@@ -11,6 +8,7 @@ public class EventRequestDto {
             String name,
 
             @NotBlank
+            @Size(max = 100)
             String description,
 
             @DecimalMax("131.872222")
@@ -22,7 +20,7 @@ public class EventRequestDto {
             Double y
     ) {}
 
-    public record nearbyOrArrivalInform(
+    public record inform(
             @NotNull
             Long memberSeq,
 
