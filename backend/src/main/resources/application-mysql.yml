@@ -1,0 +1,14 @@
+spring:
+  config:
+    import:
+      - classpath:properties/oauth2.yml
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/solsoltrip?serverTimezone=Asia/Seoul
+    username: root
+    password: root
+
+    jpa:
+      hibernate:
+        ddl-auto: none

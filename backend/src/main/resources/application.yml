@@ -1,34 +1,4 @@
 spring:
-  config:
-    import:
-      - classpath:properties/oauth2.yml
-
-  # H2
-#  h2:
-#    console:
-#      enabled: true
-#
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:solsoltrip;MODE=MYSQL
-#    username: sa
-#    password:
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
-
-  # MySQL
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/solsoltrip?serverTimezone=Asia/Seoul
-    username: root
-    password: root
-
-    jpa:
-      hibernate:
-        ddl-auto: none
+  profiles:
+    active:
+      h2
