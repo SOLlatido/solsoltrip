@@ -32,8 +32,6 @@ public class Accompany {
 
     private Integer totalWithdraw;
 
-    private Boolean isChecked;
-
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
     private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
 

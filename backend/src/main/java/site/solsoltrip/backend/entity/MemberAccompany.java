@@ -32,6 +32,8 @@ public class MemberAccompany {
 
     private Integer individualWithdraw;
 
+    private Boolean isChecked;
+
     public void updateSettlement(final Integer settlement) {
         this.settlement = settlement;
     }
@@ -42,5 +44,9 @@ public class MemberAccompany {
 
     public void updateIndividualWithdraw(final Integer individualWithdraw) {
         this.individualWithdraw = individualWithdraw;
+    }
+
+    public void updateIsChecked(final Boolean isChecked) {
+        this.isChecked = isChecked;
     }
 }

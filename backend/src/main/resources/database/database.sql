@@ -7,8 +7,8 @@ CREATE TABLE `member` (
 	`member_seq` BIGINT  NOT NULL AUTO_INCREMENT,
 	`uuid` VARCHAR(9) NOT NULL,
 	`name` VARCHAR(4) NOT NULL,
-	`point` INT NOT NULL,
-	`role` VARCHAR(5) NOT NULL,
+	`point` INT NOT NULL DEFAULT 0,
+	`role` VARCHAR(5) NOT NULL DEFAULT 'USER',
 	`kakao_email` VARCHAR(255) NULL,
 	`kakao_refresh_token` VARCHAR(255) NULL,
     PRIMARY KEY (`member_seq`)
@@ -21,9 +21,8 @@ CREATE TABLE `accompany` (
 	`start_date` DATE NOT NULL,
 	`end_date` DATE NOT NULL,
 	`individual` INT NOT NULL,
-	`total_deposit` INT NOT NULL,
-	`total_withdraw` INT NOT NULL,
-	`is_checked` BOOLEAN NOT NULL DEFAULT false,
+	`total_deposit` INT NOT NULL DEFAULT 0,
+	`total_withdraw` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`accompany_seq`)
 );
 
@@ -35,7 +34,7 @@ CREATE TABLE `accompany_member_deposit` (
 	`cost` INT NOT NULL,
 	`accepted_date` DATE NOT NULL,
 	`category` VARCHAR(1) NULL,
-	`accepted_date_time` DATETIME NOT NULL,
+	`accepted_date_time` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`accompany_member_deposit_seq`),
     KEY `fk_member_seq_amd_idx` (`member_seq`),
     CONSTRAINT `member_seq_amd` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`),
@@ -50,7 +49,7 @@ CREATE TABLE `accompany_member_withdraw` (
 	`cost` INT NOT NULL,
 	`accepted_date` DATE NOT NULL,
 	`category` VARCHAR(1) NULL,
-	`accepted_date_time` DATETIME NOT NULL,
+	`accepted_date_time` DATETIME NOT NULL DEFAULT NOW(),
 	`memo` VARCHAR(255) NULL,
 	`picture` VARCHAR(255) NULL,
 	`memo_date_time` DATETIME NULL,
@@ -73,7 +72,7 @@ CREATE TABLE `event_point` (
 	`member_seq` BIGINT NOT NULL,
 	`name` VARCHAR(20) NOT NULL,
 	`point` INT NOT NULL,
-	`accepted_date_time` DATETIME NOT NULL,
+	`accepted_date_time` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`event_point_seq`),
     KEY `fk_member_seq_ep_idx` (`member_seq`),
     CONSTRAINT `member_seq_ep` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`)
@@ -101,6 +100,7 @@ CREATE TABLE `member_accompany` (
 	`settlement` INT NOT NULL DEFAULT 0,
 	`individual_deposit` INT NOT NULL DEFAULT 0,
 	`individual_withdraw` INT NOT NULL DEFAULT 0,
+	`is_checked` BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY (`member_accompany_seq`),
     KEY `fk_member_seq_ma_idx` (`member_seq`),
     CONSTRAINT `member_seq_ma` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`),
