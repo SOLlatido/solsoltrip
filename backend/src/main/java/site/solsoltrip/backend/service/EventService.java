@@ -127,7 +127,7 @@ public class EventService {
             final EventResponseDto.PointVO pointVO = EventResponseDto.PointVO.builder()
                     .name(eventPoint.getName())
                     .point(eventPoint.getPoint())
-                    .acceptedDate(eventPoint.getAcceptedDate())
+                    .acceptedDate(eventPoint.getAcceptedDateTime())
                     .build();
 
             pointVOList.add(pointVO);
@@ -163,7 +163,7 @@ public class EventService {
                 .member(member)
                 .name(event.getName())
                 .point(eventPoint)
-                .acceptedDate(LocalDateTime.now())
+                .acceptedDateTime(LocalDateTime.now())
                 .build();
 
         eventPointRepository.save(eventPointLog);
