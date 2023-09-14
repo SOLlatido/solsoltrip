@@ -13,4 +13,8 @@ public class MemberRequestDto {
     public record login(
             @NotBlank
             String uuid) {}
+
+    public record AccompanyList(
+            @NotBlank
+            Long memberSeq) {}
 }
