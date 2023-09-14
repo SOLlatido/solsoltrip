@@ -1,7 +1,9 @@
-import axios, { AxiosInstance } from "axios"
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios"
+import Storage from "expo-storage"
 
-const http : AxiosInstance = axios.create({
+const nonAuthHttp : AxiosInstance = axios.create({
     // baseURL : import.meta.env.VITE_APP_SERVER as string,
+    baseURL : "http://j9b103.p.ssafy.io:8080/",
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -9,7 +11,18 @@ const http : AxiosInstance = axios.create({
     withCredentials : true,
 })
 
-export {http};
+const accessToken = Storage.getItem('accessToken' as any);
+const authHttp = axios.create({
+    baseURL : "http://j9b103.p.ssafy.io:8080/",
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + accessToken,
+    },
+    withCredentials : true,
+});
+
+export {authHttp, nonAuthHttp}
 
 // 사용 예시 :
 // 다른 파일에서 http 임포트 후
