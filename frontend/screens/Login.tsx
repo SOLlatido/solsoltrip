@@ -5,6 +5,9 @@ import LongButton from '../components/ButtonItems/LongButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import aurora from '../assets/images/aurora_background.png';
 import LoadingAnimation from "../components/Animation/LoadingAnimation_morning";
+import { nonAuthHttp } from '../axios/axios';
+import { AxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 type NavigationProps = {
     navigation: StackNavigationProp<any>;
@@ -13,14 +16,32 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
-  const handleMain = () =>{
-    navigation.goBack();
+
+  async function login(): Promise<void> {
+    const uuid = {
+      "uuid" : id
+    }
+      try {
+        const response = await nonAuthHttp.post(`api/member/login`, uuid);
+        const data = response.data;
+        console.log(data);
+        await AsyncStorage.setItem("loginUser", JSON.stringify(data))
+        await AsyncStorage.setItem("accessToken", JSON.stringify(data.accessToken));
+        if(data.kakaoAccessToken){
+          await AsyncStorage.setItem("kakaoAccessToken", JSON.stringify(data.kakaoAccessToken));
+        }
+        
+        navigation.navigate("MyAccounts")
+      } catch (error) {
+          const err = error as AxiosError
+          console.log(err);
+          alert("고객번호를 확인해주세요.")
+      }
   }
-  const handleLogin = () =>{
-    navigation.navigate("MyAccounts");
-  }
-  const handleSignUp = () =>{
-    navigation.navigate("SignUp");
+  const handleLogin = async() =>{
+    login()
+    // .then(()=> console.log("yay", AsyncStorage.getItem("loginUser")));
+    
   }
 
   // 로딩 페이지를 제어하고 있습니다.
@@ -65,7 +86,6 @@ const Login:React.FC<NavigationProps> = ({navigation}) => {
         </View>
       </View>
 
-      {/* <LongButton content='메인으로' onPress={handleMain}></LongButton> */}
       <LongButton content='로그인' onPress={handleLogin}></LongButton>
   
     </View>}

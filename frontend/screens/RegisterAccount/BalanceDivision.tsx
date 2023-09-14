@@ -1,14 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, TextInput, TouchableOpacity, Alert} from 'react-native'
 import { Octicons } from '@expo/vector-icons';
 import tw from "twrnc"
-
+import { useRecoilState } from 'recoil'
+import { createAccountState } from '../../recoil/user/createAccountAtom'
 function AccountDivision() {
   const [plannedExpense, setPlannedExpense] = useState<string>();
   const [myExpense, setMyExpense] = useState<string>();
+  const [newAccount, setNewAccount] = useRecoilState(createAccountState)
+
   const balanceLeft = "320,000";
-   
+  const handleExpenseGoal = () => {
+    setNewAccount((prevNewAccount) => ({
+      ...prevNewAccount,
+      personalAmount : Number(plannedExpense)
+    }));
+    Alert.alert("동행통장 생성이 완료되었습니다.")
+  }
+  useEffect(() => {
+    console.log(newAccount);
+  }, [newAccount]);
   return (
     <>
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
@@ -61,7 +73,7 @@ function AccountDivision() {
       </View>
     </View>
     </View>
-    <TouchableOpacity onPress={()=>{Alert.alert("동행통장 생성이 완료되었습니다. 동행 초대 페이지로 이동합니다.")}}><NextButton router='InviteFriends'></NextButton></TouchableOpacity>
+    <TouchableOpacity onPress={()=>{Alert.alert("동행통장 생성이 완료되었습니다. 동행 초대 페이지로 이동합니다.")}}><NextButton action={handleExpenseGoal} router='InviteFriends'></NextButton></TouchableOpacity>
     
     </>
   )

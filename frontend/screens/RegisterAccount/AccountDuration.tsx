@@ -1,15 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, TouchableOpacity, Pressable} from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRecoilState } from 'recoil'
+import { createAccountState } from '../../recoil/user/createAccountAtom'
 function AccountDuration() {
-    const [startText, setStartText] = useState<string>("2023-09-12")
+    const [startText, setStartText] = useState<string>(new Date().toISOString().slice(0,10))
     const [endText, setEndText] = useState<string>("종료 날짜")
     const [selectedDate, setSelectedDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [newAccount, setNewAccount] = useRecoilState(createAccountState)
+    const handleDate = () => {
+      setNewAccount((prevNewAccount) => ({
+        ...prevNewAccount,
+        startDate : startText,
+        endDate : endText,
+      }));
+    }
+    useEffect(() => {
+      console.log(newAccount);
+    }, [newAccount]);
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -26,7 +39,6 @@ function AccountDuration() {
       const start_month:number = parseInt(startText.slice(5,7));
       const start_day:number = parseInt(startText.slice(8,10));
 
-      
       
       // 년도가 크거나 같냐
       if(start_year<=parseInt(date.toISOString().slice(0,4))){
@@ -84,7 +96,7 @@ function AccountDuration() {
       </View>
     </View>
 
-    <NextButton router='BalanceDivision'></NextButton>
+    <NextButton action={handleDate} router='BalanceDivision'></NextButton>
     </>
   )
 }

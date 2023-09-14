@@ -22,7 +22,17 @@ const authHttp = axios.create({
     withCredentials : true,
 });
 
-export {authHttp, nonAuthHttp}
+const shinhanHttp : AxiosInstance = axios.create({
+    // baseURL : import.meta.env.VITE_APP_SERVER as string,
+    baseURL : "https://shbhack.shinhan.com/",
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    withCredentials : true,
+})
+
+export {authHttp, nonAuthHttp, shinhanHttp}
 
 // 사용 예시 :
 // 다른 파일에서 http 임포트 후

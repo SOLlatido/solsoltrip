@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, ImageBackground, Text, ScrollView, Dimensions, TouchableOpacity} from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
 import main_aurora from "../assets/images/main_aurora.png"
@@ -7,7 +7,11 @@ import SearchBar from '../components/Inputs/SearchBar';
 import ExpenseItem from '../components/Accounts/ExpenseItem';
 import tw from "twrnc";
 import TabNavigation from '../navigation/TabNavigation';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { nonAuthHttp } from '../axios/axios';
+import { AxiosError } from 'axios';
+const loginUser = AsyncStorage.getItem("loginUser")
+console.log(typeof loginUser.name)
 
 const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => {
     
@@ -25,8 +29,8 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
     )
 }
 
-
 function MainPage() {
+  
   const [activeTab, setActiveTab] = useState("전체");
   const accountNumber:string = "123232123"
   const travelTitle:string = "4박 5일 강릉 여행"
@@ -40,6 +44,7 @@ function MainPage() {
   const handleTabSelect = (tabContent: string) => {
     setActiveTab(tabContent);
   };
+
   return (
     <>
     <View style={tw `h-full`}> 

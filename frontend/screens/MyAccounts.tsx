@@ -6,7 +6,12 @@ import tw from "twrnc"
 import { AntDesign } from '@expo/vector-icons';
 import aurora from "../assets/images/aurora_background.png"
 import LongButton from '../components/ButtonItems/LongButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingAnimation_morning from '../components/Animation/LoadingAnimation_morning';
+import { authHttp, shinhanHttp } from '../axios/axios';
+import { AxiosError } from 'axios';
+
+
 
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
@@ -14,7 +19,7 @@ type NavigationProps = {
 const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
   const [myAccounts, setMyAccounts] = useState([])
   const [loading, setLoading] = useState(true);
-
+  const [name, setName] = useState("");
     useEffect(()=>{
         async function prepare(){
           try{
@@ -24,10 +29,39 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
             console.log(e);
           }
         }
-    
         prepare();
     },[])
 
+    useEffect(()=>{
+      async function getLoginUser(){
+        const loginUser = await AsyncStorage.getItem("loginUser")
+        const parsed = JSON.parse(loginUser as string)
+        const name = parsed.name;
+        setName(name);
+      }
+      getLoginUser();
+      async function getAccounts(): Promise<void> {
+        const send = {
+          "dataHeader": {
+            "apikey": "2023_Shinhan_SSAFY_Hackathon"
+           },
+           "dataBody": {
+                "실명번호": "WmokLBDC09/yfin=="
+           }
+        }
+        try {
+          const response = await shinhanHttp.post(`v1/account`, send);
+          const data = response.data;
+          const accountList = data["dataBody"]["조회내역1"]
+          setMyAccounts(accountList);
+        } catch (error) {
+            const err = error as AxiosError
+            console.log(err);
+            alert("에러!!")
+        }
+      }
+      getAccounts();
+    },[])
   const accountNumber:string = "123232123"
   const travelTitle:string = "4박 5일 강릉 여행"
   const duration:string = "2023-07-16 ~ 2023-07-20"
@@ -47,38 +81,24 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
       {loading?<LoadingAnimation_morning/>:<View style={tw`flex-1`}>
         <ImageBackground source={aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
         <View style={tw`flex`}>
-        <Text style={tw `ml-7 mt-30 text-base self-center font-bold text-xl self-start`}>다영님의 동행통장</Text>
+        <Text style={tw `ml-7 mt-30 text-base self-center font-bold text-xl self-start`}>{name}님의 동행통장</Text>
         <Text style={tw `ml-7 text-base text-[#333]`}>통장을 클릭하여 나의 여행을 확인해보세요.</Text>
         </View>
         <ScrollView style={tw `mt-5`}>
-            <AccountItem 
-              accountNumber={accountNumber} 
-              travelTitle={travelTitle}
-              duration={duration}
-              numberOfPeople={numberOfPeople}
-              >
-              </AccountItem>
-            <AccountItem 
-              accountNumber={accountNumber} 
-              travelTitle={travelTitle}
-              duration={duration}
-              numberOfPeople={numberOfPeople}
-              >
-              </AccountItem>
-            <AccountItem 
-              accountNumber={accountNumber} 
-              travelTitle={travelTitle}
-              duration={duration}
-              numberOfPeople={numberOfPeople}
-              >
-              </AccountItem>
-            <AccountItem 
-              accountNumber={accountNumber} 
-              travelTitle={travelTitle}
-              duration={duration}
-              numberOfPeople={numberOfPeople}
-              >
-              </AccountItem>
+          {
+            myAccounts.map((account, i)=>{
+              return (
+                <AccountItem 
+                key={i}
+                accountNumber={account["계좌번호"]} 
+                travelTitle={travelTitle}
+                duration={duration}
+                numberOfPeople={numberOfPeople}
+                ></AccountItem>
+              )
+            })
+          }
+    
         </ScrollView>
         <View style={tw `flex absolute bottom-10 w-3/4 p-4 self-center items-center justify-center`}>
           <TouchableOpacity
