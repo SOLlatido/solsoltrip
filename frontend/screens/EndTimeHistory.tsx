@@ -102,6 +102,14 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
       }
   }
 
+  useEffect(()=>{
+    // const EndTimeHistoryRequest = {
+    //   accompanySeq: 1,
+    //   memberSeq: 1
+    // }
+    // getEndTripHistory(EndTimeHistoryRequest);
+  },[])
+
   return (
     <>
       {loading?<LoadingAnimation_night/>:<View style={tw `flex-1 bg-white w-full`}>
