@@ -121,14 +121,14 @@ CREATE TABLE `member_event` (
 );
 
 CREATE TABLE `registed_account` (
-	`register_account_seq` BIGINT NOT NULL AUTO_INCREMENT,
+	`registed_account_seq` BIGINT NOT NULL AUTO_INCREMENT,
 	`member_seq` BIGINT NOT NULL,
 	`type` VARCHAR(20) NOT NULL,
 	`account` VARCHAR(20) NOT NULL,
 	`name` VARCHAR(30) NOT NULL,
 	`balance` INT NOT NULL,
 	`is_accompany_account` BOOLEAN NOT NULL,
-    PRIMARY KEY (`register_account_seq`),
+    PRIMARY KEY (`registed_account_seq`),
     KEY `fk_member_seq_ra_idx` (`member_seq`),
     CONSTRAINT `member_seq_ra` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`)
 );
