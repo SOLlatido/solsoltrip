@@ -179,10 +179,6 @@ type EndTripResponse = {
     message : string,
 }
 
-//1. 종료시간 재설정
-type EndTripEndTimeResetRequest = EndTripRequest& {
-	endDate : string,
-}
 
 
 //3. 최종 여행 기록 안내 페이지

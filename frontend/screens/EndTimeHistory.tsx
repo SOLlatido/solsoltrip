@@ -26,6 +26,8 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [loading, setLoading] = useState(true);
 
   const [totalCost, setTotalCost] = useState<number>(0);
+  const [dailyGraphData, setDailyGraphData] = useState<number[]>([]);
+  const [dailyGraphLabel, setDailyGraphLabel] = useState<string[]>([]);
 
 
   useEffect(()=>{
@@ -67,8 +69,18 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
         const result: EndTimeHistoryResponse = response.data; //{status, message}
         
         if(response.status===200){
-          
+          const dailyMoney:number[] = [];
+          const dailyDay:string[] = [];
+
+          result.dailyVOList.map((data, index)=>{
+            dailyMoney.push(data.cost);
+            dailyDay.push(data.acceptedDate);
+          })
+
+          setDailyGraphData(dailyMoney);
+          setDailyGraphLabel(dailyDay);
         }
+
 
     } catch (error) {
         Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
@@ -102,7 +114,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
                 ref={(ref) => setAnimation2(ref)}
                 style={tw `flex-1`}
               >
-                <EndTimeGraph />
+                <EndTimeGraph data={dailyGraphData} labels={dailyGraphLabel}/>
               </Animatable.View>
 
               <Animatable.View
@@ -133,8 +145,8 @@ type EndTimeHistoryRequest = {
 type EndTimeHistoryResponse = {
   isChecked:boolean,
   totalCost:number,
-  categoryVOList:categoryVOList,
-  dailyVOList:dailyVOList
+  categoryVOList:categoryVOList[],
+  dailyVOList:dailyVOList[]
 }
 
 type categoryVOList = {
