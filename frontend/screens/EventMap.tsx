@@ -368,9 +368,9 @@ type EventArrivalRequest = {
 
 type EventArrivalResponse = {
   // display가 true인 전체 장소 다
-status : number,
+  status : number,
   message : string,
-  Arrived : boolean,
+  isArrived : boolean,
   point : number,
   totalResponseVOList : EventAreaData[], //전체 이벤트 지역 리스트
   responseVOList : ResponseVOList[] //모달용 이름
