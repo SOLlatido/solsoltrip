@@ -6,17 +6,12 @@ import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-
-//DATA
-import NationalTouristInformation from '../Data/NationalTouristInformation.json';
-
 // axios
-import {authHttp, nonAuthHttp} from '../axios/axios';
+import {authHttp, event, nonAuthHttp} from '../axios/axios';
 import { AxiosResponse, AxiosError } from "axios"
 
 // recoil
 import { useRecoilState } from 'recoil';
-import { eventMapState } from '../recoil/eventMap/atom';
 import { centerModalState } from '../recoil/centerModal/atom';
 
 // 캐릭터 이미지
@@ -66,18 +61,33 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
       
       if(data.x===undefined || data.y===undefined) return;
-      console.log(data);
       
-        const response: AxiosResponse<EventArrivalResponse> = await authHttp.post<EventArrivalResponse>(`api/event/inform`, data);
-        const result = response.data;
-
-        if(result.status===200){
+      const response: AxiosResponse<EventArrivalResponse> = await nonAuthHttp.post<EventArrivalResponse>(`api/event/inform`, data);
+      const result = response.data;
+      
+        if(response.status===200){
+          
+          const newEventMap = eventMap;
+          result.totalResponseVOList.map((data, index)=>{
+            console.log(index);
+            newEventMap.push(
+              {
+                name : data.name,
+                x : data.x,
+                y : data.y,
+                description : data.description,
+                is2000Alert : false,
+              }
+            )
+          })
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
-          setEventMap(result.totalResponseVOList);
+          setEventMap(newEventMap);
 
           //캐릭터를 눌렀을 때 포인트 가져오기
           setPoint(result.point);
+
+          console.log(`result = ${result}`);
         }
         
     } catch (error) {
@@ -113,10 +123,12 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   // EventModal을 열거나 alert를 띄우는 함수를 작성
   const openEventModalOrAlert = (place: any) => {
     if (isWithin100m(location, place)) {
+      
       const arrivalData = {
         "memberSeq": 1,
-        "x": location?.latitude,
-        "y": location?.longitude
+        "x": location?.longitude,
+        "y": location?.latitude,
+        "is2000Alert": location.is2000Alert,
       }
       getArrival(arrivalData);
 
@@ -170,8 +182,9 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   useEffect(()=>{
     const arrivalData = {
       "memberSeq": 1,
-      "x": location?.latitude,
-      "y": location?.longitude
+      "x": location?.longitude,
+      "y": location?.latitude,
+      "is2000Alert": false,
     }
     getArrival(arrivalData);
 
@@ -183,7 +196,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     const watchLocation = async () => {
       const locationOptions = {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 10000,
+        timeInterval: 3000,
         distanceInterval: 10,
       };
 
@@ -228,40 +241,23 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
             isWithin2000mFlag = isWithin2000m(markerLocation,newCoordinate);
           
             if (isWithin2000mFlag) {
-              if (oneCharacter.name != null) {
+
+              //2000m 알람이 울리지 않은 것
+              if (!oneCharacter.is2000Alert&&oneCharacter.name != null) {
                 Alert.alert(`2000m 이내에 ${oneCharacter.name} 관광지가 보입니다!`);
+
+                //2000m 내로 들어온 캐릭터 is2000Alert true
+                const newEventMap = eventMap;
+                newEventMap[i] = {
+                  name : newEventMap[i].name,
+                  x : newEventMap[i].x,
+                  y : newEventMap[i].y,
+                  description : newEventMap[i].description,
+                  is2000Alert : true,
+                }
+
+                setEventMap(newEventMap);
               }
-
-      
-
-          
-              // setEventMap((prevEventMap) => {
-          
-              //   const updatedEventMap = prevEventMap.map(
-              //     (characterLocation, index) => {
-              //       if (!characterLocation || !characterLocation.y || !characterLocation.x) {
-              //         // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
-              //         return null;
-              //       }
-              //       if (index === i) {
-              //         // 유저가 2000m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
-              //         if (characterLocation.name != null) {
-              //           Alert.alert(`2000m 이내에 ${characterLocation.name} 관광지가 보입니다!`);
-              //         }
-              //         // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
-              //         return { ...characterLocation};
-              //       }
-              //       // 변경 대상이 아니면 그대로 반환
-              //       return characterLocation;
-              //     }
-              //   );
-          
-              //   // 업데이트된 characterLocations를 포함한 새로운 상태를 반환
-              //   return {
-              //     ...prevEventMap,
-              //     characterLocations: updatedEventMap,
-              //   };
-              // });
             }
           }
         }
@@ -311,7 +307,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
-        {/* {eventMap?.map((place, index) => {
+        {eventMap?.map((place, index) => {
+          console.log(place);
           if (!place || !place.y || !place.x) {
             // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
             return null;
@@ -319,8 +316,12 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           const markerLocation = {
             latitude : place.y,
-            longitude : place.x
+            longitude : place.x,
+            is2000Alert : place.is2000Alert,
+            index : index, //리스트 중 몇번째 요소인지
           }
+
+          console.log(markerLocation);
 
           return (
             <Marker key={index}
@@ -341,7 +342,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
             </Marker>
           );
-        })} */}
+        })}
         
 
           <View>
@@ -385,6 +386,7 @@ type EventAreaData = {
   description : string,
   x : number,
   y : number,
+  is2000Alert:boolean
 }
 
 type EventResponse = {

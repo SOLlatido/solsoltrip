@@ -25,6 +25,8 @@ import EventMap from './EventMap';
 import { useRecoilState} from 'recoil';
 import {centerModalState} from '../recoil/centerModal/atom'
 
+import EventMapManager from './EventMapManager';
+
 type IntroProps = {
   navigation: StackNavigationProp<any>;
 };
@@ -94,6 +96,8 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       </View>
 
       <LongButton content="시작하기" onPress={map} />
+
+      <EventMapManager/>
     </View>
   );
 }
