@@ -1,0 +1,7 @@
+aws:
+  access-key: ${ACCESS}
+  secret-key: ${REFRESH}
+  s3:
+    region: ${REGION}
+    bucket: ${BUCKET}
+    url: ${URL}

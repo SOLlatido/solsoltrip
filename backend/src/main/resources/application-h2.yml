@@ -2,6 +2,7 @@ spring:
   config:
     import:
       - classpath:properties/oauth2.yml
+      - classpath:properties/aws.yml
 
   h2:
     console:

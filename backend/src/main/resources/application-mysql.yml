@@ -2,6 +2,7 @@ spring:
   config:
     import:
       - classpath:properties/oauth2.yml
+      - classpath:properties/aws.yml
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
