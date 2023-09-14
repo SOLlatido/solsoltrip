@@ -7,7 +7,7 @@ import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
 
 // axios
-import {authHttp, event, nonAuthHttp} from '../axios/axios';
+import {authHttp, nonAuthHttp} from '../axios/axios';
 import { AxiosResponse, AxiosError } from "axios"
 
 // recoil
@@ -37,17 +37,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   const [locationSetting, setLocationSetting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null); //위치 제공에 동의했는지 안했다면 에러
 
-  const [prevLatLng, setPrevLatLng] = useState<any>({ //이전 거리를 왜 계산하는지 모르겠음 일단 skip
-    latitude: 36.3557439,
-    longitude: 127.3468684
-  });
-
   const [routeCoordinates, setRouteCoordinates] = useState([]); //유저가 움직인 이동경로
 
-
-  const [isMapLocked, setIsMapLocked] = useState(false); // 모달 열릴 때 지도 잠금 상태
-
-  const [showImage,setShowImage] = useState<boolean>(true);
 
   // 모달
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
@@ -59,6 +50,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   async function getArrival(data:EventArrivalRequest): Promise<void> {
     try {
 
+      console.log(data);
       
       if(data.x===undefined || data.y===undefined) return;
       
@@ -69,7 +61,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           
           const newEventMap = eventMap;
           result.totalResponseVOList.map((data, index)=>{
-            console.log(index);
+
             newEventMap.push(
               {
                 name : data.name,
@@ -86,15 +78,14 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //캐릭터를 눌렀을 때 포인트 가져오기
           setPoint(result.point);
-
-          console.log(`result = ${result}`);
+        }else{
+          return;
         }
         
     } catch (error) {
         Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
-        throw err; // 에러 핸들링을 위해 예외를 던집니다.
     }
   }
 
@@ -128,7 +119,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         "memberSeq": 1,
         "x": location?.longitude,
         "y": location?.latitude,
-        "is2000Alert": location.is2000Alert,
       }
       getArrival(arrivalData);
 
@@ -140,12 +130,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     }
   };
 
-  const toggleModalAndShowImage = (showImage: boolean) => {
-    // Modal이 열릴 때 지도 잠금 상태로 변경
-    setIsMapLocked(!showImage);
-    // Image 표시 여부를 상태로 관리
-    setShowImage(showImage);
-  };
 
 
   // 내 위치를 찾는 함수
@@ -167,11 +151,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           latitudeDelta: latitudeDelta,
           longitudeDelta: longitudeDelta,
         });
-  
-        setPrevLatLng({
-          latitude: locationChange.coords?.latitude,
-          longitude: locationChange.coords?.longitude,
-        })
 
         setLocationSetting(true);
       }
@@ -184,7 +163,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       "memberSeq": 1,
       "x": location?.longitude,
       "y": location?.latitude,
-      "is2000Alert": false,
     }
     getArrival(arrivalData);
 
@@ -205,9 +183,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         locationOptions,
         (position) => {
           const { latitude, longitude } = position.coords;
-          
-          //현재 위치로 변경
-          setPrevLatLng(position.coords);
 
           //새로운 위치 셋팅
           const newCoordinate = {
@@ -283,10 +258,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     setModalContent(`${title} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
-  useEffect(()=>{
-    console.log(location);
-  },[modalVisible.open])
-
 
   return (
     <View style={{flex:1}}>
@@ -302,13 +273,11 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         showsMyLocationButton={true}
         loadingEnabled={true}
         region={location}
-        scrollEnabled={!isMapLocked}
         provider={PROVIDER_GOOGLE}
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
         {eventMap?.map((place, index) => {
-          console.log(place);
           if (!place || !place.y || !place.x) {
             // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
             return null;
@@ -320,8 +289,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
             is2000Alert : place.is2000Alert,
             index : index, //리스트 중 몇번째 요소인지
           }
-
-          console.log(markerLocation);
 
           return (
             <Marker key={index}
@@ -349,7 +316,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
             <EventModal
               modalTitle="감사합니다"
               content={modalContent}
-              onClose={() => toggleModalAndShowImage(true)}
             />
           </View>
       </MapView>
