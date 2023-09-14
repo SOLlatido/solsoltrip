@@ -29,6 +29,9 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [dailyGraphData, setDailyGraphData] = useState<number[]>([]);
   const [dailyGraphLabel, setDailyGraphLabel] = useState<string[]>([]);
 
+  const [categoryGraphData, setCategoryGraphData] = useState<number[]>([]);
+  const [categoryGraphLabel, setCategoryGraphLabel] = useState<string[]>([]);
+
 
   useEffect(()=>{
     async function prepare(){
@@ -61,7 +64,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
     if (animation3) animation3.slideInUp(3000); // 세 번째 애니메이션
   }, [animation3]);
 
-  //3. 최종 여행 기록 안내 페이지 -> 아직 백엔드에 적용 안됨
+  //최종 여행 기록 안내 페이지
   async function getEndTripHistory(data:EndTimeHistoryRequest): Promise<void> {
     try {
 
@@ -72,13 +75,23 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
           const dailyMoney:number[] = [];
           const dailyDay:string[] = [];
 
+          const categoryMoney:number[] = [];
+          const category:string[] = [];
+
           result.dailyVOList.map((data, index)=>{
             dailyMoney.push(data.cost);
             dailyDay.push(data.acceptedDate);
           })
 
+          result.categoryVOList.map((data, index)=>{
+            categoryMoney.push(data.cost);
+            category.push(data.category);
+          })
+
           setDailyGraphData(dailyMoney);
           setDailyGraphLabel(dailyDay);
+          setCategoryGraphData(dailyMoney);
+          setCategoryGraphLabel(category);
         }
 
 
@@ -121,7 +134,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
                 ref={(ref) => setAnimation3(ref)}
                 style={tw `flex-1`}
               >
-                <EndTimeBarGraph />
+                <EndTimeBarGraph data={categoryGraphData} labels={categoryGraphLabel}/>
               </Animatable.View>
             </ScrollView>
           </SafeAreaView>
