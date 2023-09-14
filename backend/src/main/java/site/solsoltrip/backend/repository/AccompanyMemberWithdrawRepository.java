@@ -7,8 +7,11 @@ import site.solsoltrip.backend.entity.AccompanyMemberWithdraw;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface AccompanyMemberWithdrawRepository extends JpaRepository<AccompanyMemberWithdraw, Long> {
+    Optional<AccompanyMemberWithdraw> findByAccompanyMemberWithdrawSeq(final Long accompanyMemberWithdrawSeq);
+
     @Query("select a from AccompanyMemberWithdraw a join fetch a.accompany where a.accompany.accompanySeq = :accompanySeq")
     List<AccompanyMemberWithdraw> findByAccompanySeq(@Param("accompanySeq") final Long accompanySeq);
 
