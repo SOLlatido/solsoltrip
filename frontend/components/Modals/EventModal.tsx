@@ -16,9 +16,10 @@ import EventMapAnimation from '../Animation/EventMapAnimation';
 interface EventModalProps {
     modalTitle: string;
     content: string;
+    onClose: () => void; // onClose 프로퍼티 추가
   }
 
-const EventModal:React.FC<EventModalProps> = ({ modalTitle, content }: CenterModalProps) => {
+const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, onClose }: CenterModalProps) => {
     
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
