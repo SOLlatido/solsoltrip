@@ -11,9 +11,9 @@ const initialState = {
     characterLocations: [{ // 캐릭터 위치 리스트
         //totalResponseVOList+EventArrivalResponse(Arrived, point)
         name: "충남대학교", //title->name
-        discription: "대전의 큰 학교이자 유명한 관광지",
-        y: 36.3688253,
+        description: "대전의 큰 학교이자 유명한 관광지",
         x: 127.3468684,
+        y: 36.3688253,
         Arrived : false, //display + getPoint = status
         point:10,
     },]
@@ -38,9 +38,9 @@ export interface eventMapType {
 type oneCharacter = {
     //totalResponseVOList+EventArrivalResponse(Arrived, point)
     name: string, //title->name
-    discription: string,
-    y: number,
+    description: string,
     x: number,
+    y: number,
     Arrived : boolean, //display + getPoint = status
     point:number,
 }

@@ -6,6 +6,9 @@ import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
 
+// axios
+import {event} from '../axios/axios';
+
 // recoil
 import { useRecoilState } from 'recoil';
 import { eventMapState } from '../recoil/eventMap/atom';
@@ -17,28 +20,34 @@ import sol_charater1 from '../assets/character/sol_character1.png';
 // 컴포넌트
 import EventModal from '../components/Modals/EventModal';
 
-
 //2000m는 근처에 관광지가 있다고 알림
 //100m는 포인트를 받을 수 있음
-
-type EventMap = {
-  navigation: StackNavigationProp<any>;
-}
-
 const EventMap:React.FC<EventMap> = ({navigation}) => {
-  const [location, setLocation] = useState<any>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [distanceTravelled, setDistanceTravelled] = useState(0);
-  const [prevLatLng, setPrevLatLng] = useState<any>({
-    latitude: 36.3557439,
-    longitude: 127.3468684
-  });
-  const [routeCoordinates, setRouteCoordinates] = useState([]); //유저가 움직인 이동경로
 
+  //recoil
   const [eventMap, setEventMap] = useRecoilState(eventMapState);
   const { characterLocations } = eventMap;
 
-  const [isMapLocked, setIsMapLocked] = useState(false); // 지도 잠금 상태 여부를 추적
+  // axios
+  // event.
+  
+
+  //delta 고정값
+  const latitudeDelta = 0.0922;
+  const longitudeDelta = 0.0421;
+
+  const [location, setLocation] = useState<any>(null); // 내 위치 저장
+  const [errorMsg, setErrorMsg] = useState<string | null>(null); //위치 제공에 동의했는지 안했다면 에러
+
+  const [prevLatLng, setPrevLatLng] = useState<any>({ //이전 거리를 왜 계산하는지 모르겠음 일단 skip
+    latitude: 36.3557439,
+    longitude: 127.3468684
+  });
+
+  const [routeCoordinates, setRouteCoordinates] = useState([]); //유저가 움직인 이동경로
+
+
+  const [isMapLocked, setIsMapLocked] = useState(false); // 모달 열릴 때 지도 잠금 상태
 
   const [point, setPoint] = useState<number>(10);
 
@@ -105,8 +114,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         setLocation({
           latitude: locationChange.coords?.latitude,
           longitude: locationChange.coords?.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: latitudeDelta,
+          longitudeDelta: longitudeDelta,
         });
   
         setPrevLatLng({
@@ -146,17 +155,12 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           setLocation({
             latitude: latitude,
             longitude: longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: latitudeDelta,
+            longitudeDelta: longitudeDelta,
           });
 
+          //현재 새로운 위치로 변경 (새로운 루트 추가)
           setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
-
-          // distanceTravelled를 업데이트하지 않고, 이동 거리만 계산하여 사용
-          const newDistance = calcDistance(newCoordinate);
-          setDistanceTravelled((prevDistance) => prevDistance + newDistance);
-
-          setPrevLatLng(newCoordinate);
 
           // 500m 안에 들어왔는지 확인 -> alert
           let markerLocation = null;
@@ -236,8 +240,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         initialRegion={{
           latitude: 36.3538693,
           longitude: 127.3468555,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: latitudeDelta,
+          longitudeDelta: longitudeDelta,
         }}
         style={styles.map}
         showsUserLocation={true}
@@ -303,7 +307,64 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CenterModalState{
+// 모달 타입
+type CenterModalState = {
   open:boolean;
   event:boolean;
+}
+
+//axios 요청으로 받아오는 값 타입
+type EventResponse = {
+  status : number,
+  message : string,
+}
+
+//2. 이벤트 장소 주변 알림/도착 알림/포인트
+type EventArrivalRequest = {
+  memberSeq : number,
+  x : number,
+  y : number,
+}
+
+type EventArrivalResponse = {
+  // display가 true인 전체 장소 다
+status : number,
+  message : string,
+  Arrived : boolean,
+  point : number,
+  totalResponseVOList : EventAreaData[], //전체 이벤트 지역 리스트
+  responseVOList : ResponseVOList[] //모달용 이름
+}
+
+
+type ResponseVOList = {
+  name : number,
+}
+
+
+//axios로 받아와서 데이터를 가공해 쓰는 타입
+type eventMapType = {
+    distanceTravelled: number, // 이동한 거리 
+    prevLatLng: any, //이전 거리 리스트
+
+    latitudeDelta: number, //고정값
+    longitudeDelta: number, //고정값
+
+    characterLocations: oneCharacter[]
+}
+
+type oneCharacter = {
+  //totalResponseVOList+EventArrivalResponse(Arrived, point)
+  name: string, //title->name
+  description: string,
+  x: number,
+  y: number,
+  Arrived : boolean, //display + getPoint = status
+  point:number,
+}
+
+
+//기타
+type EventMap = {
+  navigation: StackNavigationProp<any>;
 }

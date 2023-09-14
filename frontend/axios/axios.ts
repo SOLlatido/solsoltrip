@@ -9,7 +9,7 @@ import NationalTouristInformation from '../Data/NationalTouristInformation.json'
 
 const http : AxiosInstance = axios.create({
     // baseURL : import.meta.env.VITE_APP_SERVER as string,
-    baseURL : 'http://15.164.169.244:8080',
+    baseURL : 'http://j9b103.p.ssafy.io:8080/',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -42,10 +42,10 @@ export {http};
 // 이벤트
 function event(){
 
-    const [eventMap, setEventMap] = useRecoilState(eventMapState);
+    // const [eventMap, setEventMap] = useRecoilState(eventMapState);
 
     //1. 이벤트 장소 설정
-    async function setEventArea(data:EventAreaData): Promise<void> {
+    async function setEventArea(data:EventAreaData): Promise<EventResponse> {
         //data form ()
         // {"경도": "128.9024348", "공공편익시설정보": "음식점+화장실+주차장+의무실", "관광지구분": "관광지", "관광지명": 
         // "가야랜드", "관광지소개": "가야테마파크 건너편에 자리한 어드벤처 놀이동산", "관리기관명": "경상남도 김해시청", "관리기관전화번호": "055-330-3241", "데이터기준일자": "2023-06-29", "면적": "1352.91", "소재지도로명주소": "경상남도 김해시 인제로 368(삼방동)", "소재지 
@@ -65,7 +65,6 @@ function event(){
         // 전라남도(집중호우 피해) 고흥, 강진군, 구례군
         // 강원도 춘천 원주 속초 제외 전 지역
         // 경상남도 
-
         // 충청남도(집중호우 피해) 서천 청양 부여
         // 충청북도(집중호우 피해) 괴산 보은
         // 경기도 가평 양평 연천 여주 포천
@@ -77,59 +76,35 @@ function event(){
             if(result){
               console.log(result.message);
             }
+            return result;
 
         } catch (error) {
             Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
             const err = error as AxiosError
             console.log(err);
+            throw err; // 에러 핸들링을 위해 예외를 던집니다.
         }
     }
 
     //2. 이벤트 장소 주변 알림/도착 알림/포인트
-    async function getArrival(data:EventArrivalRequest): Promise<void> {
+    async function getArrival(data:EventArrivalRequest): Promise<EventArrivalResponse> {
         try {
             const response: AxiosResponse<EventArrivalResponse> = await http.post<EventArrivalResponse>(`api/event/nearbyOrArrivalInform`, data);
             const result = response.data;
 
-            if(Number(result.status)===200){
-                let characterLocations:oneCharacter[] = eventMap.characterLocations;
-
-                setEventMap(()=>{
-                    result.totalResponseVOList.map((data, index)=>{
-                        if(characterLocations[index].x===data.x && characterLocations[index].y===data.y){
-                            characterLocations.push({
-                                name:data.name,
-                                discription:data.discription,
-                                y:data.y,
-                                x:data.x,
-                                Arrived:true,
-                                point:result.point
-                            })
-                            
-                            return characterLocations
-
-                        }
-                    })
-
-                })
-                
-            }else{
-                Alert.alert(result?.message);
-            }
+            return result;
             
         } catch (error) {
             Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
             const err = error as AxiosError
             console.log(err);
+            throw err; // 에러 핸들링을 위해 예외를 던집니다.
         }
     }
 
-
-    //3. 이벤트 포인트 확인  (요청 url / 형식 모름)
-    // -> 안만들어도 됨
-
-
 }
+
+export {event};
 
 
 // 여행 종료
@@ -253,10 +228,10 @@ function endTrip(){
 
 // 이벤트
 
-//1. 이벤트 장소 설정
+//1. 이벤트 장소 설정 -> 관리자용
 type EventAreaData = {
     name : string,
-    discription : string,
+    description : string,
     x : number,
     y : number,
 }
@@ -291,9 +266,9 @@ type ResponseVOList = {
 //한 캐릭터의 정보
 type oneCharacter = {
     name: string, //title->name
-    discription: string,
-    y: number,
+    description: string,
     x: number,
+    y: number,
     Arrived : boolean, //display + getPoint = status
     point:number,
 }
