@@ -6,8 +6,13 @@ import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
 
+
+//DATA
+import NationalTouristInformation from '../Data/NationalTouristInformation.json';
+
 // axios
-import {event} from '../axios/axios';
+import {authHttp, nonAuthHttp} from '../axios/axios';
+import { AxiosResponse, AxiosError } from "axios"
 
 // recoil
 import { useRecoilState } from 'recoil';
@@ -24,12 +29,9 @@ import EventModal from '../components/Modals/EventModal';
 //100m는 포인트를 받을 수 있음
 const EventMap:React.FC<EventMap> = ({navigation}) => {
 
-  //recoil
-  const [eventMap, setEventMap] = useRecoilState(eventMapState);
-  const { characterLocations } = eventMap;
-
-  // axios
-  // event.
+  //axios 결과
+  const [eventMap, setEventMap] = useState<EventAreaData[]>([]); //전체 캐릭터 위치
+  const [point, setPoint] = useState<number>(0); //유저가 누른 캐릭터의 포인트
   
 
   //delta 고정값
@@ -37,6 +39,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   const longitudeDelta = 0.0421;
 
   const [location, setLocation] = useState<any>(null); // 내 위치 저장
+  const [locationSetting, setLocationSetting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null); //위치 제공에 동의했는지 안했다면 에러
 
   const [prevLatLng, setPrevLatLng] = useState<any>({ //이전 거리를 왜 계산하는지 모르겠음 일단 skip
@@ -49,13 +52,41 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
   const [isMapLocked, setIsMapLocked] = useState(false); // 모달 열릴 때 지도 잠금 상태
 
-  const [point, setPoint] = useState<number>(10);
-
   const [showImage,setShowImage] = useState<boolean>(true);
 
   // 모달
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
   const [modalContent, setModalContent] = useState('');
+
+
+  // axios
+  //1. 이벤트 장소 주변 알림/도착 알림/포인트 (지도 켜면 1회 내 위치가 정해졌을 때 부르고, 어떤 캐릭터를 눌렀을 때 요청 보내면 될 것 같음)
+  async function getArrival(data:EventArrivalRequest): Promise<void> {
+    try {
+
+      
+      if(data.x===undefined || data.y===undefined) return;
+      console.log(data);
+      
+        const response: AxiosResponse<EventArrivalResponse> = await authHttp.post<EventArrivalResponse>(`api/event/inform`, data);
+        const result = response.data;
+
+        if(result.status===200){
+
+          //지도상 캐릭터 위치들을 저장 (업데이트)
+          setEventMap(result.totalResponseVOList);
+
+          //캐릭터를 눌렀을 때 포인트 가져오기
+          setPoint(result.point);
+        }
+        
+    } catch (error) {
+        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        const err = error as AxiosError
+        console.log(err);
+        throw err; // 에러 핸들링을 위해 예외를 던집니다.
+    }
+  }
 
   // 거리를 계산하는 함수 (현재 나의 위치와 마커 위치)
   const calcDistance = (markerLocation:any, userLocation: any) => {
@@ -82,6 +113,13 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   // EventModal을 열거나 alert를 띄우는 함수를 작성
   const openEventModalOrAlert = (place: any) => {
     if (isWithin100m(location, place)) {
+      const arrivalData = {
+        "memberSeq": 1,
+        "x": location?.latitude,
+        "y": location?.longitude
+      }
+      getArrival(arrivalData);
+
       // 거리가 100 이내인 경우 EventModal 열기
       getPoint(place?.title);
     } else {
@@ -123,10 +161,21 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           longitude: locationChange.coords?.longitude,
         })
 
+        setLocationSetting(true);
       }
 
     })();
   }, []);
+
+  useEffect(()=>{
+    const arrivalData = {
+      "memberSeq": 1,
+      "x": location?.latitude,
+      "y": location?.longitude
+    }
+    getArrival(arrivalData);
+
+  },[locationSetting])
 
 
   // 이동 위치 추적
@@ -143,14 +192,16 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         locationOptions,
         (position) => {
           const { latitude, longitude } = position.coords;
+          
+          //현재 위치로 변경
+          setPrevLatLng(position.coords);
 
+          //새로운 위치 셋팅
           const newCoordinate = {
             latitude,
             longitude,
           };
 
-          //현재 위치로 변경
-          setPrevLatLng(newCoordinate)
 
           setLocation({
             latitude: latitude,
@@ -159,51 +210,58 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
             longitudeDelta: longitudeDelta,
           });
 
-          //현재 새로운 위치로 변경 (새로운 루트 추가)
+          // 바뀐 위치를 새로운 루트로 추가
           setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
 
-          // 500m 안에 들어왔는지 확인 -> alert
-          let markerLocation = null;
-          let isWithin2000mFlag = false;
+          // 2000m 안에 들어왔는지 확인 -> alert
+          let oneCharacter:EventAreaData|null = null;
+          let isWithin2000mFlag:boolean = false;
 
-          for (let i = 0; i < characterLocations.length; i++) {
-            markerLocation = characterLocations[i];
+          for (let i = 0; i < eventMap.length; i++) {
+            oneCharacter = eventMap[i]; //markerLocation은 지금 내가 보고있는 캐릭터
+            const markerLocation = {
+              latitude : oneCharacter.y,
+              longitude : oneCharacter.x
+            }
           
-            // 이미 본 캐릭터는 처리하지 않음
-            if (!markerLocation.display) continue;
           
             isWithin2000mFlag = isWithin2000m(markerLocation,newCoordinate);
           
-            if (isWithin2000mFlag && markerLocation.display) {
+            if (isWithin2000mFlag) {
+              if (oneCharacter.name != null) {
+                Alert.alert(`2000m 이내에 ${oneCharacter.name} 관광지가 보입니다!`);
+              }
+
+      
+
           
-              // Recoil 상태를 업데이트하여 display 속성 변경
-              setEventMap((prevEventMapState) => {
+              // setEventMap((prevEventMap) => {
           
-                const updatedCharacterLocations = prevEventMapState.characterLocations.map(
-                  (characterLocation, index) => {
-                    if (!characterLocation || !characterLocation.latitude || !characterLocation.longitude) {
-                      // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
-                      return null;
-                    }
-                    if (index === i && characterLocation.display) {
-                      // 유저가 500m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
-                      if (characterLocation.title != null) {
-                        Alert.alert(`500m 이내에 ${characterLocation.title} 관광지가 보입니다!`);
-                      }
-                      // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
-                      return { ...characterLocation, display: false };
-                    }
-                    // 변경 대상이 아니면 그대로 반환
-                    return characterLocation;
-                  }
-                );
+              //   const updatedEventMap = prevEventMap.map(
+              //     (characterLocation, index) => {
+              //       if (!characterLocation || !characterLocation.y || !characterLocation.x) {
+              //         // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
+              //         return null;
+              //       }
+              //       if (index === i) {
+              //         // 유저가 2000m 이내에 마커에 접근했을 때 알림 표시 / 한개라도 보이면 표시
+              //         if (characterLocation.name != null) {
+              //           Alert.alert(`2000m 이내에 ${characterLocation.name} 관광지가 보입니다!`);
+              //         }
+              //         // 현재 반복 중인 요소가 변경 대상이라면 display를 false로 변경
+              //         return { ...characterLocation};
+              //       }
+              //       // 변경 대상이 아니면 그대로 반환
+              //       return characterLocation;
+              //     }
+              //   );
           
-                // 업데이트된 characterLocations를 포함한 새로운 상태를 반환
-                return {
-                  ...prevEventMapState,
-                  characterLocations: updatedCharacterLocations,
-                };
-              });
+              //   // 업데이트된 characterLocations를 포함한 새로운 상태를 반환
+              //   return {
+              //     ...prevEventMap,
+              //     characterLocations: updatedEventMap,
+              //   };
+              // });
             }
           }
         }
@@ -253,20 +311,26 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
-        {characterLocations.map((place, index) => {
-          if (!place || !place.latitude || !place.longitude) {
+        {/* {eventMap?.map((place, index) => {
+          if (!place || !place.y || !place.x) {
             // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
             return null;
           }
+
+          const markerLocation = {
+            latitude : place.y,
+            longitude : place.x
+          }
+
           return (
             <Marker key={index}
               coordinate={{
-                latitude: place?.latitude,
-                longitude: place?.longitude,
+                latitude: place?.y,
+                longitude: place?.x,
               }}
-              title={place?.title}
+              title={place?.name}
               description={place?.description}
-              onPress={() => openEventModalOrAlert(place)}
+              onPress={() => openEventModalOrAlert(markerLocation)}
             >
               
               
@@ -277,7 +341,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
             </Marker>
           );
-        })}
+        })} */}
         
 
           <View>
@@ -313,7 +377,16 @@ type CenterModalState = {
   event:boolean;
 }
 
-//axios 요청으로 받아오는 값 타입
+// 이벤트
+
+//1. 이벤트 장소 설정 -> 관리자용
+type EventAreaData = {
+  name : string,
+  description : string,
+  x : number,
+  y : number,
+}
+
 type EventResponse = {
   status : number,
   message : string,
@@ -340,29 +413,6 @@ status : number,
 type ResponseVOList = {
   name : number,
 }
-
-
-//axios로 받아와서 데이터를 가공해 쓰는 타입
-type eventMapType = {
-    distanceTravelled: number, // 이동한 거리 
-    prevLatLng: any, //이전 거리 리스트
-
-    latitudeDelta: number, //고정값
-    longitudeDelta: number, //고정값
-
-    characterLocations: oneCharacter[]
-}
-
-type oneCharacter = {
-  //totalResponseVOList+EventArrivalResponse(Arrived, point)
-  name: string, //title->name
-  description: string,
-  x: number,
-  y: number,
-  Arrived : boolean, //display + getPoint = status
-  point:number,
-}
-
 
 //기타
 type EventMap = {

@@ -1,15 +1,14 @@
+import axios, { AxiosInstance, InternalAxiosRequestConfig , AxiosResponse, AxiosError } from "axios"
+import Storage from "expo-storage";
 import {Alert} from 'react-native';
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios"
 import {useRecoilState} from 'recoil';
-import {eventMapState} from '../recoil/eventMap/atom';
 import {endTripState} from '../recoil/endTrip/atom';
 
 import NationalTouristInformation from '../Data/NationalTouristInformation.json';
 
-
-const http : AxiosInstance = axios.create({
+const nonAuthHttp : AxiosInstance = axios.create({
     // baseURL : import.meta.env.VITE_APP_SERVER as string,
-    baseURL : 'http://j9b103.p.ssafy.io:8080/',
+    baseURL : "http://j9b103.p.ssafy.io:8080/",
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -17,14 +16,25 @@ const http : AxiosInstance = axios.create({
     withCredentials : true,
 })
 
-export {http};
+const accessToken = Storage.getItem('accessToken' as any);
+const authHttp = axios.create({
+    baseURL : "http://j9b103.p.ssafy.io:8080/",
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + accessToken,
+    },
+    withCredentials : true,
+});
+
+export {authHttp, nonAuthHttp}
 
 // 사용 예시 :
 // 다른 파일에서 http 임포트 후
 // function getCalendar(){
 //     async function requestCalendar(): Promise<void> {
 //         try {
-//             const response: AxiosResponse<CalendarData> = await http.get<CalendarData>(`/calendar/study?user=${pk}`);
+//             const response: AxiosResponse<CalendarData> = await authHttp.get<CalendarData>(`/calendar/study?user=${pk}`);
 //             const {calendar} = response.data;
 //             if(calendar){
 //               setData(calendar)
@@ -46,7 +56,7 @@ function event(){
 
     //1. 이벤트 장소 설정
     async function setEventArea(data:EventAreaData): Promise<EventResponse> {
-        //data form ()
+        // data form ()
         // {"경도": "128.9024348", "공공편익시설정보": "음식점+화장실+주차장+의무실", "관광지구분": "관광지", "관광지명": 
         // "가야랜드", "관광지소개": "가야테마파크 건너편에 자리한 어드벤처 놀이동산", "관리기관명": "경상남도 김해시청", "관리기관전화번호": "055-330-3241", "데이터기준일자": "2023-06-29", "면적": "1352.91", "소재지도로명주소": "경상남도 김해시 인제로 368(삼방동)", "소재지 
         // 지번주소": "경상남도 김해시 삼방동 1391-2", "수용인원수": "1000", "숙박시설정보": "카라반+글램핑+오토캠핑장", "운동및오락시설정보": 
@@ -70,7 +80,7 @@ function event(){
         // 경기도 가평 양평 연천 여주 포천
         try {
 
-            const response: AxiosResponse<EventResponse> = await http.post<EventResponse>(`/api/event/regist`, data);
+            const response: AxiosResponse<EventResponse> = await authHttp.post<EventResponse>(`/api/event/regist`, data);
             const result: EventResponse = response.data; //{status, message}
             
             if(result){
@@ -89,7 +99,7 @@ function event(){
     //2. 이벤트 장소 주변 알림/도착 알림/포인트
     async function getArrival(data:EventArrivalRequest): Promise<EventArrivalResponse> {
         try {
-            const response: AxiosResponse<EventArrivalResponse> = await http.post<EventArrivalResponse>(`api/event/nearbyOrArrivalInform`, data);
+            const response: AxiosResponse<EventArrivalResponse> = await authHttp.post<EventArrivalResponse>(`api/event/nearbyOrArrivalInform`, data);
             const result = response.data;
 
             return result;
@@ -116,7 +126,7 @@ function endTrip(){
     async function setEventArea(data:EndTripEndTimeResetRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/reset`, data);
+            const response: AxiosResponse<EndTripResponse> = await authHttp.patch<EndTripResponse>(`/api/settlement/reset`, data);
             const result: EndTripResponse = response.data; //{status, message}
             
             if(result){
@@ -134,7 +144,7 @@ function endTrip(){
     async function manualEndTrip(data:EndTripRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/manual`, data);
+            const response: AxiosResponse<EndTripResponse> = await authHttp.patch<EndTripResponse>(`/api/settlement/manual`, data);
             const result: EndTripResponse = response.data; //{status, message}
             
             if(result){
@@ -152,7 +162,7 @@ function endTrip(){
     async function getEndTripHistory(data:EndTripRequest): Promise<void> {
         // try {
 
-        //     const response: AxiosResponse<EndTripHistoryResponse|EndTripResponse> = await http.post<EndTripHistoryResponse|EndTripResponse>(`/api/settlement/resultl`, data);
+        //     const response: AxiosResponse<EndTripHistoryResponse|EndTripResponse> = await authHttp.post<EndTripHistoryResponse|EndTripResponse>(`/api/settlement/resultl`, data);
         //     const result: EndTripHistoryResponse|EndTripResponse = response.data; //{status, message}
             
         //     if(result){
@@ -170,7 +180,7 @@ function endTrip(){
     async function EndTripHistoryCheck(data:EndTripRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripResponse> = await http.patch<EndTripResponse>(`/api/settlement/checked`, data);
+            const response: AxiosResponse<EndTripResponse> = await authHttp.patch<EndTripResponse>(`/api/settlement/checked`, data);
             const result: EndTripResponse = response.data; //{status, message}
             
             if(result){
@@ -188,7 +198,7 @@ function endTrip(){
     async function EndTripTimeLine(data:EndTripRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripTimeLineResponse|EndTripResponse> = await http.patch<EndTripTimeLineResponse|EndTripResponse>(`/api/settlement/timeline`, data);
+            const response: AxiosResponse<EndTripTimeLineResponse|EndTripResponse> = await authHttp.patch<EndTripTimeLineResponse|EndTripResponse>(`/api/settlement/timeline`, data);
             const result: EndTripTimeLineResponse|EndTripResponse = response.data; //{status, message}
             
             if(result){
@@ -206,7 +216,7 @@ function endTrip(){
     async function EndTripSettle(data:EndTripSettleRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripSettleResponse|EndTripResponse> = await http.patch<EndTripSettleResponse|EndTripResponse>(`/api/settlement/settle`, data);
+            const response: AxiosResponse<EndTripSettleResponse|EndTripResponse> = await authHttp.patch<EndTripSettleResponse|EndTripResponse>(`/api/settlement/settle`, data);
             const result: EndTripSettleResponse|EndTripResponse = response.data; //{status, message}
             
             if(result){
