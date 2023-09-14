@@ -49,8 +49,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   //1. 이벤트 장소 주변 알림/도착 알림/포인트 (지도 켜면 1회 내 위치가 정해졌을 때 부르고, 어떤 캐릭터를 눌렀을 때 요청 보내면 될 것 같음)
   async function getArrival(data:EventArrivalRequest): Promise<void> {
     try {
-
-      console.log(data);
       
       if(data.x===undefined || data.y===undefined) return;
       
@@ -78,6 +76,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //캐릭터를 눌렀을 때 포인트 가져오기
           setPoint(result.point);
+
         }else{
           return;
         }
