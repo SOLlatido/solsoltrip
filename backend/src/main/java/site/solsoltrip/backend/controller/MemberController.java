@@ -22,7 +22,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<MemberResponseDto.login> login(@RequestBody @Validated final MemberRequestDto.login requestDto) {
         MemberResponseDto.login responseDto = memberService.login(requestDto);
 
@@ -32,6 +32,13 @@ public class MemberController {
     @GetMapping("/kakao")
     public ResponseEntity<MemberResponseDto.KakaoTokenInfo> kakaoSync(@RequestParam final String code, @RequestParam final Long state) {
         MemberResponseDto.KakaoTokenInfo responseDto = memberService.kakaoSync(code, state);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/accompany")
+    public ResponseEntity<MemberResponseDto.AccompanyList> accompanyList(@RequestBody @Validated final MemberRequestDto.AccompanyList requestDto) {
+        MemberResponseDto.AccompanyList responseDto = memberService.accompanyList(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

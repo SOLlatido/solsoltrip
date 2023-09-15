@@ -24,5 +24,5 @@ public class EventPoint {
 
     private Integer point;
 
-    private LocalDateTime acceptedDate;
+    private LocalDateTime acceptedDateTime;
 }

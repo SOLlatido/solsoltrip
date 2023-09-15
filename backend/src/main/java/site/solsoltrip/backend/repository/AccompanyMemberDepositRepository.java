@@ -6,8 +6,11 @@ import org.springframework.data.repository.query.Param;
 import site.solsoltrip.backend.entity.AccompanyMemberDeposit;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccompanyMemberDepositRepository extends JpaRepository<AccompanyMemberDeposit, Long> {
+    Optional<AccompanyMemberDeposit> findByAccompanyMemberDepositSeq(final Long accompanyMemberDepositSeq);
+
     @Query("select a from AccompanyMemberDeposit a join fetch a.accompany where a.accompany.accompanySeq = :accompanySeq")
     List<AccompanyMemberDeposit> findByAccompanySeq(@Param("accompanySeq") final Long accompanySeq);
 

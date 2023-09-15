@@ -9,7 +9,9 @@ import java.util.List;
 public class SettlementResponseDto {
     @Builder
     public record showTripResult(
+            Boolean isChecked,
             Integer totalCost,
+            String formattedTotalCost,
             List<ShowTripResultCategoryVO> categoryVOList,
             List<ShowTripResultDailyVO> dailyVOList) {}
 

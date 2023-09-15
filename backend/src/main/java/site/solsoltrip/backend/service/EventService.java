@@ -17,6 +17,7 @@ import site.solsoltrip.backend.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -45,7 +46,7 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponseDto.nearbyOrArrivalInform nearbyOrArrivalInform(final EventRequestDto.nearbyOrArrivalInform requestDto) {
+    public EventResponseDto.inform inform(final EventRequestDto.inform requestDto) {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
         );
@@ -58,9 +59,6 @@ public class EventService {
 
         final List<EventResponseDto.TotalEventResponseVO> totalResponseVOList = new ArrayList<>();
         final List<EventResponseDto.EventResponseVO> responseVOList = new ArrayList<>();
-
-        boolean isArrived = false;
-        int eventPoint = 0;
 
         for (final Event event : eventList) {
             final MemberEvent memberEvent = memberEventRepository
@@ -76,15 +74,8 @@ public class EventService {
                 continue;
             }
 
-            final double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
-
-            if (dist < Event.ARRIVAL_UNIT) {
-                eventPoint = arrivalInform(requestDto.memberSeq(), event.getEventSeq());
-                isArrived = true;
-                continue;
-            }
-
             final EventResponseDto.TotalEventResponseVO totalResponseVO = EventResponseDto.TotalEventResponseVO.builder()
+                    .eventSeq(event.getEventSeq())
                     .name(event.getName())
                     .description(event.getDescription())
                     .x(event.getX())
@@ -92,6 +83,8 @@ public class EventService {
                     .build();
 
             totalResponseVOList.add(totalResponseVO);
+
+            final double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
 
             if (dist > Event.NEARBY_UNIT) {
                 continue;
@@ -104,10 +97,51 @@ public class EventService {
             responseVOList.add(responseVO);
         }
 
-        return EventResponseDto.nearbyOrArrivalInform.builder()
+        return EventResponseDto.inform.builder()
                 .totalResponseVOList(totalResponseVOList)
                 .responseVOList(responseVOList)
-                .isArrived(isArrived)
+                .build();
+    }
+
+    @Transactional
+    public EventResponseDto.arrivalInform arrivalInform(final EventRequestDto.arrivalInform requestDto) {
+        final Event event = eventRepository.findByEventSeq(requestDto.eventSeq()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 이벤트가 없습니다.")
+        );
+
+        final double dist = coordinateToMeter(event.getX(), event.getY(), requestDto.x(), requestDto.y());
+
+        if (dist > Event.ARRIVAL_UNIT) {
+            throw new IllegalArgumentException("기준 거리보다 밖에 있습니다.");
+        }
+
+        final MemberEvent memberEvent = memberEventRepository
+                .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(requestDto.memberSeq(), requestDto.eventSeq())
+                .orElseThrow(() -> new IllegalArgumentException("찾은 멤버 및 이벤트와 매칭되는 정보가 없습니다."));
+
+        memberEvent.updateIsDone(true);
+
+        final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
+
+        final int myPoint = member.getPoint();
+
+        final int eventPoint = generatePoint();
+
+        final EventPoint eventPointLog = EventPoint.builder()
+                .member(member)
+                .name(event.getName())
+                .point(eventPoint)
+                .acceptedDateTime(LocalDateTime.now())
+                .build();
+
+        eventPointRepository.save(eventPointLog);
+
+        member.updatePoint(myPoint + eventPoint);
+
+        return EventResponseDto.arrivalInform.builder()
+                .name(event.getName())
                 .point(eventPoint)
                 .build();
     }
@@ -127,7 +161,7 @@ public class EventService {
             final EventResponseDto.PointVO pointVO = EventResponseDto.PointVO.builder()
                     .name(eventPoint.getName())
                     .point(eventPoint.getPoint())
-                    .acceptedDate(eventPoint.getAcceptedDate())
+                    .acceptedDate(eventPoint.getAcceptedDateTime())
                     .build();
 
             pointVOList.add(pointVO);
@@ -137,40 +171,6 @@ public class EventService {
                 .myPoint(myPoint)
                 .pointVOList(pointVOList)
                 .build();
-    }
-
-    @Transactional
-    private int arrivalInform(final Long memberSeq, final Long eventSeq) {
-        final MemberEvent memberEvent = memberEventRepository
-                .findByMemberSeqAndEventSeqJoinFetchMemberAndEvent(memberSeq, eventSeq)
-                .orElseThrow(() -> new IllegalArgumentException("찾은 멤버 및 이벤트와 매칭되는 정보가 없습니다."));
-
-        memberEvent.updateIsDone(true);
-
-        final Member member = memberRepository.findByMemberSeq(memberSeq).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
-        );
-
-        final int myPoint = member.getPoint();
-
-        final int eventPoint = generatePoint();
-
-        final Event event = eventRepository.findByEventSeq(eventSeq).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 이벤트가 없습니다.")
-        );
-
-        final EventPoint eventPointLog = EventPoint.builder()
-                .member(member)
-                .name(event.getName())
-                .point(eventPoint)
-                .acceptedDate(LocalDateTime.now())
-                .build();
-
-        eventPointRepository.save(eventPointLog);
-
-        member.updatePoint(myPoint + eventPoint);
-
-        return eventPoint;
     }
 
     private static double coordinateToMeter(final double eventX, final double eventY, final double curX, final double curY) {

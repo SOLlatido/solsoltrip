@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import site.solsoltrip.backend.dto.EventRequestDto;
 import site.solsoltrip.backend.dto.EventResponseDto;
 import site.solsoltrip.backend.service.EventService;
@@ -22,14 +25,21 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/nearbyOrArrivalInform")
-    public ResponseEntity<EventResponseDto.nearbyOrArrivalInform> nearbyOrArrivalInform(@RequestBody @Validated final EventRequestDto.nearbyOrArrivalInform requestDto) {
-        final EventResponseDto.nearbyOrArrivalInform responseDto = eventService.nearbyOrArrivalInform(requestDto);
+    @PostMapping("/inform")
+    public ResponseEntity<EventResponseDto.inform> inform(@RequestBody @Validated final EventRequestDto.inform requestDto) {
+        final EventResponseDto.inform responseDto = eventService.inform(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/point")
+    @PostMapping("/arrival")
+    public ResponseEntity<EventResponseDto.arrivalInform> arrivalInform(@RequestBody @Validated final EventRequestDto.arrivalInform requestDto) {
+        final EventResponseDto.arrivalInform responseDto = eventService.arrivalInform(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PostMapping("/point")
     public ResponseEntity<EventResponseDto.myPointList> myPointList(@RequestBody @Validated final EventRequestDto.myPointList requestDto) {
         final EventResponseDto.myPointList responseDto = eventService.myPointList(requestDto);
 

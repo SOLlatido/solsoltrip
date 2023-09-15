@@ -8,10 +8,11 @@ import java.util.List;
 
 public class EventResponseDto {
     @Builder
-    public record nearbyOrArrivalInform(List<TotalEventResponseVO> totalResponseVOList,
-                                        List<EventResponseVO> responseVOList,
-                                        Boolean isArrived,
-                                        Integer point) {}
+    public record inform(List<TotalEventResponseVO> totalResponseVOList,
+                                        List<EventResponseVO> responseVOList) {}
+
+    @Builder
+    public record arrivalInform(String name, Integer point) {}
 
     @Builder
     public record myPointList(Integer myPoint, List<PointVO> pointVOList) {}
@@ -19,12 +20,18 @@ public class EventResponseDto {
     @Getter
     @Builder
     public static class TotalEventResponseVO {
+        private final Long eventSeq;
         private final String name;
         private final String description;
         private final Double x;
         private final Double y;
 
-        TotalEventResponseVO(final String name, final String description, final Double x, final Double y) {
+        TotalEventResponseVO(final Long eventSeq,
+                             final String name,
+                             final String description,
+                             final Double x,
+                             final Double y) {
+            this.eventSeq = eventSeq;
             this.name = name;
             this.description = description;
             this.x = x;
