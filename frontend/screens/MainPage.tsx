@@ -12,16 +12,16 @@ import { nonAuthHttp } from '../axios/axios';
 import { AxiosError } from 'axios';
 import { currentAccountState } from '../recoil/account/currentAccountAtom'
 import { useRecoilState } from 'recoil';
-const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
 const loginUser = AsyncStorage.getItem("loginUser")
 console.log(typeof loginUser.name)
 //들어오자 마자 recoil에 담긴 통장 정보가 떠야 함.
 
 
 const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => { 
-    return (
-        <>
+  return (
+    <>
         <TouchableOpacity onPress = {props.onPress}>
+    const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
         <View style={[
             tw `ml-3 w-20 h-9 rounded-2 bg-[#ddd] justify-center items-center`,
             props.isActive? {backgroundColor : '#EDF7FA'} : {backgroundColor : "transparent"}
@@ -34,7 +34,7 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 }
 
 function MainPage() {
-  
+  const [currAccount, setCurrAccount] = useRecoilState(currentAccountState)
   const [activeTab, setActiveTab] = useState("전체");
   const accountNumber:string = "123232123"
   const travelTitle:string = "4박 5일 강릉 여행"
