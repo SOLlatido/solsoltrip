@@ -12,6 +12,9 @@ public interface MemberAccompanyRepository extends JpaRepository<MemberAccompany
     @Query("select a from MemberAccompany a join fetch a.accompany where a.accompany.accompanySeq = :accompanySeq")
     List<MemberAccompany> findByAccompanySeq(@Param("accompanySeq") final Long accompanySeq);
 
+    @Query("select a from MemberAccompany a join fetch a.member where a.member.memberSeq = :memberSeq")
+    List<MemberAccompany> findByMemberSeq(@Param("memberSeq") final Long memberSeq);
+
     @Query(value = "select a from MemberAccompany a " +
             "join fetch a.accompany join fetch a.member " +
             "where a.accompany.accompanySeq = :accompanySeq and a.member.memberSeq = :memberSeq",

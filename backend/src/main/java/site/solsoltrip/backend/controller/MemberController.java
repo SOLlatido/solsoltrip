@@ -35,4 +35,11 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @GetMapping("/accompany")
+    public ResponseEntity<MemberResponseDto.AccompanyList> accompanyList(@RequestBody @Validated final MemberRequestDto.AccompanyList requestDto) {
+        MemberResponseDto.AccompanyList responseDto = memberService.accompanyList(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
