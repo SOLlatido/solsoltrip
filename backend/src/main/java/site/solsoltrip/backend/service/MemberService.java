@@ -6,11 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import site.solsoltrip.backend.dto.MemberRequestDto;
 import site.solsoltrip.backend.dto.MemberResponseDto;
 import site.solsoltrip.backend.entity.Member;
+import site.solsoltrip.backend.entity.MemberAccompany;
 import site.solsoltrip.backend.entity.Role;
 import site.solsoltrip.backend.oauth.KakaoOAuth2;
 import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.repository.MemberRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MemberAccompanyRepository memberAccompanyRepository;
 
     private final KakaoOAuth2 kakaoOAuth2;
 
@@ -92,4 +96,26 @@ public class MemberService {
                 .build();
     }
 
+    public MemberResponseDto.AccompanyList accompanyList(final MemberRequestDto.AccompanyList requestDto) {
+        final List<MemberAccompany> memberAccompanyList = memberAccompanyRepository.findByMemberSeq(requestDto.memberSeq());
+
+        final List<MemberResponseDto.AccompanyListVO> accompanyList = new ArrayList<>();
+
+        for (MemberAccompany memberAccompany : memberAccompanyList) {
+            final int personNum = memberAccompanyRepository.findByAccompanySeq(memberAccompany.getMemberAccompanySeq()).size();
+
+            accompanyList.add(MemberResponseDto.AccompanyListVO.builder()
+                    .accompanySeq(memberAccompany.getAccompany().getAccompanySeq())
+                    .account(memberAccompany.getAccompany().getAccount())
+                    .name(memberAccompany.getAccompany().getName())
+                    .startDate(memberAccompany.getAccompany().getStartDate())
+                    .endDate(memberAccompany.getAccompany().getEndDate())
+                    .personNum(personNum)
+                    .build());
+        }
+
+        return MemberResponseDto.AccompanyList.builder()
+                .accompanyList(accompanyList)
+                .build();
+    }
 }
