@@ -15,6 +15,10 @@ import LongButton from '../components/ButtonItems/LongButton';
 import EndTimeBarGraph from '../components/Graph/EndTimeBarGraph';
 import LoadingAnimation_night from "../components/Animation/LoadingAnimation_night";
 
+import { useRecoilState } from 'recoil';
+import {userState} from "../recoil/user/loginUserAtom"
+import {currentAccountState} from "../recoil/account/currentAccountAtom"
+
 type EndTimeHistoryProps = {
   navigation: StackNavigationProp<any>;
 };
@@ -31,6 +35,12 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
 
   const [categoryGraphData, setCategoryGraphData] = useState<number[]>([]);
   const [categoryGraphLabel, setCategoryGraphLabel] = useState<string[]>([]);
+
+  const loginUser = useRecoilState(userState);
+  const memberSeq:number|null = loginUser[0].memberSeq; //로그인 유저
+
+  const currAccount = useRecoilState(currentAccountState);
+  const accompanySeq:number|null = currAccount[0].accompanySeq; //동행 통장 정보
 
 
   useEffect(()=>{
@@ -102,13 +112,13 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
       }
   }
 
-  useEffect(()=>{
-    // const EndTimeHistoryRequest = {
-    //   accompanySeq: 1,
-    //   memberSeq: 1
-    // }
-    // getEndTripHistory(EndTimeHistoryRequest);
-  },[])
+  // useEffect(()=>{
+  //   const EndTimeHistoryRequest = {
+  //     accompanySeq: accompanySeq,
+  //     memberSeq: memberSeq
+  //   }
+  //   getEndTripHistory(EndTimeHistoryRequest);
+  // },[])
 
   return (
     <>
@@ -159,8 +169,8 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
 export default EndTimeHistory; 
 
 type EndTimeHistoryRequest = {
-  accompanySeq:number,
-  memberSeq:number
+  accompanySeq:number|null,
+  memberSeq:number|null
 }
 
 type EndTimeHistoryResponse = {
