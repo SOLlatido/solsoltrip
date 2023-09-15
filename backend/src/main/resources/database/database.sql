@@ -78,12 +78,12 @@ CREATE TABLE `event_point` (
     CONSTRAINT `member_seq_ep` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`)
 );
 
-
 CREATE TABLE `individual_withdraw` (
 	`individual_withdraw_seq` BIGINT NOT NULL AUTO_INCREMENT,
 	`member_seq` BIGINT NOT NULL,
 	`accompany_member_withdraw_seq` BIGINT NOT NULL,
 	`individual` DOUBLE NOT NULL,
+    `isIncluded` BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (`individual_withdraw_seq`),
     KEY `fk_member_seq_iw_idx` (`member_seq`),
     CONSTRAINT `member_seq_iw` FOREIGN KEY (`member_seq`) REFERENCES `member` (`member_seq`),
