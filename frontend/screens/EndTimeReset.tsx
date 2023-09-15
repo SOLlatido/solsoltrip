@@ -7,10 +7,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native'
 import { nonAuthHttp, authHttp } from '../axios/axios';
 
-// 컴포넌트
-import Calendar from '../components/Calendar/Calendar';
-import LongButton from '../components/ButtonItems/LongButton';
-import CenterModal from '../components/Modals/CenterModal';
+// recoil
+import { useRecoilState } from 'recoil';
+import {currentAccountState} from "../recoil/account/currentAccountAtom"
 
 type EndTimeResetProps = {
     navigation: StackNavigationProp<any>;
@@ -30,6 +29,9 @@ const EndTimeReset: React.FC = ()=>{
     if(Number(nowDate)<10){
         nowDate = `0${nowDate}`;
     }
+
+    const currAccount = useRecoilState(currentAccountState);
+    const accompanySeq:number|null = currAccount[0].accompanySeq;
 
     const navigation = useNavigation();
     const [startText, setStartText] = useState<string>(`${nowYear}-${nowMonth}-${nowDate}`)
@@ -80,7 +82,7 @@ const EndTimeReset: React.FC = ()=>{
     async function setTripEndDate(data:endTimeResetRequest): Promise<void> {
         try {
 
-            const response = await authHttp.patch(`api/settlement/reset`, data);
+            const response = await nonAuthHttp.patch(`api/settlement/reset`, data);
             
             if(response.status===200){
                 Alert.alert("종료날짜를 재설정하였습니다.")
@@ -136,7 +138,7 @@ const EndTimeReset: React.FC = ()=>{
                     onPress={()=>{navigation.navigate("MyAccounts")}}
                 >
                     <Text onPress={()=>{setTripEndDate({
-                        accompanySeq: 1,
+                        accompanySeq: accompanySeq,
                         endDate: endText
                     })}} style={tw `text-white text-base font-semibold`}>수정하기</Text>
                 </TouchableOpacity>
@@ -173,6 +175,6 @@ const EndTimeReset: React.FC = ()=>{
 export default EndTimeReset
 
 type endTimeResetRequest = {
-    accompanySeq : number,
+    accompanySeq : number|null,
     endDate : string
 }
