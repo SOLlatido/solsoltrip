@@ -29,4 +29,11 @@ public class PaymentController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PostMapping
+    public ResponseEntity<Void> withdraw(@RequestBody @Validated final PaymentRequestDto.withdraw requestDto) {
+        paymentService.withdraw(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
