@@ -11,7 +11,7 @@ import tw from "twrnc";
 //recoil
 import { useRecoilState } from 'recoil';
 import { centerModalState } from '../recoil/centerModal/atom';
-
+import FirstPage from '../screens/FirstPage';
 import Intro from '../screens/Intro';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
@@ -153,6 +153,7 @@ const AppNavigation = () => {
               headerRight: () => <MainRightButtons navigation={useNavigation()} />,
             }}
           />
+        <Stack.Screen name='FirstPage' component={FirstPage} options={{headerShown:false}} />
         <Stack.Screen name='Intro' component={Intro} options={{headerShown:false}} />
         <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
         <Stack.Screen name='SignUp' component={SignUp} options={{headerShown:false}} />
@@ -330,6 +331,7 @@ export default AppNavigation
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import FirstPage from '../screens/FirstPage';
 
 type IntroParams = {
 };
