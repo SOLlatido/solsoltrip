@@ -27,4 +27,8 @@ public class RegistedAccount {
     private Integer balance;
 
     private Boolean isAccompanyAccount;
+
+    public void updateIsAccompanyAccount(final Boolean isAccompanyAccount) {
+        this.isAccompanyAccount = isAccompanyAccount;
+    }
 }
