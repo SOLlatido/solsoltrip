@@ -15,7 +15,10 @@ public class SettlementRequestDto {
 
     public record endTrip(
             @NotNull
-            Long accompanySeq) {}
+            Long accompanySeq,
+
+            @NotNull
+            Long memberSeq) {}
 
     public record showTripResult(
             @NotNull

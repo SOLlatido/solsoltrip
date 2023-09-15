@@ -23,6 +23,7 @@ public class SettlementService {
     private final AccompanyMemberDepositRepository accompanyMemberDepositRepository;
     private final MemberAccompanyRepository memberAccompanyRepository;
     private final IndividualWithdrawRepository individualWithdrawRepository;
+    private final RegistedAccountRepository registedAccountRepository;
 
     public void resetEndTime(final SettlementRequestDto.resetEndTime requestDto) {
         final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
@@ -38,6 +39,12 @@ public class SettlementService {
         );
 
         accompany.updateEndDate(LocalDate.now());
+
+        final RegistedAccount registedAccount = registedAccountRepository
+                .findByMemberSeqAndAccount(requestDto.memberSeq(), accompany.getAccount())
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 유저의 해당 계좌가 없습니다."));
+
+        registedAccount.updateIsAccompanyAccount(false);
     }
 
     public SettlementResponseDto.showTripResult checkShowTripResult(final SettlementRequestDto.showTripResult requestDto) {
