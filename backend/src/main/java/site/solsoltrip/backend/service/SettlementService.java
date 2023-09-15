@@ -187,6 +187,7 @@ public class SettlementService {
         return SettlementResponseDto.showTripResult.builder()
                 .isChecked(memberAccompany.getIsChecked())
                 .totalCost(checkedTotalWithdraw)
+                .formattedTotalCost(NumberFormatUtility.formatter(checkedTotalWithdraw))
                 .dailyVOList(dailyVOList)
                 .categoryVOList(categoryVOList)
                 .build();

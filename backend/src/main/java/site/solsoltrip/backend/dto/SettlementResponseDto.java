@@ -11,6 +11,7 @@ public class SettlementResponseDto {
     public record showTripResult(
             Boolean isChecked,
             Integer totalCost,
+            String formattedTotalCost,
             List<ShowTripResultCategoryVO> categoryVOList,
             List<ShowTripResultDailyVO> dailyVOList) {}
 
