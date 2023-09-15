@@ -10,11 +10,15 @@ import TabNavigation from '../navigation/TabNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nonAuthHttp } from '../axios/axios';
 import { AxiosError } from 'axios';
+import { currentAccountState } from '../recoil/account/currentAccountAtom'
+import { useRecoilState } from 'recoil';
+const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
 const loginUser = AsyncStorage.getItem("loginUser")
 console.log(typeof loginUser.name)
+//들어오자 마자 recoil에 담긴 통장 정보가 떠야 함.
 
-const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => {
-    
+
+const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => { 
     return (
         <>
         <TouchableOpacity onPress = {props.onPress}>
