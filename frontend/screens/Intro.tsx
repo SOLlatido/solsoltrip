@@ -17,7 +17,13 @@ import tw from 'twrnc';
 import aurora from '../assets/images/aurora_background.png';
 import LongButton from '../components/ButtonItems/LongButton';
 import sol from '../assets/images/character_sol.png';
+import solGo from "../assets/images/sol_go_main.png";
+import CenterModal from '../components/Modals/CenterModal';
+import Mypage from './Mypage';
+import EventMap from './EventMap';
 
+import { useRecoilState} from 'recoil';
+import {centerModalState} from '../recoil/centerModal/atom'
 
 type IntroProps = {
   navigation: StackNavigationProp<any>;
@@ -25,6 +31,8 @@ type IntroProps = {
 
 const Intro:React.FC<IntroProps> = ({navigation}) => {
   const translateY = new Animated.Value(0);
+
+  const [modalVisible, setModalVisible] = useRecoilState(centerModalState); //recoil state: 모달
   
   useEffect(() => {
     const animateSol = () => {
@@ -55,9 +63,15 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
     });
   }
 
+  const map = () =>{
+    navigation.navigate("EndTimeHistory", {
+      animation : 'fadeIn'
+    });
+  }
+
   return (
     <View style={tw `flex flex-1 bg-black items-center justify-center text-white`}>
-      <ImageBackground source={aurora} style={tw `w-full h-full bg-cover absolute`}></ImageBackground>
+      <ImageBackground source={aurora} style={tw `w-full h-full absolute`}></ImageBackground>
 
       <View style={tw `flex-2 w-full h-full`}>
         <View style={tw `mt-35 w-full ml-5`}>
@@ -70,9 +84,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       <View style={tw `flex-3 flex justify-center items-center`}>
       <Animated.View
         style={[
-          tw`transform`,
           { transform: [{ translateY }] },
-          tw`transition-transform duration-1000 ease-linear`,
         ]}
       >
           <Image
@@ -82,9 +94,6 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
       </View>
 
       <LongButton content="시작하기" onPress={handleNavigate} />
-        <View style={tw `mb-10`}>
-      <Button onPress={()=>{navigation.navigate("Login")}} title='산하하던거'></Button>
-        </View>
 
     </View>
   );
