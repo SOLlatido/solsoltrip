@@ -8,7 +8,7 @@ type createAccountType = {
     name : string | null,
     startDate : string | null,
     endDate : string | null,
-    personalAmount : number | null
+    individual : number | null
 }
 
 export const createAccountState = atom<createAccountType>({
@@ -19,6 +19,6 @@ export const createAccountState = atom<createAccountType>({
         name : "",
         startDate : "",
         endDate : "",
-        personalAmount : 0
+        individual : 0
     }, // 초깃값
   });

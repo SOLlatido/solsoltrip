@@ -39,7 +39,7 @@ function AccountDivision() {
   const handleExpenseGoal = () => {
     setNewAccount((prevNewAccount) => ({
       ...prevNewAccount,
-      personalAmount : Number(plannedExpense)
+      individual : Number(plannedExpense)
     }));
 
     makeNewAccount();
