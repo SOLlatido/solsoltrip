@@ -37,7 +37,7 @@ public class MemberController {
     }
 
     @GetMapping("/accompany")
-    public ResponseEntity<MemberResponseDto.AccompanyList> accompanyList(@RequestBody final MemberRequestDto.AccompanyList requestDto) {
+    public ResponseEntity<MemberResponseDto.AccompanyList> accompanyList(@RequestBody @Validated final MemberRequestDto.AccompanyList requestDto) {
         MemberResponseDto.AccompanyList responseDto = memberService.accompanyList(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
