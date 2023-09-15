@@ -93,7 +93,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
         </Animated.View>
       </View>
 
-      <LongButton content="시작하기" onPress={map} />
+      <LongButton content="시작하기" onPress={handleNavigate} />
 
     </View>
   );
