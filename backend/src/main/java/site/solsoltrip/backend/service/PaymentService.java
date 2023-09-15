@@ -6,14 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.solsoltrip.backend.dto.PaymentRequestDto;
 import site.solsoltrip.backend.dto.PaymentResponseDto;
-import site.solsoltrip.backend.entity.AccompanyMemberDeposit;
-import site.solsoltrip.backend.entity.AccompanyMemberWithdraw;
+import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.properties.aws.AwsS3Properties;
 import site.solsoltrip.backend.repository.AccompanyMemberDepositRepository;
 import site.solsoltrip.backend.repository.AccompanyMemberWithdrawRepository;
+import site.solsoltrip.backend.repository.IndividualWithdrawRepository;
+import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.util.AwsS3Manager;
 import site.solsoltrip.backend.util.FileUtility;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -23,6 +26,8 @@ import java.util.function.UnaryOperator;
 public class PaymentService {
     private final AccompanyMemberDepositRepository accompanyMemberDepositRepository;
     private final AccompanyMemberWithdrawRepository accompanyMemberWithdrawRepository;
+    private final IndividualWithdrawRepository individualWithdrawRepository;
+    private final MemberAccompanyRepository memberAccompanyRepository;
 
     private final AwsS3Manager awsS3Manager;
     private final AwsS3Properties awsS3Properties;
@@ -70,9 +75,69 @@ public class PaymentService {
                         .findByAccompanyMemberWithdrawSeq(requestDto.accompanyMemberWithdrawSeq())
                         .orElseThrow(() -> new IllegalArgumentException("출금 내역을 찾을 수 없습니다."));
 
-        accompanyMemberWithdraw.updateWithdrawRecord(requestDto.category(), requestDto.memo());
+        accompanyMemberWithdraw.updateWithdrawRecord(requestDto.category(), requestDto.memo(), LocalDateTime.now());
 
         uploadPicture(requestDto.accompanyMemberWithdrawSeq(), requestDto.pictureFile());
+
+        changeEachExpense(requestDto.accompanyMemberWithdrawSeq(), requestDto.eachExpenseList());
+    }
+
+    @Transactional
+    public void withdraw(final PaymentRequestDto.withdraw requestDto) {
+        final AccompanyMemberWithdraw accompanyMemberWithdraw = AccompanyMemberWithdraw.builder()
+                .store(requestDto.store())
+                .cost(requestDto.cost())
+                .acceptedDate(LocalDate.now())
+                .category(requestDto.category())
+                .acceptedDateTime(LocalDateTime.now())
+                .build();
+
+        accompanyMemberWithdrawRepository.save(accompanyMemberWithdraw);
+
+        List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+                accompanyMemberWithdrawRepository
+                        .findByAccompanySeqOrderByAccompanyMemberWithdrawSeqDesc(requestDto.accompanySeq());
+
+        if (accompanyMemberWithdrawList.isEmpty()) {
+            throw new IllegalArgumentException("출금이 저장되지 않았습니다.");
+        }
+
+        final AccompanyMemberWithdraw foundAccompanyMemberWithdraw = accompanyMemberWithdrawList.get(0);
+
+        final List<MemberAccompany> memberAccompanyList = memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        final int size = memberAccompanyList.size();
+
+        final double eachWithdraw = (double) requestDto.cost() / size;
+
+        for (final MemberAccompany memberAccompany : memberAccompanyList) {
+            final Member member = memberAccompany.getMember();
+
+            final IndividualWithdraw individualWithdraw = IndividualWithdraw.builder()
+                    .member(member)
+                    .accompanyMemberWithdraw(foundAccompanyMemberWithdraw)
+                    .individual(eachWithdraw)
+                    .isIncluded(true)
+                    .build();
+
+            individualWithdrawRepository.save(individualWithdraw);
+        }
+    }
+
+    @Transactional
+    private void changeEachExpense(final Long accompanyMemberWithdrawSeq, final List<PaymentRequestDto.EachExpense> eachExpenseList) {
+        final List<IndividualWithdraw> individualWithdrawList =
+                individualWithdrawRepository.findByAccompanyMemberWithdrawSeq(accompanyMemberWithdrawSeq);
+
+        for (final IndividualWithdraw individualWithdraw : individualWithdrawList) {
+            for (int seq = 0; seq < eachExpenseList.size(); seq++) {
+                if (!eachExpenseList.get(seq).getMemberSeq().equals(individualWithdraw.getMember().getMemberSeq())) {
+                    continue;
+                }
+
+                individualWithdraw.updateIndividualWithdraw(eachExpenseList.get(seq).getCost(), true);
+            }
+        }
     }
 
     @Transactional
