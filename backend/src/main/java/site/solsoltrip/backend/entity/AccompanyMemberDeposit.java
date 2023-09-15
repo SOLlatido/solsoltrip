@@ -28,7 +28,7 @@ public class AccompanyMemberDeposit {
     @ManyToOne(fetch = FetchType.LAZY)
     private Accompany accompany;
 
-    private String store;
+    private String name;
 
     private Integer cost;
 

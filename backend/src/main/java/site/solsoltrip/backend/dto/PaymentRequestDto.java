@@ -29,6 +29,19 @@ public class PaymentRequestDto {
 
             List<EachExpense> eachExpenseList) {}
 
+    public record deposit(
+            @NotNull
+            Long accompanySeq,
+
+            @NotBlank
+            String name,
+
+            @NotNull
+            Integer cost,
+
+            @NotBlank
+            String category) {}
+
     public record withdraw(
             @NotNull
             Long accompanySeq,
@@ -39,24 +52,8 @@ public class PaymentRequestDto {
             @NotNull
             Integer cost,
 
-            @NotNull
-            LocalDate acceptedDate,
-
             @NotBlank
-            String category,
-
-            @NotNull
-            LocalDateTime acceptedDateTime,
-
-            @NotBlank
-            String memo,
-
-            @NotBlank
-            String picture,
-
-            @NotNull
-            LocalDateTime memoDateTime
-    ) {}
+            String category) {}
 
     @Getter
     @Builder

@@ -42,7 +42,7 @@ public class PaymentService {
                             .orElseThrow(() -> new IllegalArgumentException("입금 내역을 찾을 수 없습니다."));
 
             deposit = PaymentResponseDto.Deposit.builder()
-                    .name(accompanyMemberDeposit.getStore())
+                    .name(accompanyMemberDeposit.getName())
                     .cost(accompanyMemberDeposit.getCost())
                     .category(accompanyMemberDeposit.getCategory())
                     .time(accompanyMemberDeposit.getAcceptedDateTime())
@@ -80,6 +80,19 @@ public class PaymentService {
         uploadPicture(requestDto.accompanyMemberWithdrawSeq(), requestDto.pictureFile());
 
         changeEachExpense(requestDto.accompanyMemberWithdrawSeq(), requestDto.eachExpenseList());
+    }
+
+    @Transactional
+    public void deposit(final PaymentRequestDto.deposit requestDto) {
+        final AccompanyMemberDeposit accompanyMemberDeposit = AccompanyMemberDeposit.builder()
+                .name(requestDto.name())
+                .cost(requestDto.cost())
+                .acceptedDate(LocalDate.now())
+                .category(requestDto.category())
+                .acceptedDateTime(LocalDateTime.now())
+                .build();
+
+        accompanyMemberDepositRepository.save(accompanyMemberDeposit);
     }
 
     @Transactional
