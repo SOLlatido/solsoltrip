@@ -30,7 +30,7 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping
+    @PostMapping("/withdraw")
     public ResponseEntity<Void> withdraw(@RequestBody @Validated final PaymentRequestDto.withdraw requestDto) {
         paymentService.withdraw(requestDto);
 
