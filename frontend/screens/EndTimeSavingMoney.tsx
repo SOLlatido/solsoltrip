@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, ImageBackground} from 'react-native';
+import {View, Text, ImageBackground, Alert} from 'react-native';
 import tw from 'twrnc'; 
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
+import { AxiosResponse, AxiosError } from "axios"
+import { authHttp, nonAuthHttp } from '../axios/axios';
 
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
@@ -18,7 +20,7 @@ type EndTimeSavingMoneyProps = {
 
 const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
     
-    const [saving, setSaving] = useState("20,000");
+    const [saving, setSaving] = useState<string>("0");
 
     const handleSavingMoney = (type:string) => {
         if(type==="prev")
@@ -37,6 +39,25 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
       useEffect(() => {
         if (animation2) animation2.slideInUp(2000); // 두 번째 애니메이션
       }, [animation2]);
+
+
+    // 남은 금액 정산
+    async function EndTripSettle(data:EndTripSettleRequest): Promise<void> {
+        try {
+
+            const response: AxiosResponse<EndTripSettleResponse> = await authHttp.patch<EndTripSettleResponse>(`/api/settlement/settle`, data);
+            const result: EndTripSettleResponse = response.data; //{status, message}
+            
+            if(response.status===200){
+                setSaving(result.formattedLeft);
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            const err = error as AxiosError
+            console.log(err);
+        }
+    }
 
     return(
         <View style={tw`flex-1`}>
@@ -61,3 +82,30 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
 }
 
 export default EndTimeSavingMoney
+
+//6. 남은 금액 정산
+type EndTripSettleRequest = {
+    accompanySeq : number,
+    memberSeq : number,
+}
+
+type EndTripSettleResponse = {
+    left : number,//전체 남은 금액 숫자
+    formattedLeft : string, //전체 남은 금액 규격 표시 (,)
+    settlementList:SettlementList[]
+}
+
+type SettlementList = { //각 참여자의 정산 금액
+    name : string,
+    isManager : boolean,
+    isPositive : boolean,
+
+    settlement : number,
+    formattedSettlement : string,
+
+    individualWithdraw : number,
+    formattedIndividualWithdraw : string,
+
+    individualDeposit : number,
+    formattedIndividualDeposit : string
+}
