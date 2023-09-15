@@ -1,6 +1,7 @@
 package site.solsoltrip.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class MemberRequestDto {
     public record signup(
@@ -15,6 +16,6 @@ public class MemberRequestDto {
             String uuid) {}
 
     public record AccompanyList(
-            @NotBlank
+            @NotNull
             Long memberSeq) {}
 }
