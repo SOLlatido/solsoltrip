@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.KakaoUserInfo;
 import site.solsoltrip.backend.dto.MemberResponseDto;
-import site.solsoltrip.backend.properties.KakaoProperties;
+import site.solsoltrip.backend.properties.kakao.KakaoProperties;
 
 @Component
 @RequiredArgsConstructor

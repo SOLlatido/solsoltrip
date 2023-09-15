@@ -1,4 +1,4 @@
-package site.solsoltrip.backend.properties;
+package site.solsoltrip.backend.properties.kakao;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
