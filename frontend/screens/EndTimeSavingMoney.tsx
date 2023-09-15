@@ -13,6 +13,10 @@ import starrynight from '../assets/images/starrynight_bg.jpg';
 import SavingMoneySlider from '../components/Slider/SavingMoneySlider';
 import LongButton from '../components/ButtonItems/LongButton';
 
+import { useRecoilState } from 'recoil';
+import {userState} from "../recoil/user/loginUserAtom"
+import {currentAccountState} from "../recoil/account/currentAccountAtom"
+
 
 type EndTimeSavingMoneyProps = {
     navigation: StackNavigationProp<any>;
@@ -31,6 +35,12 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
 
     const [animation1, setAnimation1] = useState(null);
     const [animation2, setAnimation2] = useState(null);
+
+    const loginUser = useRecoilState(userState);
+    const memberSeq:number|null = loginUser[0].memberSeq; //로그인 유저
+
+    const currAccount = useRecoilState(currentAccountState);
+    const accompanySeq:number|null = currAccount[0].accompanySeq; //동행 통장 정보
 
     useEffect(() => {
         if (animation1) animation1.slideInUp(1000); // 첫 번째 애니메이션
@@ -59,6 +69,17 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
         }
     }
 
+    // useEffect(()=>{
+
+    //     const requestData:EndTripSettleRequest = {
+    //         accompanySeq: accompanySeq,
+    //         memberSeq: memberSeq
+    //     }
+
+    //     EndTripSettle(requestData);
+
+    // },[])
+
     return(
         <View style={tw`flex-1`}>
             
@@ -85,8 +106,8 @@ export default EndTimeSavingMoney
 
 //6. 남은 금액 정산
 type EndTripSettleRequest = {
-    accompanySeq : number,
-    memberSeq : number,
+    accompanySeq : number|null,
+    memberSeq : number|null,
 }
 
 type EndTripSettleResponse = {
