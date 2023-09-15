@@ -85,9 +85,9 @@ public class TripService {
 
     @Transactional
     public void registAccount(final TripRequestDto.registAccount requestDto) {
-        final RegistedAccount account = registedAccountRepository.findById(requestDto.registerAccountSeq()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 계좌입니다.")
-        );
+        final RegistedAccount account = registedAccountRepository
+                .findByRegistedAccountSeq(requestDto.registedAccountSeq())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계좌입니다."));
 
         account.updateIsAccompanyAccount(true);
 
@@ -97,6 +97,8 @@ public class TripService {
                 .startDate(requestDto.startDate())
                 .endDate(requestDto.endDate())
                 .individual(requestDto.individual())
+                .totalDeposit(requestDto.individual())
+                .totalWithdraw(0)
                 .build();
 
         accompanyRepository.save(accompany);
@@ -112,6 +114,11 @@ public class TripService {
                 .member(member)
                 .accompany(savedAccompany)
                 .isManager(true)
+                .isPaid(false)
+                .settlement(0)
+                .individualDeposit(requestDto.individual())
+                .individualWithdraw(0)
+                .isChecked(false)
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);
