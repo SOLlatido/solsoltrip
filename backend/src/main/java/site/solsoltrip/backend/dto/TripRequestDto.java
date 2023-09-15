@@ -30,7 +30,7 @@ public class TripRequestDto {
             LocalDate endDate,
 
             @NotBlank
-            Integer personalAmount
+            Integer individual
     ) {}
 
     public record tripDetail (

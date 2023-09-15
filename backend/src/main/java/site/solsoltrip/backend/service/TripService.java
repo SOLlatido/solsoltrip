@@ -89,12 +89,14 @@ public class TripService {
                 () -> new IllegalArgumentException("존재하지 않는 계좌입니다.")
         );
 
+        account.updateIsAccompanyAccount(true);
+
         final Accompany accompany = Accompany.builder()
                 .name(requestDto.name())
                 .account(account.getAccount())
                 .startDate(requestDto.startDate())
                 .endDate(requestDto.endDate())
-                .individual(requestDto.personalAmount())
+                .individual(requestDto.individual())
                 .build();
 
         accompanyRepository.save(accompany);
@@ -102,9 +104,13 @@ public class TripService {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
+        final Accompany savedAccompany = accompanyRepository
+                .findByNameAndAccount(accompany.getName(), accompany.getAccount())
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 동행 통장이 없습니다."));
+
         final MemberAccompany memberAccompany = MemberAccompany.builder()
                 .member(member)
-                .accompany(accompany)
+                .accompany(savedAccompany)
                 .isManager(true)
                 .build();
 
