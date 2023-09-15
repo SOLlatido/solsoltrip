@@ -30,6 +30,13 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PostMapping("/deposit")
+    public ResponseEntity<Void> deposit(@RequestBody @Validated final PaymentRequestDto.deposit requestDto) {
+        paymentService.deposit(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @PostMapping("/withdraw")
     public ResponseEntity<Void> withdraw(@RequestBody @Validated final PaymentRequestDto.withdraw requestDto) {
         paymentService.withdraw(requestDto);

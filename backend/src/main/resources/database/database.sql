@@ -30,7 +30,7 @@ CREATE TABLE `accompany_member_deposit` (
 	`accompany_member_deposit_seq` BIGINT NOT NULL AUTO_INCREMENT,
 	`member_seq` BIGINT NOT NULL,
 	`accompany_seq` BIGINT NOT NULL,
-	`store` VARCHAR(20) NOT NULL,
+	`name` VARCHAR(20) NOT NULL,
 	`cost` INT NOT NULL,
 	`accepted_date` DATE NOT NULL,
 	`category` VARCHAR(1) NULL,
