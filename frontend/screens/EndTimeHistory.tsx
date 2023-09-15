@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, SafeAreaView, ScrollView, Alert } from 'react-native';
 import tw from 'twrnc';
 import * as Animatable from 'react-native-animatable'; // 애니메이션 라이브러리 추가
 import { StackNavigationProp } from '@react-navigation/stack';
+import { AxiosResponse, AxiosError } from "axios"
+import { authHttp, nonAuthHttp } from '../axios/axios';
 
 // 이미지
 import starrynight from '../assets/images/starrynight_bg.jpg';
@@ -22,6 +24,14 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   const [animation2, setAnimation2] = useState(null);
   const [animation3, setAnimation3] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [totalCost, setTotalCost] = useState<number>(0);
+  const [dailyGraphData, setDailyGraphData] = useState<number[]>([]);
+  const [dailyGraphLabel, setDailyGraphLabel] = useState<string[]>([]);
+
+  const [categoryGraphData, setCategoryGraphData] = useState<number[]>([]);
+  const [categoryGraphLabel, setCategoryGraphLabel] = useState<string[]>([]);
+
 
   useEffect(()=>{
     async function prepare(){
@@ -54,6 +64,52 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
     if (animation3) animation3.slideInUp(3000); // 세 번째 애니메이션
   }, [animation3]);
 
+  //최종 여행 기록 안내 페이지
+  async function getEndTripHistory(data:EndTimeHistoryRequest): Promise<void> {
+    try {
+
+        const response: AxiosResponse<EndTimeHistoryResponse> = await authHttp.post<EndTimeHistoryResponse>(`api/settlement/result`, data);
+        const result: EndTimeHistoryResponse = response.data; //{status, message}
+        
+        if(response.status===200){
+          const dailyMoney:number[] = [];
+          const dailyDay:string[] = [];
+
+          const categoryMoney:number[] = [];
+          const category:string[] = [];
+
+          result.dailyVOList.map((data, index)=>{
+            dailyMoney.push(data.cost);
+            dailyDay.push(data.acceptedDate);
+          })
+
+          result.categoryVOList.map((data, index)=>{
+            categoryMoney.push(data.cost);
+            category.push(data.category);
+          })
+
+          setDailyGraphData(dailyMoney);
+          setDailyGraphLabel(dailyDay);
+          setCategoryGraphData(dailyMoney);
+          setCategoryGraphLabel(category);
+        }
+
+
+    } catch (error) {
+        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        const err = error as AxiosError
+        console.log(err);
+      }
+  }
+
+  useEffect(()=>{
+    // const EndTimeHistoryRequest = {
+    //   accompanySeq: 1,
+    //   memberSeq: 1
+    // }
+    // getEndTripHistory(EndTimeHistoryRequest);
+  },[])
+
   return (
     <>
       {loading?<LoadingAnimation_night/>:<View style={tw `flex-1 bg-white w-full`}>
@@ -66,7 +122,7 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
         >
           <Animatable.View style={tw `flex-1 items-center mt-10`}>
             <Text style={tw `text-xl text-white mt-10`}>동행통장 지출 금액</Text>
-            <Text style={tw `text-5xl font-bold text-white`}>980,000원</Text>
+            <Text style={tw `text-5xl font-bold text-white`}>{totalCost}원</Text>
           </Animatable.View>
         </Animatable.View>
 
@@ -79,14 +135,14 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
                 ref={(ref) => setAnimation2(ref)}
                 style={tw `flex-1`}
               >
-                <EndTimeGraph />
+                <EndTimeGraph data={dailyGraphData} labels={dailyGraphLabel}/>
               </Animatable.View>
 
               <Animatable.View
                 ref={(ref) => setAnimation3(ref)}
                 style={tw `flex-1`}
               >
-                <EndTimeBarGraph />
+                <EndTimeBarGraph data={categoryGraphData} labels={categoryGraphLabel}/>
               </Animatable.View>
             </ScrollView>
           </SafeAreaView>
@@ -100,4 +156,28 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
   );
 }
 
-export default EndTimeHistory;
+export default EndTimeHistory; 
+
+type EndTimeHistoryRequest = {
+  accompanySeq:number,
+  memberSeq:number
+}
+
+type EndTimeHistoryResponse = {
+  isChecked:boolean,
+  totalCost:number,
+  categoryVOList:categoryVOList[],
+  dailyVOList:dailyVOList[]
+}
+
+type categoryVOList = {
+  category:string,
+  cost:number,
+  formattedCost:string
+}
+
+type dailyVOList = {
+  acceptedDate:string,
+  cost:number,
+  formattedCost:string
+}

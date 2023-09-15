@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, Pressable, Dimensions} from 'react-native'
+import { View, Text, TouchableOpacity, Pressable, Dimensions, Alert} from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native'
+import { nonAuthHttp, authHttp } from '../axios/axios';
 
 // 컴포넌트
 import Calendar from '../components/Calendar/Calendar';
@@ -16,9 +17,22 @@ type EndTimeResetProps = {
 };
 
 const EndTimeReset: React.FC = ()=>{
-    const navigation = useNavigation();
 
-    const [startText, setStartText] = useState<string>("2023-09-12")
+    //오늘의 날짜 설정
+    const now = new Date();
+    let nowYear:string = String(now.getFullYear());
+    let nowMonth:string = String(now.getMonth()+1);
+    let nowDate:string = String(now.getDate());
+
+    if(Number(nowMonth)<10){
+        nowMonth = `0${nowMonth}`;
+    }
+    if(Number(nowDate)<10){
+        nowDate = `0${nowDate}`;
+    }
+
+    const navigation = useNavigation();
+    const [startText, setStartText] = useState<string>(`${nowYear}-${nowMonth}-${nowDate}`)
     const [endText, setEndText] = useState<string>("종료 날짜")
     const [selectedDate, setSelectedDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
@@ -62,6 +76,24 @@ const EndTimeReset: React.FC = ()=>{
         hideDatePicker();
     };
 
+    //종료시간 재설정 axios
+    async function setTripEndDate(data:endTimeResetRequest): Promise<void> {
+        try {
+
+            const response = await authHttp.patch(`api/settlement/reset`, data);
+            
+            if(response.status===200){
+                Alert.alert("종료날짜를 재설정하였습니다.")
+            }else{
+                return;
+            }
+
+        } catch (error) {
+            Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+            console.log(error);
+        }
+    }
+
 
     return(
         <View style={tw `flex-1 bg-[#DBE4E4]`}>
@@ -103,7 +135,10 @@ const EndTimeReset: React.FC = ()=>{
                     ]}
                     onPress={()=>{navigation.navigate("MyAccounts")}}
                 >
-                    <Text style={tw `text-white text-base font-semibold`}>수정하기</Text>
+                    <Text onPress={()=>{setTripEndDate({
+                        accompanySeq: 1,
+                        endDate: endText
+                    })}} style={tw `text-white text-base font-semibold`}>수정하기</Text>
                 </TouchableOpacity>
             
 
@@ -136,3 +171,8 @@ const EndTimeReset: React.FC = ()=>{
 
 
 export default EndTimeReset
+
+type endTimeResetRequest = {
+    accompanySeq : number,
+    endDate : string
+}

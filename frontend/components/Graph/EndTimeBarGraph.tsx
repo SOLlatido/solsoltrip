@@ -3,18 +3,20 @@ import { View, Dimensions, Text } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import tw from 'twrnc';
 
-const initialData = {
-  labels: ["교통", "관광", "식비", "숙소", "기타"],
-  datasets: [
-    {
-      data: [10.3, 126, 283.8, 452, 100],
-    },
-  ],
-};
 
-const screenWidth = Dimensions.get("window").width;
+const EndTimeBarGraph = (props:{data:number[], labels:string[]}) => {
 
-const EndTimeBarGraph = () => {
+  const initialData = {
+    labels: ["교통", "관광", "식비", "숙소", "기타"],
+    datasets: [
+      {
+        data: [10.3, 126, 283.8, 452, 100],
+      },
+    ],
+  };
+  
+  const screenWidth = Dimensions.get("window").width;
+
   const chartConfig = {
     backgroundGradientFrom: "#0B49FF",
     backgroundGradientTo: "#9E5FEE",

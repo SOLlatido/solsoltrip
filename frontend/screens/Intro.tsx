@@ -63,6 +63,12 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
     });
   }
 
+  const map = () =>{
+    navigation.navigate("EndTimeHistory", {
+      animation : 'fadeIn'
+    });
+  }
+
   return (
     <View style={tw `flex flex-1 bg-black items-center justify-center text-white`}>
       <ImageBackground source={aurora} style={tw `w-full h-full absolute`}></ImageBackground>
@@ -87,7 +93,8 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
         </Animated.View>
       </View>
 
-      <LongButton content="시작하기" onPress={handleNavigate} />
+      <LongButton content="시작하기" onPress={map} />
+
     </View>
   );
 }

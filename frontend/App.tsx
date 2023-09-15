@@ -8,9 +8,11 @@ import {
 
 
 export default function App() {
+  
   return (
       // <GestureHandlerRootView>
     <RecoilRoot>
+      <StatusBar style="light"/>
       {/* <TabNavigation></TabNavigation> */}
       <AppNavigation>
       </AppNavigation>
