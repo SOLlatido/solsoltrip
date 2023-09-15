@@ -2,10 +2,20 @@ import React, { useState } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, TextInput } from 'react-native'
 import tw from "twrnc"
+import { TouchableOpacity } from 'react-native';
+import { useRecoilState } from 'recoil'
+import { createAccountState } from '../../recoil/user/createAccountAtom'
 
 function AccountName() {
-  const [accountName, setAccountName] = useState<string>();
+  const [accountName, setAccountName] = useState<string>("");
+  const [newAccount, setNewAccount] = useRecoilState(createAccountState)
 
+  const handleName = () => {
+    setNewAccount((prevNewAccount) => ({
+      ...prevNewAccount,
+      name : accountName
+    }));
+  }
   return (
     <>
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
@@ -23,8 +33,9 @@ function AccountName() {
             />
       </View>
     </View>
-
-    <NextButton router='AccountDuration'></NextButton>
+    <TouchableOpacity onPress={handleName}>
+      <NextButton action={handleName} router='AccountDuration'></NextButton>
+    </TouchableOpacity>
     </>
   )
 }

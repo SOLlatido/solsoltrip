@@ -1,23 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import NextButton from '../../components/ButtonItems/NextButton'
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import tw from "twrnc"
 import SelectAccountItem from '../../components/Accounts/SelectAccounItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authHttp, nonAuthHttp } from '../../axios/axios';
+import { AxiosError } from 'axios';
+import { useRecoilState } from 'recoil'
+import { createAccountState } from '../../recoil/user/createAccountAtom'
 
 function AccountList() {
   // const [accountInfo, setAccountInfo] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState<number>();
-  const accountNumber = "110480000001"
-  const accountTitle = "FNA증권거래예금"
-  const balance = "331,551"
-  const accountInfo = [
-    { accountNumber: '110480000001', accountTitle: 'FNA증권거래예금', balance: '331,551' },
-    { accountNumber: '110480000001', accountTitle: 'FNA증권거래예금', balance: '331,551' },
-    { accountNumber: '110480000001', accountTitle: 'FNA증권거래예금', balance: '331,551' },
-  ];
+  const [newAccount, setNewAccount] = useRecoilState(createAccountState)
+  
+  useEffect(() => {
+    console.log(newAccount);
+  }, [newAccount]); 
+
+  let memberN:number;
+
+  useEffect(()=>{
+    async function getAvailableAccounts(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      memberN = parsed.memberSeq;
+
+      setNewAccount((prevNewAccount) => ({
+      ...prevNewAccount,
+      memberSeq : memberN,
+      }));
+
+      console.log("memberN", memberN);
+      const send = {
+        "memberSeq" : memberN
+      }
+      try {
+        const response = await nonAuthHttp.post(`api/trip/validation`, send);
+        const data = response.data;
+        console.log("data", data["responseVOList"]);
+        setAccounts(data["responseVOList"])
+      } catch (error) {
+          const err = error as AxiosError
+          console.log(err)
+          alert("에러!!")
+      }
+    }
+    getAvailableAccounts();
+  },[])
 
   const handleAccountPress = (index:number) => {
     setSelectedAccount(index);
+    setNewAccount((prevNewAccount) => ({
+      ...prevNewAccount,
+      registerAccountSeq: index,
+      // memberSeq : memberN,
+    }));
+    console.log("new :", newAccount);
   };
   return (
     <>
@@ -29,26 +69,24 @@ function AccountList() {
       </View>
 
       <ScrollView style={tw `mt-10`}>
-      {accountInfo.map((account, index) => (
+      {accounts.map((account, index) => (
               <Pressable
-                key={index}
-                onPress={() => handleAccountPress(index)}
+                key={account["registedAccountSeq"]}
+                onPress={() => handleAccountPress(account["registedAccountSeq"])}
                 style={[
                   tw `mb-5 self-center w-6/7`,
-                  selectedAccount === index && tw`z-10 rounded-2xl border-4 border-[#51C0C7]`
+                  selectedAccount === account["registedAccountSeq"] && tw`z-10 rounded-2xl border-4 border-[#51C0C7]`
                 ]}
               >
-                <SelectAccountItem {...account} />
+                 {/* const {accountNumber, accountTitle, balance} = props; */}
+                <SelectAccountItem accountNumber={account["account"]} accountTitle={account["name"]} balance={account["balance"]} />
               </Pressable>
             ))}
-
-        {/* <SelectAccountItem accountNumber={accountNumber} accountTitle={accountTitle} balance={balance}></SelectAccountItem> */}
-        {/* <SelectAccountItem accountNumber={accountNumber} accountTitle={accountTitle} balance={balance}></SelectAccountItem> */}
       </ScrollView>
       </View>
     </View>
 
-    <NextButton router='AccountName'></NextButton>
+    <NextButton action={()=>{}} router='AccountName'></NextButton>
     </>
   )
 }
