@@ -50,8 +50,8 @@ const MyPointList = () => {
       
       const response: AxiosResponse<eventPointResponse> = await nonAuthHttp.post<eventPointResponse>(`api/event/point`, data);
       const result = response.data;
-      console.log(result);
-        if(response.status===200){
+      if(response.status===200){
+            console.log(result);
             setMyPointList(result.pointVOList);
             setSearchList(result.pointVOList);
             setMyPoint(result.myPoint);
@@ -98,7 +98,7 @@ const MyPointList = () => {
                 
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center mt-5`}>
-                    {searchList?.length===0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                    {searchList?.length!==0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
                         
                         {searchList?.map((pointData, index)=>{
 
