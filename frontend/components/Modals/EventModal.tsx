@@ -18,7 +18,7 @@ interface EventModalProps {
     content: string;
   }
 
-const EventModal:React.FC<EventModalProps> = ({ modalTitle, content }: CenterModalProps) => {
+const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, point }: CenterModalProps) => {
     
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
@@ -65,11 +65,11 @@ const EventModal:React.FC<EventModalProps> = ({ modalTitle, content }: CenterMod
                     <View style={tw`m--7 bg-white rounded-2xl shadow-[#000] w-5/6 h-3/6`}>
 
                             <View style={tw `flex-2`}>
-                                <Text style={tw`mb-5 text-center text-3xl font-black pt-10`}>마이신한포인트</Text>
+                                <Text style={tw`mb-5 text-center text-3xl font-black pt-10`}>신한 지역상생 포인트</Text>
                             </View>
 
                             <View style={tw `flex-3`}>
-                                <Text style={tw`mb-5 text-center text-6xl font-black pt-10 text-[#0046FF]`}>10p</Text>
+                                <Text style={tw`mb-5 text-center text-6xl font-black pt-10 text-[#0046FF]`}>{point}P</Text>
                             </View>
 
                             <View style={tw `flex-2`}>
@@ -109,6 +109,7 @@ export default EventModal;
 interface CenterModalProps {
     modalTitle: string;
     content: string;
+    point:number;
 }
 
 interface CenterModalState{

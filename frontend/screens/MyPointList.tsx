@@ -13,12 +13,20 @@ import PointItem from "../components/Accounts/PointItem";
 import {authHttp, nonAuthHttp} from '../axios/axios';
 import { AxiosResponse, AxiosError } from "axios"
 
+// recoil
+import { useRecoilState } from 'recoil';
+import {userState} from "../recoil/user/loginUserAtom"
+
 const MyPointList = () => {
     const accountNumber:string = "포인트는 개인 계좌로 연동됩니다.";
     const [myPoint, setMyPoint] = useState<number>(0);
     const [myPointList, setMyPointList] = useState<PointVO[]|null>(null);
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<PointVO[]|null>(null);
+
+    //로그인한 유저 정보
+    const loginUser = useRecoilState(userState);
+    const memberSeq:number|null = loginUser[0].memberSeq;
     
     const search = (searchText:string) => {
 
@@ -50,8 +58,8 @@ const MyPointList = () => {
       
       const response: AxiosResponse<eventPointResponse> = await nonAuthHttp.post<eventPointResponse>(`api/event/point`, data);
       const result = response.data;
-      console.log(result);
-        if(response.status===200){
+      if(response.status===200){
+            console.log(result);
             setMyPointList(result.pointVOList);
             setSearchList(result.pointVOList);
             setMyPoint(result.myPoint);
@@ -67,7 +75,7 @@ const MyPointList = () => {
   }
 
   useEffect(()=>{
-    getPointList({memberSeq: 1});
+    getPointList({memberSeq: memberSeq});
   },[])
 
   return (
@@ -98,7 +106,7 @@ const MyPointList = () => {
                 
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center mt-5`}>
-                    {searchList?.length===0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                    {searchList?.length!==0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
                         
                         {searchList?.map((pointData, index)=>{
 
@@ -120,7 +128,7 @@ const MyPointList = () => {
 export default MyPointList
 
 type eventPointRequest = {
-    memberSeq : number
+    memberSeq : number|null
 } 
 
 type eventPointResponse = {
