@@ -64,7 +64,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
   }
 
   const map = () =>{
-    navigation.navigate("EndTimeHistory", {
+    navigation.navigate("EventMap", {
       animation : 'fadeIn'
     });
   }
@@ -93,7 +93,7 @@ const Intro:React.FC<IntroProps> = ({navigation}) => {
         </Animated.View>
       </View>
 
-      <LongButton content="시작하기" onPress={handleNavigate} />
+      <LongButton content="시작하기" onPress={map} />
 
     </View>
   );
