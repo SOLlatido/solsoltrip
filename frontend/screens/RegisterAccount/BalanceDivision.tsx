@@ -5,22 +5,50 @@ import { Octicons } from '@expo/vector-icons';
 import tw from "twrnc"
 import { useRecoilState } from 'recoil'
 import { createAccountState } from '../../recoil/user/createAccountAtom'
+import { currentAccountState } from '../../recoil/account/currentAccountAtom';
+import { authHttp } from '../../axios/axios';
+import { AxiosError } from 'axios';
 function AccountDivision() {
   const [plannedExpense, setPlannedExpense] = useState<string>();
   const [myExpense, setMyExpense] = useState<string>();
-  const [newAccount, setNewAccount] = useRecoilState(createAccountState)
-
+  const [newAccount, setNewAccount] = useRecoilState(createAccountState);
+  const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
+  
   const balanceLeft = "320,000";
+  const makeNewAccount = () => {
+    async function createAccount(){
+      try {
+        const response = await authHttp.post(`api/trip/regist`, newAccount);
+        const data = response.data;
+        console.log("data", data);
+        //현재 선택된 통장 정보
+        setCurrAccount((prevAccount) => ({
+          ...prevAccount,
+          accompanySeq : data,
+        }));
+        Alert.alert("동행통장 생성이 완료되었습니다. 동행 초대 페이지로 이동합니다.")
+      } catch (error) {
+          const err = error as AxiosError
+          console.log(err)
+          alert("에러!!")
+      }
+    }
+    createAccount();
+  }
+
   const handleExpenseGoal = () => {
     setNewAccount((prevNewAccount) => ({
       ...prevNewAccount,
       personalAmount : Number(plannedExpense)
     }));
-    Alert.alert("동행통장 생성이 완료되었습니다.")
+
+    makeNewAccount();
   }
+
   useEffect(() => {
     console.log(newAccount);
   }, [newAccount]);
+
   return (
     <>
     <View style={tw `w-full h-full bg-[#DBE4E4]`}>
@@ -58,8 +86,8 @@ function AccountDivision() {
               />
                 <Octicons style={tw `ml-2 self-center`} name="question" size={24} color="#7EBBBB" />
             </View> */}
-            <Text style={tw `mt-10 text-right mb-0 text-[#333] font-bold`}>현재 계좌 잔액</Text>
-            <Text style={tw `text-right pl-2 mb-2 text-[#333] font-bold text-lg`}>₩ {balanceLeft}</Text>
+            {/* <Text style={tw `mt-10 text-right mb-0 text-[#333] font-bold`}>현재 계좌 잔액</Text> */}
+            {/* <Text style={tw `text-right pl-2 mb-2 text-[#333] font-bold text-lg`}>₩ {balanceLeft}</Text> */}
             
 
           {/* 설명란 */}
@@ -67,13 +95,12 @@ function AccountDivision() {
           <Text style={tw `font-bold mb-2 text-[#555] `}>Tip!</Text>
           <Text style={tw `text-[#555] pb-2`}>각 동행이 동행통장에 기여할 금액을 입력해주세요. 해당 금액은 추후 '정산하기' 기능에서 활용됩니다.</Text>
         </View>
-
         </View>
      
       </View>
     </View>
     </View>
-    <TouchableOpacity onPress={()=>{Alert.alert("동행통장 생성이 완료되었습니다. 동행 초대 페이지로 이동합니다.")}}><NextButton action={handleExpenseGoal} router='InviteFriends'></NextButton></TouchableOpacity>
+    <TouchableOpacity><NextButton action={handleExpenseGoal} router='InviteFriends'></NextButton></TouchableOpacity>
     
     </>
   )

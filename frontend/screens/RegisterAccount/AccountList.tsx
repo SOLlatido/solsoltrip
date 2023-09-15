@@ -18,12 +18,20 @@ function AccountList() {
   useEffect(() => {
     console.log(newAccount);
   }, [newAccount]); 
+
   let memberN:number;
+
   useEffect(()=>{
     async function getAvailableAccounts(){
       const loginUser = await AsyncStorage.getItem("loginUser")
       const parsed = JSON.parse(loginUser as string)
       memberN = parsed.memberSeq;
+
+      setNewAccount((prevNewAccount) => ({
+      ...prevNewAccount,
+      memberSeq : memberN,
+      }));
+
       console.log("memberN", memberN);
       const send = {
         "memberSeq" : memberN
@@ -40,7 +48,6 @@ function AccountList() {
       }
     }
     getAvailableAccounts();
-    
   },[])
 
   const handleAccountPress = (index:number) => {
@@ -48,9 +55,9 @@ function AccountList() {
     setNewAccount((prevNewAccount) => ({
       ...prevNewAccount,
       registerAccountSeq: index,
-      memberSeq : memberN,
+      // memberSeq : memberN,
     }));
-    console.log(newAccount);
+    console.log("new :", newAccount);
   };
   return (
     <>

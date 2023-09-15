@@ -13,6 +13,7 @@ function AccountDuration() {
     const [endDate, setEndDate] = useState<Date>();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [newAccount, setNewAccount] = useRecoilState(createAccountState)
+
     const handleDate = () => {
       setNewAccount((prevNewAccount) => ({
         ...prevNewAccount,
