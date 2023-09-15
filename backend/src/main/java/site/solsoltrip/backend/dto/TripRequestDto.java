@@ -17,7 +17,7 @@ public class TripRequestDto {
             Long memberSeq,
 
             @NotNull
-            Long registerAccountSeq,
+            Long registedAccountSeq,
 
             @NotBlank
             String name,
@@ -29,7 +29,7 @@ public class TripRequestDto {
             @FutureOrPresent
             LocalDate endDate,
 
-            @NotBlank
+            @NotNull
             Integer individual
     ) {}
 
