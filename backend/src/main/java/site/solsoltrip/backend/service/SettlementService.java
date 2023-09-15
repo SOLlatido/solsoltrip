@@ -223,6 +223,10 @@ public class SettlementService {
                     .findByAccompanyMemberWithdrawSeq(accompanyMemberWithdraw.getAccompanyMemberWithdrawSeq());
 
             for (final IndividualWithdraw individualWithdraw : individualWithdrawList) {
+                if (!individualWithdraw.getIsIncluded()) {
+                    continue;
+                }
+
                 final Member member = individualWithdraw.getMember();
 
                 final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
@@ -262,27 +266,19 @@ public class SettlementService {
             }
 
             // 개별 출금액 확인
-            final List<AccompanyMemberWithdraw> individualAccompanyMemberWithdrawList =
-                    accompanyMemberWithdrawRepository
-                            .findByAccompanySeqAndMemberSeq(accompanySeq, member.getMemberSeq());
-
-            int checkedIndividualWithdraw = 0;
-
-            for (final AccompanyMemberWithdraw accompanyMemberWithdraw : individualAccompanyMemberWithdrawList) {
-                checkedIndividualWithdraw += accompanyMemberWithdraw.getCost();
-            }
-
-            final int savedIndividualWithdraw = memberAccompany.getIndividualWithdraw();
-
-            if (checkedIndividualWithdraw != savedIndividualWithdraw) {
-                memberAccompany.updateIndividualWithdraw(checkedIndividualWithdraw);
-            }
-
-            // 정산 시작
             final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
+
+            final double checkedIndividualWithdraw = eachActualUsage[memberLocation];
 
             final int individualWithdraw = (int) Math.ceil(eachActualUsage[memberLocation]);
 
+            final double savedIndividualWithdraw = memberAccompany.getIndividualWithdraw();
+
+            if (checkedIndividualWithdraw != savedIndividualWithdraw) {
+                memberAccompany.updateIndividualWithdraw(individualWithdraw);
+            }
+
+            // 정산 시작
             final int settlement = checkedIndividualDeposit - individualWithdraw;
 
             memberAccompany.updateSettlement(settlement);
@@ -300,8 +296,8 @@ public class SettlementService {
                             .formattedSettlement(NumberFormatUtility.formatter(settlement))
                             .individualDeposit(checkedIndividualDeposit)
                             .formattedIndividualDeposit(NumberFormatUtility.formatter(checkedIndividualDeposit))
-                            .individualWithdraw(checkedIndividualWithdraw)
-                            .formattedSettlement(NumberFormatUtility.formatter(checkedIndividualWithdraw))
+                            .individualWithdraw(individualWithdraw)
+                            .formattedSettlement(NumberFormatUtility.formatter(individualWithdraw))
                             .build();
 
             settlementList.add(responseVO);
@@ -336,7 +332,9 @@ public class SettlementService {
 
         final int individualDeposit = memberAccompany.getIndividualDeposit();
 
-        final int individualWithdraw = memberAccompany.getIndividualWithdraw();
+        final double individualWithdraw = memberAccompany.getIndividualWithdraw();
+
+        final int integerIndividualWithdraw = (int) Math.ceil(individualWithdraw);
 
         final List<SettlementResponseDto.SettlementResponseVO> settlementList = new ArrayList<>();
 
@@ -349,8 +347,8 @@ public class SettlementService {
                         .formattedSettlement(NumberFormatUtility.formatter(settlement))
                         .individualDeposit(individualDeposit)
                         .formattedIndividualDeposit(NumberFormatUtility.formatter(individualDeposit))
-                        .individualWithdraw(individualWithdraw)
-                        .formattedSettlement(NumberFormatUtility.formatter(individualWithdraw))
+                        .individualWithdraw(integerIndividualWithdraw)
+                        .formattedSettlement(NumberFormatUtility.formatter(integerIndividualWithdraw))
                         .build();
 
         settlementList.add(responseVO);
