@@ -37,4 +37,9 @@ public class TripRequestDto {
             @NotNull
             Long accompanySeq
     ) {}
+
+    public record check(
+            @NotNull
+            Long accompanySeq
+    ) {}
 }
