@@ -151,9 +151,20 @@ public class PaymentService {
 
     @Transactional
     public void withdraw(final PaymentRequestDto.withdraw requestDto) {
-        final Accompany accompany = accompanyRepository.findByAccount(requestDto.account()).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
-        );
+        final List<Accompany> accompanyList = accompanyRepository.findByAccount(requestDto.account());
+
+        Accompany accompany = null;
+
+        for (final Accompany now : accompanyList) {
+            final RegistedAccount registedAccount = registedAccountRepository.findByAccount(requestDto.account())
+                    .orElseThrow(() -> new IllegalArgumentException("해당하는 계좌의 통장이 없습니다."));
+
+            if (!registedAccount.getIsAccompanyAccount()) {
+                continue;
+            }
+
+            accompany = now;
+        }
 
         final AccompanyMemberWithdraw accompanyMemberWithdraw = AccompanyMemberWithdraw.builder()
                 .accompany(accompany)

@@ -3,10 +3,11 @@ package site.solsoltrip.backend.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import site.solsoltrip.backend.entity.Accompany;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AccompanyRepository extends JpaRepository<Accompany, Long> {
     Optional<Accompany> findByAccompanySeq(final Long accompanySeq);
 
-    Optional<Accompany> findByAccount(final String account);
+    List<Accompany> findByAccount(final String account);
 }

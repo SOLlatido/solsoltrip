@@ -41,7 +41,7 @@ public class SettlementService {
         accompany.updateEndDate(LocalDate.now());
 
         final RegistedAccount registedAccount = registedAccountRepository
-                .findByMemberSeqAndAccount(requestDto.memberSeq(), accompany.getAccount())
+                .findByAccount(accompany.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 유저의 해당 계좌가 없습니다."));
 
         registedAccount.updateIsAccompanyAccount(false);
