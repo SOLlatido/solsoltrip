@@ -1,6 +1,9 @@
 package site.solsoltrip.backend.service;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +21,7 @@ import site.solsoltrip.backend.util.NumberFormatUtility;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -108,8 +112,21 @@ public class TripService {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        final Accompany savedAccompany = accompanyRepository.findByAccount(accompany.getAccount())
-                .orElseThrow(() -> new IllegalArgumentException("일치하는 동행 통장이 없습니다."));
+        final List<Accompany> accompanyList = accompanyRepository.findByAccount(account.getAccount());
+
+        Accompany savedAccompany = null;
+
+        for (final Accompany now : accompanyList) {
+            final RegistedAccount registedAccount = registedAccountRepository.findByAccount(now.getAccount())
+                    .orElseThrow(() -> new IllegalArgumentException("해당하는 계좌의 통장이 없습니다."));
+
+            if (!registedAccount.getIsAccompanyAccount()) {
+                continue;
+            }
+
+            savedAccompany = now;
+            break;
+        }
 
         final MemberAccompany memberAccompany = MemberAccompany.builder()
                 .member(member)
@@ -135,14 +152,32 @@ public class TripService {
 
         final List<AccompanyMemberWithdraw> withdrawList = accompanyMemberWithdrawRepository.findByAccompanySeq(requestDto.accompanySeq());
 
-        // Todo: peopleNum 추가해야 함.
+        final List<Object> totalList = new ArrayList<>();
+
+        totalList.addAll(depositList);
+        totalList.addAll(withdrawList);
+
+        totalList.sort(Comparator.comparing(o -> {
+            if (o instanceof AccompanyMemberDeposit) {
+                return ((AccompanyMemberDeposit) o).getAcceptedDateTime();
+            } else if (o instanceof AccompanyMemberWithdraw) {
+                return ((AccompanyMemberWithdraw) o).getAcceptedDateTime();
+            }
+
+            return null;
+        }));
+
+        final int size = memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).size();
+
         return TripResponseDto.tripDetail.builder()
                 .account(accompany.getAccount())
                 .name(accompany.getName())
+                .size(size)
                 .startDate(accompany.getStartDate())
                 .endDate(accompany.getEndDate())
                 .depositList(depositList)
                 .withdrawList(withdrawList)
+                .totalList(totalList)
                 .build();
     }
 
