@@ -11,8 +11,8 @@ const initial = {
     peopleNum:0,
     depositList:[],
     withdrawList:[],
-    accompanyDepositContents:[],
-    accompanyWithdrawalContents:[],
+    // accompanyDepositContents:[],
+    // accompanyWithdrawalContents:[],
 }
 
 
@@ -29,7 +29,7 @@ type tripAccountResponse = {
 }
 
 type depositObj = {
-    accompanyMemberDepositSeq : number,
+    accompanyMemberDepositSeq : number, 
     name:string,
     cost:number,
     acceptedDate:string,
@@ -55,9 +55,6 @@ type individualWithdrawObj = {
     individual: number,
     isIncluded: boolean
 }
-
-
-
   
 type accompanyWithdrawalContents = {
     "store": string,
