@@ -6,6 +6,7 @@ import tw from "twrnc"
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nonAuthHttp, authHttp } from '../axios/axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 // recoil
 import { useRecoilState } from 'recoil';
@@ -21,8 +22,9 @@ function MyTravelMates() {
   async function getTotalPeople(data:memberRequest): Promise<void> {
     try {
 
-        const response = await nonAuthHttp.post(`api/trip/total`, data);
-        const result = response.data;
+        const response: AxiosResponse<memberResponse> = await authHttp.patch<memberResponse>(`api/trip/total`, data);
+        const result = response.data; //{status, message}
+
         
         if(response.status===200){
           // setPeople(result);

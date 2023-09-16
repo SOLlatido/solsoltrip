@@ -32,7 +32,7 @@ const AccountItem = (props : { accompanySeq:number, accountNumber:string, travel
         
         if(response.status===200){
             setCurrAccountInfo(result);
-            navigation.navigate("MainPage" as never);
+            navigation.navigate("MainTabNavigator" as never);
         }else{
             return;
         }
