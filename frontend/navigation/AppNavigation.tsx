@@ -331,7 +331,6 @@ export default AppNavigation
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import FirstPage from '../screens/FirstPage';
 
 type IntroParams = {
 };
