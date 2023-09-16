@@ -18,10 +18,11 @@ type EndTimeResetProps = {
 const EndTimeReset: React.FC = ()=>{
 
     const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+    console.log(currAccount);
 
-    const accompanySeq:number|null = currAccount[0].accountSeq;
-    const startDateSplit = currAccount[0].duration.split("~")[0].replace();
-    const endDateSplit = currAccount[0].duration.split("~")[1].replace();
+    const accompanySeq:number|null = currAccount.accountSeq;
+    const startDateSplit = currAccount?.duration.split("~")[0].replace();
+    const endDateSplit = currAccount?.duration.split("~")[1].replace();
 
     const navigation = useNavigation();
     const [startText, setStartText] = useState<string>(startDateSplit);
@@ -89,7 +90,7 @@ const EndTimeReset: React.FC = ()=>{
                 const newDuration= `${startText} ~ ${endText}`
 
                 setCurrAccount({
-                    accountSeq:currAccount.accountSeq,
+                    accountSeq:currAccount?.accountSeq,
                     accountNumber: currAccount.accountNumber,
                     travelTitle:currAccount.travelTitle,
                     duration: newDuration,
