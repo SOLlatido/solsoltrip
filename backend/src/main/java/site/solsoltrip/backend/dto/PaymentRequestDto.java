@@ -27,7 +27,7 @@ public class PaymentRequestDto {
 
             MultipartFile pictureFile,
 
-            List<EachExpense> eachExpenseList) {}
+            String eachExpenseList) {}
 
     public record deposit(
             @NotBlank
@@ -37,13 +37,13 @@ public class PaymentRequestDto {
             String code,
 
             @NotBlank
+            String myAccount,
+
+            @NotBlank
             String account,
 
             @NotNull
-            Integer cost,
-
-            @NotBlank
-            String category) {}
+            Integer cost) {}
 
     public record withdraw(
             @NotBlank
