@@ -9,6 +9,7 @@ import site.solsoltrip.backend.entity.Member;
 import site.solsoltrip.backend.entity.MemberAccompany;
 import site.solsoltrip.backend.entity.Role;
 import site.solsoltrip.backend.oauth.KakaoOAuth2;
+import site.solsoltrip.backend.properties.aws.AwsS3Properties;
 import site.solsoltrip.backend.repository.MemberAccompanyRepository;
 import site.solsoltrip.backend.repository.MemberRepository;
 
@@ -25,6 +26,8 @@ public class MemberService {
 
     private final KakaoOAuth2 kakaoOAuth2;
 
+    private final AwsS3Properties awsS3Properties;
+
     public void signup(final MemberRequestDto.signup requestDto) {
         if (memberRepository.findByUuid(requestDto.uuid()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 유저입니다.");
@@ -33,6 +36,7 @@ public class MemberService {
         final Member member = Member.builder()
                 .uuid(requestDto.uuid())
                 .name(requestDto.name())
+                .profileImage(awsS3Properties.getUrl() + Member.DEFAULT_PROFILE_IMAGE)
                 .point(0)
                 .role(Role.USER.name())
                 .build();
@@ -79,6 +83,7 @@ public class MemberService {
         final MemberResponseDto.KakaoInfo userInfo = kakaoOAuth2.kakaoSync(code);
 
         final String email = userInfo.userInfo().getKakao_account().getEmail();
+        final String profileImage = userInfo.userInfo().getKakao_account().getProfile().getProfile_image_url();
 
         final Member member = memberRepository.findByMemberSeq(state).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
@@ -88,6 +93,7 @@ public class MemberService {
 
         if (kakaoIncludedMember.isEmpty()) {
             member.updateKakaoEmail(email);
+            member.updateProfileImage(profileImage);
             member.updateKakaoRefreshToken(userInfo.kakaoRefreshToken());
         }
 
