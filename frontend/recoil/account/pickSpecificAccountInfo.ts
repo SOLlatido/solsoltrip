@@ -1,5 +1,7 @@
 import { atom } from "recoil";
 
+//동행통장 세부 내용을 다뤄요
+
 type tripAccountResponse = {
     account : string,
     name : string,
@@ -11,7 +13,6 @@ type tripAccountResponse = {
 }
   
 type accompanyWithdrawalContents = {
-    "accompanyContentSeq": number,
     "store": string,
     "cost": number,
     "acceptedDate": string,

@@ -1,22 +1,19 @@
 import { atom } from "recoil";
 
 type currentAccountType = {
-    accompanySeq : number | null,
-    // registerAccountSeq : number | null,
-    // name : string | null,
-    // startDate : string | null,
-    // endDate : string | null,
-    // personalAmount : number | null
+    "accompanySeq": number,
+    "account": string,
+    "name": string,
+    "startDate": string,
+    "endDate": string,
+    "personNum": number
 }
 
-export const currentAccountState = atom<currentAccountType>({
+type list = currentAccountType[];
+
+const initialState:list = [];
+
+export const currentAccountState = atom<list>({
     key: "currentAccountState", // 전역적으로 고유한 값
-    default: {
-        accompanySeq : 0,
-        // registerAccountSeq : 0,
-        // name : "",
-        // startDate : "",
-        // endDate : "",
-        // personalAmount : 0
-    }, // 초깃값
+    default: initialState, // 초깃값
   });

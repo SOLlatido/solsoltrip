@@ -12,6 +12,11 @@ import { authHttp, nonAuthHttp, shinhanHttp } from '../axios/axios';
 import { AxiosError,AxiosResponse } from 'axios';
 
 
+// recoil
+import { useRecoilState } from 'recoil';
+import {currentAccountState} from "../recoil/account/currentAccountAtom";
+
+
 
 type NavigationProps = {
   navigation: StackNavigationProp<any>;
@@ -22,6 +27,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
   const [name, setName] = useState<string>("");
   const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
   const [endUpload, setEndUpload] = useState<boolean>(false);
+  const [accompanySeq, setAccompanySeq] = useRecoilState(currentAccountState);
 
     useEffect(()=>{
         async function prepare(){
@@ -92,18 +98,20 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
     async function getAccounts(data:getAccountsRequest): Promise<void> {
       try {
 
-        if(data.memberSeq===0) return;
+        console.log(data);
+
+        if(data.memberSeq<=0) return;
          
         const response: AxiosResponse<getAccountsResponse> = await nonAuthHttp.post<getAccountsResponse>(`api/member/accompany`, data);
         const result: getAccountsResponse = response.data; //{status, message}
           
         if(response.status===200){
           setMyAccounts(result.accompanyList);
-          console.log(result);
+          setAccompanySeq(result.accompanyList);
+          console.log(accompanySeq[0].accompanySeq);
         }
 
       } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
       }
@@ -135,11 +143,11 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
               return (
                 <AccountItem 
                 key={i}
-                accompanySeq={account.accompanySeq}
-                accountNumber={account.account} 
-                travelTitle={account.name}
+                accompanySeq={account?.accompanySeq}
+                accountNumber={account?.account} 
+                travelTitle={account?.name}
                 duration={duration}
-                numberOfPeople={account.personNum}
+                numberOfPeople={account?.personNum}
                 ></AccountItem>
               )
             })
@@ -163,7 +171,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
 export default MyAccounts
 
 type getAccountsResponse = {
-  accompanyList : accompanyList[]|null,
+  accompanyList : accompanyList[],
 }
 
 type accompanyList = {
@@ -178,3 +186,14 @@ type accompanyList = {
 type getAccountsRequest = {
   memberSeq:number,
 }
+
+type currentAccountType = {
+  "accompanySeq": number,
+  "account": string,
+  "name": string,
+  "startDate": string,
+  "endDate": string,
+  "personNum": number
+}
+
+type list = currentAccountType[];
