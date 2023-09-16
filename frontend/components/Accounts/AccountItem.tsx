@@ -13,7 +13,7 @@ import {pickSpecificAccountInfoState} from "../../recoil/account/pickSpecificAcc
 
 import { nonAuthHttp, authHttp } from '../../axios/axios';
 
-const AccountItem = (props : { accompanySeq:number, accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
+const AccountItem = (props : { accompanySeq:string, accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
   const navigation = useNavigation();
   const {accompanySeq,accountNumber, travelTitle, duration, numberOfPeople} = props
 

@@ -37,7 +37,7 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 function MainPage() {
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
   const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState);
-  console.log(currAccountInfo);
+  console.log(currAccountInfo.account);
 
   const [activeTab, setActiveTab] = useState("전체");
   const [searchText, setSearchText] = useState('');
@@ -55,7 +55,7 @@ function MainPage() {
       <ImageBackground source={main_aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-                accompanySeq={currAccount.accountSeq}
+                accompanySeq={currAccountInfo.account}
                 accountNumber={currAccount.accountNumber} 
                 travelTitle={currAccount.travelTitle}
                 duration={currAccount.duration}
