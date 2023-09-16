@@ -35,8 +35,8 @@ public class PaymentResponseDto {
         @Getter
         @Builder
         public static class IncludedMember {
-            private final Long memberSeq;
             private final String name;
+            private final Double expense;
         }
     }
 }

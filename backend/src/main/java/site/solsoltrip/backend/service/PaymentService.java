@@ -74,10 +74,16 @@ public class PaymentService {
             for (final MemberAccompany memberAccompany : memberAccompanyList) {
                 final Member member = memberAccompany.getMember();
 
+                final IndividualWithdraw individualWithdraw =
+                        individualWithdrawRepository
+                                .findByAccompanyMemberWithdrawSeqAndMemberSeq(requestDto.accompanyMemberSeq(),
+                                        member.getMemberSeq())
+                                .orElseThrow(() -> new IllegalArgumentException("출금 내역 없음"));
+
                 final PaymentResponseDto.Withdraw.IncludedMember includedMember =
                         PaymentResponseDto.Withdraw.IncludedMember.builder()
-                                .memberSeq(member.getMemberSeq())
                                 .name(member.getName())
+                                .expense(individualWithdraw.getIndividual())
                                 .build();
 
                 includedMemberList.add(includedMember);
@@ -180,7 +186,7 @@ public class PaymentService {
         } else if (memberList.size() == 1) {
             member = memberList.get(0);
         }
-        // TODO: 이름이 같을 경우의 로직 : MemberAccompany 테이블에 uuid 추가할 예정
+        // TODO: 이름이 같을 경우의 로직 : 회원번호는 주민번호?
         else {
             checkMember:
             for (final Member checkMember : memberList) {
