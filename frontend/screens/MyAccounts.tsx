@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ScrollView, View, Text, ImageBackground, TouchableOpacity} from 'react-native'
+import { ScrollView, View, Text, ImageBackground, TouchableOpacity, Alert} from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
 import { StackNavigationProp } from '@react-navigation/stack';
 import tw from "twrnc"
@@ -8,8 +8,8 @@ import aurora from "../assets/images/aurora_background.png"
 import LongButton from '../components/ButtonItems/LongButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingAnimation_morning from '../components/Animation/LoadingAnimation_morning';
-import { authHttp, shinhanHttp } from '../axios/axios';
-import { AxiosError } from 'axios';
+import { authHttp, nonAuthHttp, shinhanHttp } from '../axios/axios';
+import { AxiosError,AxiosResponse } from 'axios';
 
 
 
@@ -17,9 +17,11 @@ type NavigationProps = {
   navigation: StackNavigationProp<any>;
 };
 const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
-  const [myAccounts, setMyAccounts] = useState([])
-  const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
+  const [myAccounts, setMyAccounts] = useState<accompanyList[]|null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [name, setName] = useState<string>("");
+  const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
+
     useEffect(()=>{
         async function prepare(){
           try{
@@ -32,40 +34,85 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
         prepare();
     },[])
 
-    useEffect(()=>{
-      async function getLoginUser(){
-        const loginUser = await AsyncStorage.getItem("loginUser")
-        const parsed = JSON.parse(loginUser as string)
-        const name = parsed.name;
-        setName(name);
-      }
-      getLoginUser();
-      async function getAccounts(): Promise<void> {
-        const send = {
-          "dataHeader": {
-            "apikey": "2023_Shinhan_SSAFY_Hackathon"
-           },
-           "dataBody": {
-                "실명번호": "WmokLBDC09/yfin=="
-           }
+    // 다영 로직
+    // useEffect(()=>{
+    //   async function getLoginUser(){
+    //     const loginUser = await AsyncStorage.getItem("loginUser")
+    //     const parsed = JSON.parse(loginUser as string)
+    //     const name = parsed.name;
+    //     setName(name);
+    //   }
+    //   getLoginUser();
+    //   async function getAccounts(): Promise<void> {
+    //     const send = {
+    //       "dataHeader": {
+    //         "apikey": "2023_Shinhan_SSAFY_Hackathon"
+    //        },
+    //        "dataBody": {
+    //             "실명번호": "WmokLBDC09/yfin=="
+    //        }
+    //     }
+    //     try {
+    //       const response = await shinhanHttp.post(`v1/account`, send);
+    //       const data = response.data;
+    //       const accountList = data["dataBody"]["조회내역1"]
+    //       setMyAccounts(accountList);
+    //     } catch (error) {
+    //         const err = error as AxiosError
+    //         console.log(err);
+    //         alert("에러!!")
+    //     }
+    //   }
+    //   getAccounts();
+    // },[])
+  // const accountNumber:string = "123232123"
+  // const travelTitle:string = "4박 5일 강릉 여행"
+  // const duration:string = "2023-07-16 ~ 2023-07-20"
+  // const numberOfPeople:number = 4
+
+
+  useEffect(()=>{
+    // 로그인 유저 받아오기
+    async function getLoginUser(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      const name:string = parsed.name;
+      const userSeq:number = parsed.memberSeq;
+      setName(name);
+      setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
+
+  },[])
+
+  useEffect(()=>{
+    //axios 나의 동행통장 리스트 가져오기
+    async function getAccounts(data:getAccountsRequest): Promise<void> {
+      try {
+        
+        const response: AxiosResponse<getAccountsResponse> = await nonAuthHttp.post<getAccountsResponse>(`api/member/accompany`, data);
+        const result: getAccountsResponse = response.data; //{status, message}
+          
+        if(response.status===200){
+          setMyAccounts(result.accompanyList);
+          console.log(result);
         }
-        try {
-          const response = await shinhanHttp.post(`v1/account`, send);
-          const data = response.data;
-          const accountList = data["dataBody"]["조회내역1"]
-          setMyAccounts(accountList);
-        } catch (error) {
-            const err = error as AxiosError
-            console.log(err);
-            alert("에러!!")
-        }
+
+      } catch (error) {
+        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        const err = error as AxiosError
+        console.log(err);
       }
-      getAccounts();
-    },[])
-  const accountNumber:string = "123232123"
-  const travelTitle:string = "4박 5일 강릉 여행"
-  const duration:string = "2023-07-16 ~ 2023-07-20"
-  const numberOfPeople:number = 4
+    }
+
+    console.log(loginUserSeq)
+
+    const data:getAccountsRequest = {
+      memberSeq:loginUserSeq
+    }
+    getAccounts(data);
+  },[])
+
 
   const handleRegisterAccount = () => {
     navigation.navigate("AccountList");
@@ -86,14 +133,15 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
         </View>
         <ScrollView style={tw `mt-5`}>
           {
-            myAccounts.map((account, i)=>{
+            myAccounts?.map((account, i)=>{
+              const duration = `${account.startDate} ~ ${account.endDate}`
               return (
                 <AccountItem 
                 key={i}
-                accountNumber={account["계좌번호"]} 
-                travelTitle={travelTitle}
+                accountNumber={account.account} 
+                travelTitle={account.name}
                 duration={duration}
-                numberOfPeople={numberOfPeople}
+                numberOfPeople={account.personNum}
                 ></AccountItem>
               )
             })
@@ -115,3 +163,20 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
 }
 
 export default MyAccounts
+
+type getAccountsResponse = {
+  accompanyList : accompanyList[]|null,
+}
+
+type accompanyList = {
+  accompanySeq : number,
+  account : string,
+  name : string,
+  startDate:string,
+  endDate:string,
+  personNum:number
+}
+
+type getAccountsRequest = {
+  memberSeq:number,
+}
