@@ -180,7 +180,7 @@ public class SettlementService {
         final List<SettlementResponseDto.ShowTripResultCategoryVO> categoryVOList = new ArrayList<>();
 
         for (final Category category : Category.values()) {
-            final int categorySeq = Integer.parseInt(category.getNumber());
+            final String categorySeq = category.getNumber();
 
             final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
                     accompanyMemberWithdrawRepository
