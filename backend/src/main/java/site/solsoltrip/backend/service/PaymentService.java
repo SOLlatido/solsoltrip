@@ -1,22 +1,29 @@
 package site.solsoltrip.backend.service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.PaymentRequestDto;
 import site.solsoltrip.backend.dto.PaymentResponseDto;
+import site.solsoltrip.backend.dto.ShbhackRequestDto;
+import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.properties.aws.AwsS3Properties;
-import site.solsoltrip.backend.repository.AccompanyMemberDepositRepository;
-import site.solsoltrip.backend.repository.AccompanyMemberWithdrawRepository;
-import site.solsoltrip.backend.repository.IndividualWithdrawRepository;
-import site.solsoltrip.backend.repository.MemberAccompanyRepository;
+import site.solsoltrip.backend.repository.*;
 import site.solsoltrip.backend.util.AwsS3Manager;
 import site.solsoltrip.backend.util.FileUtility;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -24,13 +31,23 @@ import java.util.function.UnaryOperator;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PaymentService {
+    private final AccompanyRepository accompanyRepository;
     private final AccompanyMemberDepositRepository accompanyMemberDepositRepository;
     private final AccompanyMemberWithdrawRepository accompanyMemberWithdrawRepository;
     private final IndividualWithdrawRepository individualWithdrawRepository;
+    private final MemberRepository memberRepository;
     private final MemberAccompanyRepository memberAccompanyRepository;
+    private final RegistedAccountRepository registedAccountRepository;
 
     private final AwsS3Manager awsS3Manager;
     private final AwsS3Properties awsS3Properties;
+
+    private WebClient webClient;
+
+    @PostConstruct
+    public void initWebClient() {
+        webClient = WebClient.create("https://shbhack.shinhan.com");
+    }
 
     public PaymentResponseDto.paymentDetail paymentDetail(final PaymentRequestDto.paymentDetail requestDto) {
         PaymentResponseDto.Deposit deposit = null;
@@ -84,8 +101,45 @@ public class PaymentService {
 
     @Transactional
     public void deposit(final PaymentRequestDto.deposit requestDto) {
+        // api 이용 로직
+        // final String jsonObject = sendRequest(requestDto.code(), requestDto.account(), "/v1/search/name");
+
+        // final String name = checkName(jsonObject);
+
+        // api 미이용 로직
+        final String name = requestDto.name();
+
+        final Accompany accompany = accompanyRepository.findByAccount(requestDto.account()).orElseThrow(
+                () -> new IllegalArgumentException("일치하는 동행 통장이 없습니다.")
+        );
+
+        final List<Member> memberList = memberRepository.findByName(name);
+
+        Member member = null;
+
+        if (memberList.isEmpty()) {
+            throw new IllegalArgumentException("동행 통장을 이용하는 고객이 아닙니다.");
+        } else if (memberList.size() == 1) {
+            member = memberList.get(0);
+        } else {
+            checkMember:
+            for (final Member checkMember : memberList) {
+                final List<RegistedAccount> registedAccountList =
+                        registedAccountRepository.findByMemberSeqJoinFetchMember(checkMember.getMemberSeq());
+
+                for (final RegistedAccount registedAccount : registedAccountList) {
+                    if (registedAccount.getAccount().equals(requestDto.account())) {
+                        member = checkMember;
+                        break checkMember;
+                    }
+                }
+            }
+        }
+
         final AccompanyMemberDeposit accompanyMemberDeposit = AccompanyMemberDeposit.builder()
-                .name(requestDto.name())
+                .accompany(accompany)
+                .member(member)
+                .name(name)
                 .cost(requestDto.cost())
                 .acceptedDate(LocalDate.now())
                 .category(requestDto.category())
@@ -97,7 +151,12 @@ public class PaymentService {
 
     @Transactional
     public void withdraw(final PaymentRequestDto.withdraw requestDto) {
+        final Accompany accompany = accompanyRepository.findByAccount(requestDto.account()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
+        );
+
         final AccompanyMemberWithdraw accompanyMemberWithdraw = AccompanyMemberWithdraw.builder()
+                .accompany(accompany)
                 .store(requestDto.store())
                 .cost(requestDto.cost())
                 .acceptedDate(LocalDate.now())
@@ -107,9 +166,11 @@ public class PaymentService {
 
         accompanyMemberWithdrawRepository.save(accompanyMemberWithdraw);
 
-        List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+        final Long accompanySeq = accompany.getAccompanySeq();
+
+        final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
                 accompanyMemberWithdrawRepository
-                        .findByAccompanySeqOrderByAccompanyMemberWithdrawSeqDesc(requestDto.accompanySeq());
+                        .findByAccompanySeqOrderByAccompanyMemberWithdrawSeqDesc(accompanySeq);
 
         if (accompanyMemberWithdrawList.isEmpty()) {
             throw new IllegalArgumentException("출금이 저장되지 않았습니다.");
@@ -117,7 +178,7 @@ public class PaymentService {
 
         final AccompanyMemberWithdraw foundAccompanyMemberWithdraw = accompanyMemberWithdrawList.get(0);
 
-        final List<MemberAccompany> memberAccompanyList = memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq());
+        final List<MemberAccompany> memberAccompanyList = memberAccompanyRepository.findByAccompanySeq(accompanySeq);
 
         final int size = memberAccompanyList.size();
 
@@ -183,7 +244,34 @@ public class PaymentService {
     }
 
     public static UnaryOperator<String> createPictureTitleGenerator(final String seq, final String title) {
-        return originalFileName -> seq + "/" + title + FileUtility.getFileExtension(originalFileName);
+        return originalFileName -> "memo/" + seq + "/" + title + FileUtility.getFileExtension(originalFileName);
     }
 
+    public String sendRequest(final String code, final String account, final String uri) {
+        final ShbhackRequestDto.CheckName requestDto = ShbhackRequestDto.CheckName.builder()
+                .dataHeader(new ShbhackRequestDto.CheckName.DataHeader())
+                .dataBody(ShbhackRequestDto.CheckName.DataBody.builder()
+                        .입금은행코드(code)
+                        .입금계좌번호(account)
+                        .build())
+                .build();
+
+        return webClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestDto)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String checkName(final String jsonObject) {
+        final JsonElement element = JsonParser.parseString(jsonObject);
+
+        final JsonObject object = element.getAsJsonObject();
+
+        final JsonObject dataBody = object.get("dataBody").getAsJsonObject();
+
+        return String.valueOf(dataBody.get("입금계좌성명"));
+    }
 }
