@@ -73,7 +73,8 @@ public class TripService {
         final List<RegistedAccount> registedAccountList = registedAccountRepository.findByMemberSeqJoinFetchMember(requestDto.memberSeq());
 
         for (RegistedAccount account : registedAccountList) {
-            if (!StringUtils.containsAny(account.getName(), notAllowedKeyword)) {
+            if (!StringUtils.containsAny(account.getName(), notAllowedKeyword) &&
+            !account.getIsAccompanyAccount()) {
                 TripResponseDto.TripResponseVO responseVO = TripResponseDto.TripResponseVO.builder()
                         .registedAccountSeq(account.getRegistedAccountSeq())
                         .account(account.getAccount())
