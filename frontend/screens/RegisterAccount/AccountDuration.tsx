@@ -48,7 +48,10 @@ function AccountDuration() {
               //일이 크거나 같냐
               if(start_day<=parseInt(date.toISOString().slice(8,10))){
                   setEndDate(date);
-                  setEndText(String(date.toISOString().slice(0,10)));
+                  const koreanTime = new Date(date);
+                  koreanTime.setHours(koreanTime.getHours() + 9);  // Adding 9 hours for KST
+                  const koreanTimeISOString = koreanTime.toISOString();
+                  setEndText(String(koreanTimeISOString.slice(0,10)));
               }else flag = false;
           }else flag = false;
       }else flag = false;
