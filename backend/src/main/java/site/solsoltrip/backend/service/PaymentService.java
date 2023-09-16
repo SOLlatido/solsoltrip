@@ -1,6 +1,5 @@
 package site.solsoltrip.backend.service;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.PaymentRequestDto;
 import site.solsoltrip.backend.dto.PaymentResponseDto;
 import site.solsoltrip.backend.dto.ShbhackRequestDto;
-import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.properties.aws.AwsS3Properties;
 import site.solsoltrip.backend.repository.*;
@@ -23,7 +21,6 @@ import site.solsoltrip.backend.util.FileUtility;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -109,9 +106,21 @@ public class PaymentService {
         // api 미이용 로직
         final String name = requestDto.name();
 
-        final Accompany accompany = accompanyRepository.findByAccount(requestDto.account()).orElseThrow(
-                () -> new IllegalArgumentException("일치하는 동행 통장이 없습니다.")
-        );
+        final List<Accompany> accompanyList = accompanyRepository.findByAccount(requestDto.account());
+
+        Accompany accompany = null;
+
+        for (final Accompany now : accompanyList) {
+            final RegistedAccount registedAccount = registedAccountRepository.findByAccount(now.getAccount())
+                    .orElseThrow(() -> new IllegalArgumentException("해당하는 계좌의 통장이 없습니다."));
+
+            if (!registedAccount.getIsAccompanyAccount()) {
+                continue;
+            }
+
+            accompany = now;
+            break;
+        }
 
         final List<Member> memberList = memberRepository.findByName(name);
 
@@ -215,12 +224,12 @@ public class PaymentService {
                 individualWithdrawRepository.findByAccompanyMemberWithdrawSeq(accompanyMemberWithdrawSeq);
 
         for (final IndividualWithdraw individualWithdraw : individualWithdrawList) {
-            for (int seq = 0; seq < eachExpenseList.size(); seq++) {
-                if (!eachExpenseList.get(seq).getMemberSeq().equals(individualWithdraw.getMember().getMemberSeq())) {
+            for (PaymentRequestDto.EachExpense eachExpense : eachExpenseList) {
+                if (!eachExpense.getMemberSeq().equals(individualWithdraw.getMember().getMemberSeq())) {
                     continue;
                 }
 
-                individualWithdraw.updateIndividualWithdraw(eachExpenseList.get(seq).getCost(), true);
+                individualWithdraw.updateIndividualWithdraw(eachExpense.getCost(), true);
             }
         }
     }
