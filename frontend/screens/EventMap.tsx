@@ -6,6 +6,7 @@ import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingAnimation_morning from '../components/Animation/LoadingAnimation_morning';
 
 // axios
 import {authHttp, nonAuthHttp} from '../axios/axios';
@@ -48,6 +49,9 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
   //로그인한 유저 정보
   const [loginUserSeq, setLoginUserSeq] = useState<number|null>();
+
+  //로딩
+  const [loading, setLoding] = useState<boolean>(true);
   
 
 
@@ -81,10 +85,14 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
           setEventMap(newEventMap);
+          setLoding(false);
+          console.log("if");
 
         }else{
+          console.log("else");
           return;
         }
+        
         
     } catch (error) {
         Alert.alert("1시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
@@ -238,15 +246,16 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     }
     getInform(arrivalData);
 
-  },[locationSetting])
+  },[locationSetting, loading])
 
 
   // 이동 위치 추적
   useEffect(() => {
     const watchLocation = async () => {
+      
       const locationOptions = {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 3000,
+        timeInterval: 2000,
         distanceInterval: 10,
       };
 
@@ -330,11 +339,9 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     setModalVisible(newValue);
   }
 
-  useEffect(()=>{},[eventMap, modalVisible])
-
 
   return (
-    <View style={{flex:1}}>
+    loading?<LoadingAnimation_morning/>:<View style={{flex:1}}>
       <MapView
         initialRegion={{
           latitude: 36.3538693,
