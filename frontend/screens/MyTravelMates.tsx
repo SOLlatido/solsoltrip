@@ -11,11 +11,16 @@ import { AxiosError, AxiosResponse } from 'axios';
 // recoil
 import { useRecoilState } from 'recoil';
 import {pickAccountState} from "../recoil/account/pickAccountAtom"
+import {currentAccountState} from "../recoil/account/currentAccountAtom"
 
 function MyTravelMates() {
 
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+
+  // const [loginUser, setLoginUserSeq] = useState<>();
+
   const [people, setPeople] = useState<memberResponse[]|null>();
+
 
 
   // 동행통장에 참여한 전체 인원 불러오기
@@ -38,6 +43,25 @@ function MyTravelMates() {
         console.log(error);
     }
   }
+
+  // useEffect(()=>{
+  //   // 로그인 유저 받아오기
+  //   async function getLoginUser(){
+  //     const loginUser = await AsyncStorage.getItem("loginUser")
+  //     const parsed = JSON.parse(loginUser as string)
+  //     const name:string = parsed.name;
+  //     const userSeq:number = parsed.memberSeq;
+
+  //     setLoginUserSeq(userSeq);
+  //     setEndUpload(true); //1
+  //   }
+  //   getLoginUser();
+
+  //   getTotalPeople({
+  //     memberSeq: number;
+  //     accompanySeq: number;
+  //   });
+  // },[])
   
   
   return (
