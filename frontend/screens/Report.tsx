@@ -1,39 +1,103 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, ImageBackground, ScrollView} from 'react-native'
 import main_aurora from "../assets/images/main_aurora.png"
 import tw from "twrnc"
 import GoalGraph from '../components/Graph/GoalGraph'
 import { PieChart } from 'react-native-chart-kit'
-const totalExpense = "980000"
-const myExpense = "300000"
+import { nonAuthHttp } from '../axios/axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useRecoilState } from 'recoil'
+import { AxiosResponse } from 'axios'
+import {currentAccountState} from '../recoil/account/currentAccountAtom'
+
+// const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
+
+async function getLoginUser(): Promise<number> {
+  const loginUser = await AsyncStorage.getItem("loginUser")
+  const parsed = JSON.parse(loginUser as string)
+  const userSeq:number = parsed.memberSeq
+  return userSeq
+}
+
 const colorList = ["#ac9be8", "#907ae1", "#7459d9", "#5d47ae", "#513e98", "#3a2d6d", "#2e2457"]
 const donutColorList = ["#ac9be8", "#907ae1", "#7459d9", "#5d47ae", "#513e98", "#3a2d6d", "#2e2457"]
-const expensesByPerson = [
-  { name: '석다영', expense: 180000 },
-  { name: '신산하', expense: 300000},
-  { name: '이승현', expense: 200000},
-  { name: '김민식', expense: 300000},
-];
-const category = ["숙소", "항공", "교통", "관광", "식비", "쇼핑", "기타"];
-const expensesByCategory = [10000, 30000, 50000, 65000, 25000, 0, 0];
+
 interface PieContent {
   name : string,
   population : number,
   color : string
 }
-const pieData = category.map((name, index) => ({
-  name,
-  population: expensesByCategory[index],
-  color: colorList[index],
-}));
-const goal = "50,0000"
-const goalData = [
-  {value : 60, color : "#5d47ae", text : '60%'},
-  {value : 40, color : "white", text : null},
-]
+
+interface GoalData {
+  value : number,
+  color : string,
+  text : string,
+}
 
 function Report() {
+  const category = ["숙소", "항공", "교통", "관광", "식비", "쇼핑", "기타"];
+  const expensesByCategory = [0, 0, 0, 0, 0, 0, 0];
+  const [accompany] = useRecoilState(currentAccountState);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [myExpense, setMyExpense] = useState<number>(1);
+  const [expensesByPerson, setExpensesByPerson] = useState<{ name: string; expense: number }[]>([]);
+  const [categoryExpense, setCategoryExpense] = useState<{ category: string; cost: number}[]>([]);
+  const [pieData, setPieData] = useState<PieContent[]>([]);
+  const [goal, setGoal] = useState<number>(1);
+  const [goalData, setGoalData] = useState<GoalData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userSeq: number = await getLoginUser();
+        const response: AxiosResponse<getReportResponse> = await nonAuthHttp.post<getReportResponse>(`api/info/analysis`, {
+          accompanySeq: accompany[0].accompanySeq,
+          memberSeq: userSeq
+        });
+        const result: getReportResponse = response.data;
+
+        setTotalExpense(result.totalCost);
+        setMyExpense(result.myCost);
+
+        const expensesByPersonData = result.individualVO.map((item) => ({
+          name: item.name,
+          expense: item.cost
+        }));
+
+        setExpensesByPerson(expensesByPersonData);
+
+        result.categoryVO.forEach((item) => {
+          expensesByCategory[Number(item.category)] = item.cost;
+        })
+
+        const tmpData = category.map((name, index) => ({
+          name,
+          population: expensesByCategory[index],
+          color: colorList[index],
+        }));
+        
+        setPieData(tmpData);
+
+        setGoal(result.expenseGoal);
+        const percent:number =  (totalExpense/goal) * 100;
+        console.log("percent : " + percent)
+
+        setGoalData([
+          {value: percent, color: "#5d47ae", text : String(percent + "%")},
+          {value: (100 - percent), color: "white", text: ""}
+        ]);
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData(); // 데이터를 불러오는 함수 호출
+  }, [accompany]);
+
   const calculateProportion = (expense:number) => (expense / totalExpense) * 100;
+
   return (
     <>
     <View style={tw `bg-[#ECEBDD] w-full h-full`}>
@@ -86,7 +150,7 @@ function Report() {
             width={300}
             height={200}
             chartConfig={{
-              color : (opacity = 0.5) => `rgba(0,0,0,${opacity}`,
+              color : (opacity = 0.5) => `rgba(0,0,0,${opacity})`,
             }}
             accessor={"population"}
             backgroundColor={"transparent"}
@@ -140,3 +204,17 @@ function Report() {
 }
 
 export default Report
+
+type getReportResponse = {
+  totalCost:number,
+  myCost:number,
+  expenseGoal:number,
+  categoryVO: {
+    category: string;
+    cost: number;
+  }[];
+  individualVO: {
+    name: string;
+    cost: number;
+  }[];
+}
