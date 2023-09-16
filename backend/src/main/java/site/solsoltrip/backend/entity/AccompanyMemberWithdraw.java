@@ -45,9 +45,10 @@ public class AccompanyMemberWithdraw {
     @OneToMany(mappedBy = "accompanyMemberWithdraw", fetch = FetchType.LAZY)
     private List<IndividualWithdraw> individualWithdrawList = new ArrayList<>();
 
-    public void updateWithdrawRecord(final String category, final String memo) {
+    public void updateWithdrawRecord(final String category, final String memo, final LocalDateTime memoDateTime) {
         this.category = category;
         this.memo = memo;
+        this.memoDateTime = memoDateTime;
     }
 
     public void updatePicture(final String picture) {

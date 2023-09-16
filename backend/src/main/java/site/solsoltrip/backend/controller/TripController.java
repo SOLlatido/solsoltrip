@@ -17,7 +17,7 @@ public class TripController {
 
     @PostMapping("/validation")
     public ResponseEntity<TripResponseDto.validation> validation(@RequestBody @Validated final TripRequestDto.validation requestDto) {
-        TripResponseDto.validation responseDto = tripService.validation(requestDto);
+        final TripResponseDto.validation responseDto = tripService.validation(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
@@ -31,7 +31,14 @@ public class TripController {
 
     @PostMapping("/detail")
     public ResponseEntity<TripResponseDto.tripDetail> movetoTripDetail(@RequestBody @Validated final TripRequestDto.tripDetail requestDto) {
-        TripResponseDto.tripDetail responseDto = tripService.movetoTripDetail(requestDto);
+        final TripResponseDto.tripDetail responseDto = tripService.movetoTripDetail(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<TripResponseDto.check> check(@RequestBody @Validated final TripRequestDto.check requestDto) {
+        final TripResponseDto.check responseDto = tripService.check(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

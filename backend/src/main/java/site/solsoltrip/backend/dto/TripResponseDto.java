@@ -29,6 +29,9 @@ public class TripResponseDto {
     @Builder
     public record validation(List<TripResponseVO> responseVOList) {}
 
+    @Builder
+    public record check(Boolean endTrip) {}
+
     @Getter
     @Builder
     public static class TripResponseVO {

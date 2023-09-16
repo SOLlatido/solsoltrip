@@ -23,6 +23,7 @@ public class SettlementService {
     private final AccompanyMemberDepositRepository accompanyMemberDepositRepository;
     private final MemberAccompanyRepository memberAccompanyRepository;
     private final IndividualWithdrawRepository individualWithdrawRepository;
+    private final RegistedAccountRepository registedAccountRepository;
 
     public void resetEndTime(final SettlementRequestDto.resetEndTime requestDto) {
         final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
@@ -38,6 +39,12 @@ public class SettlementService {
         );
 
         accompany.updateEndDate(LocalDate.now());
+
+        final RegistedAccount registedAccount = registedAccountRepository
+                .findByMemberSeqAndAccount(requestDto.memberSeq(), accompany.getAccount())
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 유저의 해당 계좌가 없습니다."));
+
+        registedAccount.updateIsAccompanyAccount(false);
     }
 
     public SettlementResponseDto.showTripResult checkShowTripResult(final SettlementRequestDto.showTripResult requestDto) {
@@ -55,6 +62,30 @@ public class SettlementService {
         } else {
             return showTripResult(requestDto.accompanySeq(), requestDto.memberSeq());
         }
+    }
+
+    public SettlementResponseDto.timeline timeline(final SettlementRequestDto.timeline requestDto) {
+        final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+                accompanyMemberWithdrawRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        final List<SettlementResponseDto.TimelineVO> timelineVOList = new ArrayList<>();
+
+        for (final AccompanyMemberWithdraw accompanyMemberWithdraw : accompanyMemberWithdrawList) {
+            final SettlementResponseDto.TimelineVO timelineVO = SettlementResponseDto.TimelineVO.builder()
+                    .store(accompanyMemberWithdraw.getStore())
+                    .cost(accompanyMemberWithdraw.getCost())
+                    .memo(accompanyMemberWithdraw.getMemo())
+                    .picture(accompanyMemberWithdraw.getPicture())
+                    .acceptedDate(accompanyMemberWithdraw.getAcceptedDate())
+                    .acceptedDateTime(accompanyMemberWithdraw.getAcceptedDateTime())
+                    .build();
+
+            timelineVOList.add(timelineVO);
+        }
+
+        return SettlementResponseDto.timeline.builder()
+                .timeline(timelineVOList)
+                .build();
     }
 
     public SettlementResponseDto.settleUp settleUp(final SettlementRequestDto.settleUp requestDto) {
@@ -216,6 +247,10 @@ public class SettlementService {
                     .findByAccompanyMemberWithdrawSeq(accompanyMemberWithdraw.getAccompanyMemberWithdrawSeq());
 
             for (final IndividualWithdraw individualWithdraw : individualWithdrawList) {
+                if (!individualWithdraw.getIsIncluded()) {
+                    continue;
+                }
+
                 final Member member = individualWithdraw.getMember();
 
                 final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
@@ -255,27 +290,19 @@ public class SettlementService {
             }
 
             // 개별 출금액 확인
-            final List<AccompanyMemberWithdraw> individualAccompanyMemberWithdrawList =
-                    accompanyMemberWithdrawRepository
-                            .findByAccompanySeqAndMemberSeq(accompanySeq, member.getMemberSeq());
-
-            int checkedIndividualWithdraw = 0;
-
-            for (final AccompanyMemberWithdraw accompanyMemberWithdraw : individualAccompanyMemberWithdrawList) {
-                checkedIndividualWithdraw += accompanyMemberWithdraw.getCost();
-            }
-
-            final int savedIndividualWithdraw = memberAccompany.getIndividualWithdraw();
-
-            if (checkedIndividualWithdraw != savedIndividualWithdraw) {
-                memberAccompany.updateIndividualWithdraw(checkedIndividualWithdraw);
-            }
-
-            // 정산 시작
             final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
+
+            final double checkedIndividualWithdraw = eachActualUsage[memberLocation];
 
             final int individualWithdraw = (int) Math.ceil(eachActualUsage[memberLocation]);
 
+            final double savedIndividualWithdraw = memberAccompany.getIndividualWithdraw();
+
+            if (checkedIndividualWithdraw != savedIndividualWithdraw) {
+                memberAccompany.updateIndividualWithdraw(individualWithdraw);
+            }
+
+            // 정산 시작
             final int settlement = checkedIndividualDeposit - individualWithdraw;
 
             memberAccompany.updateSettlement(settlement);
@@ -293,8 +320,8 @@ public class SettlementService {
                             .formattedSettlement(NumberFormatUtility.formatter(settlement))
                             .individualDeposit(checkedIndividualDeposit)
                             .formattedIndividualDeposit(NumberFormatUtility.formatter(checkedIndividualDeposit))
-                            .individualWithdraw(checkedIndividualWithdraw)
-                            .formattedSettlement(NumberFormatUtility.formatter(checkedIndividualWithdraw))
+                            .individualWithdraw(individualWithdraw)
+                            .formattedSettlement(NumberFormatUtility.formatter(individualWithdraw))
                             .build();
 
             settlementList.add(responseVO);
@@ -329,7 +356,9 @@ public class SettlementService {
 
         final int individualDeposit = memberAccompany.getIndividualDeposit();
 
-        final int individualWithdraw = memberAccompany.getIndividualWithdraw();
+        final double individualWithdraw = memberAccompany.getIndividualWithdraw();
+
+        final int integerIndividualWithdraw = (int) Math.ceil(individualWithdraw);
 
         final List<SettlementResponseDto.SettlementResponseVO> settlementList = new ArrayList<>();
 
@@ -342,8 +371,8 @@ public class SettlementService {
                         .formattedSettlement(NumberFormatUtility.formatter(settlement))
                         .individualDeposit(individualDeposit)
                         .formattedIndividualDeposit(NumberFormatUtility.formatter(individualDeposit))
-                        .individualWithdraw(individualWithdraw)
-                        .formattedSettlement(NumberFormatUtility.formatter(individualWithdraw))
+                        .individualWithdraw(integerIndividualWithdraw)
+                        .formattedSettlement(NumberFormatUtility.formatter(integerIndividualWithdraw))
                         .build();
 
         settlementList.add(responseVO);

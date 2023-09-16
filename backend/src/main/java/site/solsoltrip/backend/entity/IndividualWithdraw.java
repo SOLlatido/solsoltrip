@@ -1,14 +1,14 @@
 package site.solsoltrip.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "individual_withdraw")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor
+@Builder
 public class IndividualWithdraw {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,11 @@ public class IndividualWithdraw {
     private AccompanyMemberWithdraw accompanyMemberWithdraw;
 
     private Double individual;
+
+    private Boolean isIncluded;
+
+    public void updateIndividualWithdraw(final Double individual, final Boolean isIncluded) {
+        this.individual = individual;
+        this.isIncluded = isIncluded;
+    }
 }

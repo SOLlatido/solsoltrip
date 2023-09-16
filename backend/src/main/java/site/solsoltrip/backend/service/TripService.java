@@ -15,6 +15,7 @@ import site.solsoltrip.backend.dto.TripResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.repository.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,16 +86,20 @@ public class TripService {
 
     @Transactional
     public void registAccount(final TripRequestDto.registAccount requestDto) {
-        final RegistedAccount account = registedAccountRepository.findById(requestDto.registerAccountSeq()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 계좌입니다.")
-        );
+        final RegistedAccount account = registedAccountRepository
+                .findByRegistedAccountSeq(requestDto.registedAccountSeq())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계좌입니다."));
+
+        account.updateIsAccompanyAccount(true);
 
         final Accompany accompany = Accompany.builder()
                 .name(requestDto.name())
                 .account(account.getAccount())
                 .startDate(requestDto.startDate())
                 .endDate(requestDto.endDate())
-                .individual(requestDto.personalAmount())
+                .individual(requestDto.individual())
+                .totalDeposit(requestDto.individual())
+                .totalWithdraw(0)
                 .build();
 
         accompanyRepository.save(accompany);
@@ -102,10 +107,19 @@ public class TripService {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
+        final Accompany savedAccompany = accompanyRepository
+                .findByNameAndAccount(accompany.getName(), accompany.getAccount())
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 동행 통장이 없습니다."));
+
         final MemberAccompany memberAccompany = MemberAccompany.builder()
                 .member(member)
-                .accompany(accompany)
+                .accompany(savedAccompany)
                 .isManager(true)
+                .isPaid(false)
+                .settlement(0)
+                .individualDeposit(requestDto.individual())
+                .individualWithdraw(0)
+                .isChecked(false)
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);
@@ -129,6 +143,19 @@ public class TripService {
                 .endDate(accompany.getEndDate())
                 .depositList(depositList)
                 .withdrawList(withdrawList)
+                .build();
+    }
+
+    @Transactional
+    public TripResponseDto.check check(final TripRequestDto.check requestDto) {
+        final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
+        );
+
+        final boolean endTrip = accompany.getEndDate().isBefore(LocalDate.now());
+
+        return TripResponseDto.check.builder()
+                .endTrip(endTrip)
                 .build();
     }
 
