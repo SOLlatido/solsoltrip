@@ -95,7 +95,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         
         
     } catch (error) {
-        Alert.alert("1시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
@@ -127,7 +126,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
                   x : data.x,
                   y : data.y,
                   description : eventMap[i].description,
-                  is2000Alert : false,
+                  is2000Alert : eventMap[i].is2000Alert,
                 }
               )
             }
@@ -150,7 +149,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         }
         
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
@@ -172,7 +170,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     return distance <= 2; // 2000m = 2 km
   };
 
-  // 유저의 위치와 마커 간의 거리를 확인하는 함수 100m 알람범위
+  // 유저의 위치와 마커 간의 거리를 확인하는 함수 300m 알람범위
   const isWithin300m = (markerLocation: any, userLocation: any) => {
     const distance = calcDistance(markerLocation, userLocation);
     return distance <= 0.3; // 300m = 0.3 km
@@ -251,11 +249,12 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
   // 이동 위치 추적
   useEffect(() => {
+    console.log(1);
     const watchLocation = async () => {
       
       const locationOptions = {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 2000,
+        timeInterval: 1000,
         distanceInterval: 10,
       };
 
@@ -295,9 +294,10 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           
           
             isWithin2000mFlag = isWithin2000m(markerLocation,newCoordinate);
+            console.log(2);
           
             if (isWithin2000mFlag) {
-
+              console.log(3);
               //2000m 알람이 울리지 않은 것
               if (!oneCharacter.is2000Alert&&oneCharacter.name != null) {
                 Alert.alert(`2000m 이내에 ${oneCharacter.name} 관광지가 보입니다!`);
@@ -387,8 +387,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
               
               
               <Image
-                source={sol_charater1} // 이미지를 직접 지정합니다.
-                style={tw`w-[40px] h-[40px]`} // 이미지 크기를 조정하세요.
+                source={sol_charater1}
+                style={tw`w-[40px] h-[40px]`} // 이미지 크기 조정
               />
 
             </Marker>
