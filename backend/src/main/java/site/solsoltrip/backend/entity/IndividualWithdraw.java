@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +17,12 @@ public class IndividualWithdraw {
 
     @JoinColumn(name = "member_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Member member;
 
     @JoinColumn(name = "accompany_member_withdraw_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private AccompanyMemberWithdraw accompanyMemberWithdraw;
 
     private Double individual;

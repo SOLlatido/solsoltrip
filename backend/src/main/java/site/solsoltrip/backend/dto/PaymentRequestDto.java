@@ -30,11 +30,14 @@ public class PaymentRequestDto {
             List<EachExpense> eachExpenseList) {}
 
     public record deposit(
-            @NotNull
-            Long accompanySeq,
-
             @NotBlank
             String name,
+
+            @NotBlank
+            String code,
+
+            @NotBlank
+            String account,
 
             @NotNull
             Integer cost,
@@ -43,8 +46,8 @@ public class PaymentRequestDto {
             String category) {}
 
     public record withdraw(
-            @NotNull
-            Long accompanySeq,
+            @NotBlank
+            String account,
 
             @NotBlank
             String store,

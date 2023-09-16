@@ -1,5 +1,7 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +26,7 @@ public class AccompanyMemberWithdraw {
 
     @JoinColumn(name = "accompany_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Accompany accompany;
 
     private String store;
@@ -43,6 +46,7 @@ public class AccompanyMemberWithdraw {
     private LocalDateTime memoDateTime;
 
     @OneToMany(mappedBy = "accompanyMemberWithdraw", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<IndividualWithdraw> individualWithdrawList = new ArrayList<>();
 
     public void updateWithdrawRecord(final String category, final String memo, final LocalDateTime memoDateTime) {

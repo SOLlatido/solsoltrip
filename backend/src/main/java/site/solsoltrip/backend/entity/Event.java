@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,6 @@ public class Event {
     private Double y;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<MemberEvent> memberEventList = new ArrayList<>();
 }

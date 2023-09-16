@@ -14,6 +14,7 @@ import site.solsoltrip.backend.dto.TripRequestDto;
 import site.solsoltrip.backend.dto.TripResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.repository.*;
+import site.solsoltrip.backend.util.NumberFormatUtility;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -107,8 +108,7 @@ public class TripService {
         final Member member = memberRepository.findByMemberSeq(requestDto.memberSeq()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        final Accompany savedAccompany = accompanyRepository
-                .findByNameAndAccount(accompany.getName(), accompany.getAccount())
+        final Accompany savedAccompany = accompanyRepository.findByAccount(accompany.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 동행 통장이 없습니다."));
 
         final MemberAccompany memberAccompany = MemberAccompany.builder()
@@ -143,6 +143,35 @@ public class TripService {
                 .endDate(accompany.getEndDate())
                 .depositList(depositList)
                 .withdrawList(withdrawList)
+                .build();
+    }
+
+    public TripResponseDto.totalMember totalMember(final TripRequestDto.totalMember requestDto) {
+        final List<MemberAccompany> memberAccompanyList =
+                memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        final List<TripResponseDto.TotalMemberVO> totalMemberList = new ArrayList<>();
+
+        for (final MemberAccompany memberAccompany : memberAccompanyList) {
+            final Member now = memberAccompany.getMember();
+
+            final String name = now.getName();
+
+            boolean isMe = now.getMemberSeq().equals(requestDto.memberSeq());
+
+            final int formattedWithdraw = memberAccompany.getIndividualWithdraw();
+
+            final TripResponseDto.TotalMemberVO totalMemberVO = TripResponseDto.TotalMemberVO.builder()
+                    .name(name)
+                    .isMe(isMe)
+                    .formattedWithdraw(NumberFormatUtility.formatter(formattedWithdraw))
+                    .build();
+
+            totalMemberList.add(totalMemberVO);
+        }
+
+        return TripResponseDto.totalMember.builder()
+                .totalMemberList(totalMemberList)
                 .build();
     }
 

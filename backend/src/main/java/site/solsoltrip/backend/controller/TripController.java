@@ -36,6 +36,13 @@ public class TripController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    @PostMapping("/total")
+    public ResponseEntity<TripResponseDto.totalMember> totalMember(@RequestBody @Validated final TripRequestDto.totalMember requestDto) {
+        final TripResponseDto.totalMember responseDto = tripService.totalMember(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
     @GetMapping("/check")
     public ResponseEntity<TripResponseDto.check> check(@RequestBody @Validated final TripRequestDto.check requestDto) {
         final TripResponseDto.check responseDto = tripService.check(requestDto);
