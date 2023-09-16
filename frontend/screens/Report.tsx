@@ -40,7 +40,7 @@ function Report() {
   const expensesByCategory = [0, 0, 0, 0, 0, 0, 0];
   const [accompany] = useRecoilState(currentAccountState);
   const [totalExpense, setTotalExpense] = useState<number>(0);
-  const [myExpense, setMyExpense] = useState<number>(1);
+  const [myExpense, setMyExpense] = useState<number>(0);
   const [expensesByPerson, setExpensesByPerson] = useState<{ name: string; expense: number }[]>([]);
   const [categoryExpense, setCategoryExpense] = useState<{ category: string; cost: number}[]>([]);
   const [pieData, setPieData] = useState<PieContent[]>([]);
@@ -81,7 +81,6 @@ function Report() {
 
         setGoal(result.expenseGoal);
         const percent:number =  (totalExpense/goal) * 100;
-        console.log("percent : " + percent)
 
         setGoalData([
           {value: percent, color: "#5d47ae", text : String(percent + "%")},
@@ -192,9 +191,9 @@ function Report() {
           <GoalGraph data={goalData}></GoalGraph>
           <View style={tw `items-center`}>
             <Text style={tw `text-xs font-bold text-[#333]`}>총 지출 목표</Text>
-            <Text style={tw `text-sm font-bold mb-3`}>{goal}</Text>
+            <Text style={tw `text-sm font-bold mb-3`}>{goal}원</Text>
             <Text style={tw `text-xs font-bold text-[#5d47ae]`}>누적 지출액</Text>
-            <Text style={tw `text-sm font-bold text-[#5d47ae]`}>{myExpense}</Text>
+            <Text style={tw `text-sm font-bold text-[#5d47ae]`}>{totalExpense}원</Text>
           </View>
       </View>
     </ScrollView>
