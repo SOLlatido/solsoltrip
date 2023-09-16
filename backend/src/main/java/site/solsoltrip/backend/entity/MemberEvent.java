@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +17,12 @@ public class MemberEvent {
 
     @JoinColumn(name = "member_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Member member;
 
     @JoinColumn(name = "event_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Event event;
 
     private Boolean isDone;

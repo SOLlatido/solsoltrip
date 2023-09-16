@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Member {
+    public static final String DEFAULT_PROFILE_IMAGE = "profile/sol_expense_large.png";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberSeq;
@@ -20,6 +23,8 @@ public class Member {
     private String uuid;
 
     private String name;
+
+    private String profileImage;
 
     private int point;
 
@@ -30,18 +35,23 @@ public class Member {
     private String kakaoRefreshToken;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<MemberEvent> eventList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<EventPoint> eventPointList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<MemberAccompany> accompanyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<IndividualWithdraw> individualWithdrawList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<RegistedAccount> registedAccountList = new ArrayList<>();
 
     public void updatePoint(final int point) {
@@ -50,6 +60,10 @@ public class Member {
 
     public void updateKakaoEmail(final String kakaoEmail) {
         this.kakaoEmail = kakaoEmail;
+    }
+
+    public void updateProfileImage(final String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public void updateKakaoRefreshToken(final String kakaoRefreshToken) {

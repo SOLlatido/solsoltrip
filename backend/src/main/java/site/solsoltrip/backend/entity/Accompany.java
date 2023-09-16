@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,12 +34,15 @@ public class Accompany {
     private Integer totalWithdraw;
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<MemberAccompany> memberAccompanyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<AccompanyMemberDeposit> accompanyMemberDepositList = new ArrayList<>();
 
     @OneToMany(mappedBy = "accompany", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<AccompanyMemberWithdraw> accompanyMemberWithdrawList = new ArrayList<>();
 
     public void updateEndDate(final LocalDate endDate) {
