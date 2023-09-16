@@ -1,21 +1,55 @@
-import React from 'react';
-import { View, Text, Pressable, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Pressable, TouchableOpacity, Alert } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient'
 import { Feather, AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 
-const AccountItem = (props : { accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
+// recoil
+import { useRecoilState } from 'recoil';
+import {pickAccountState} from "../../recoil/account/pickAccountAtom";
+import {pickSpecificAccountInfoState} from "../../recoil/account/pickSpecificAccountInfo";
+
+import { nonAuthHttp, authHttp } from '../../axios/axios';
+
+const AccountItem = (props : { accompanySeq:number, accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
   const navigation = useNavigation();
-  const {accountNumber, travelTitle, duration, numberOfPeople} = props
+  const {accompanySeq,accountNumber, travelTitle, duration, numberOfPeople} = props
+
+  const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState); //동행통장 상세 내역 정보를 담음
 
   const exitAccount = () => {
     console.log("동행통장 나가기");
   }
 
+  async function getOneAccountInfo(data:tripAccountRequest): Promise<void> {
+    try {
+
+        const response = await nonAuthHttp.post(`api/trip/detail`, data);
+        const result = response.data;
+        
+        if(response.status===200){
+            setCurrAccountInfo(result);
+            navigation.navigate("MainPage" as never);
+        }else{
+            return;
+        }
+
+    } catch (error) {
+        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    setCurrAccount({ accountSeq:accompanySeq, accountNumber:accountNumber, travelTitle:travelTitle, duration:duration, numberOfPeople:numberOfPeople });
+  },[currAccount.duration])
+
+
   return (
-    <Pressable onPress={()=>console.log("pressed!")}>
+    <Pressable onPress={()=>{getOneAccountInfo({accompanySeq: props.accompanySeq})}}>
       <LinearGradient
         colors={['#7479BF', '#38B0E8']} // Define your gradient colors
         start={{ x: 0, y: 0 }} // Gradient start point
@@ -50,3 +84,27 @@ const AccountItem = (props : { accountNumber:string, travelTitle:string, duratio
 };
 
 export default AccountItem;
+
+type tripAccountResponse = {
+  account : string,
+  name : string,
+  startDate:string,
+  endDate:string,
+  peopleNum:number,
+  accompanyDepositContents:accompanyWithdrawalContents[],
+  accompanyWithdrawalContents:accompanyWithdrawalContents[],
+}
+
+type accompanyWithdrawalContents = {
+  "accompanyContentSeq": number,
+	"store": string,
+	"cost": number,
+	"acceptedDate": string,
+	"category": string,
+	"memeo": string,
+	"acceptedDatetime": string
+}
+
+type tripAccountRequest = {
+  accompanySeq:number,
+}
