@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -28,6 +28,7 @@ public class MemberService {
 
     private final AwsS3Properties awsS3Properties;
 
+    @Transactional
     public void signup(final MemberRequestDto.signup requestDto) {
         if (memberRepository.findByUuid(requestDto.uuid()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 유저입니다.");
@@ -44,6 +45,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
     public MemberResponseDto.login login(final MemberRequestDto.login requestDto) {
         final Member member = memberRepository.findByUuid(requestDto.uuid()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
@@ -79,6 +81,7 @@ public class MemberService {
                         .build();
     }
 
+    @Transactional
     public MemberResponseDto.KakaoTokenInfo kakaoSync(final String code, final Long state) {
         final MemberResponseDto.KakaoInfo userInfo = kakaoOAuth2.kakaoSync(code);
 
@@ -108,7 +111,7 @@ public class MemberService {
         final List<MemberResponseDto.AccompanyListVO> accompanyList = new ArrayList<>();
 
         for (MemberAccompany memberAccompany : memberAccompanyList) {
-            final int personNum = memberAccompanyRepository.findByAccompanySeq(memberAccompany.getMemberAccompanySeq()).size();
+            final int personNum = memberAccompanyRepository.findByAccompanySeq(memberAccompany.getAccompany().getAccompanySeq()).size();
 
             accompanyList.add(MemberResponseDto.AccompanyListVO.builder()
                     .accompanySeq(memberAccompany.getAccompany().getAccompanySeq())
