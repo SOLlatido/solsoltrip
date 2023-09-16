@@ -16,8 +16,11 @@ import {currentAccountState} from "../recoil/account/currentAccountAtom"
 function MyTravelMates() {
 
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  const [accompanyInfo, setAccompanyInfo] = useRecoilState(currentAccountState);
+  const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
+  const accompanySeq = accompanyInfo[0].accompanySeq;
+  
 
-  // const [loginUser, setLoginUserSeq] = useState<>();
 
   const [people, setPeople] = useState<memberResponse[]|null>();
 
@@ -27,41 +30,39 @@ function MyTravelMates() {
   async function getTotalPeople(data:memberRequest): Promise<void> {
     try {
 
-        const response: AxiosResponse<memberResponse> = await authHttp.patch<memberResponse>(`api/trip/total`, data);
+        const response: AxiosResponse<memberResponse[]> = await nonAuthHttp.post<memberResponse[]>(`api/trip/total`, data);
         const result = response.data; //{status, message}
 
         
         if(response.status===200){
-          // setPeople(result);
-          console.log(result);
+          setPeople(result.totalMemberList);
+          console.log(result.totalMemberList);
         }else{
             return;
         }
 
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         console.log(error);
     }
   }
 
-  // useEffect(()=>{
-  //   // 로그인 유저 받아오기
-  //   async function getLoginUser(){
-  //     const loginUser = await AsyncStorage.getItem("loginUser")
-  //     const parsed = JSON.parse(loginUser as string)
-  //     const name:string = parsed.name;
-  //     const userSeq:number = parsed.memberSeq;
+  useEffect(()=>{
+    // 로그인 유저 받아오기
+    async function getLoginUser(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      const name:string = parsed.name;
+      const userSeq:number = parsed.memberSeq;
 
-  //     setLoginUserSeq(userSeq);
-  //     setEndUpload(true); //1
-  //   }
-  //   getLoginUser();
+      setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
 
-  //   getTotalPeople({
-  //     memberSeq: number;
-  //     accompanySeq: number;
-  //   });
-  // },[])
+    getTotalPeople({
+      memberSeq: loginUserSeq,
+      accompanySeq: accompanySeq
+    });
+  },[])
   
   
   return (
@@ -77,9 +78,16 @@ function MyTravelMates() {
         </View>
         <ScrollView style={tw `flex-1`}>
           <View style={tw `ml-6 justify-center items-center w-7/8`}>
-            <TravelMatesItem name={"다영"} status={"나"} balance={"101,500"}/>
-            <TravelMatesItem name={"다영"} status={"나"} balance={"101,500"}/>
-            <TravelMatesItem name={"다영"} status={"나"} balance={"101,500"}/>
+            
+            {
+              people?.map((peopleData, index)=>{
+                return(
+                  <TravelMatesItem key={index} name={peopleData.name} status={peopleData.isMe?"나":"모임원"} balance={peopleData.formattedWithdraw}/>
+                )  
+              })
+            }
+            
+
           </View>
         </ScrollView>
 
@@ -112,7 +120,7 @@ const TravelMatesItem = (props: { name: string, status: string, balance: string 
           <Text style={tw`text-lg`}>{props.name}</Text>
           <Text style={tw`text-sm`}>{props.status}</Text>
         </View>
-        <View style={tw`flex-2 justify-end items-end p-2 pr-3`}>
+        <View style={tw`flex-2 justify-center items-end p-2 pr-3`}>
           <Text style={tw`text-lg`}>{props.balance}원</Text>
         </View>
       </View>
