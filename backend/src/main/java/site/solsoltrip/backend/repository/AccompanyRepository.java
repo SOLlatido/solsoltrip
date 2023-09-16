@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface AccompanyRepository extends JpaRepository<Accompany, Long> {
     Optional<Accompany> findByAccompanySeq(final Long accompanySeq);
 
-    Optional<Accompany> findByNameAndAccount(final String name, String account);
+    Optional<Accompany> findByAccount(final String account);
 }
