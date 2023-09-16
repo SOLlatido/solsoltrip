@@ -14,7 +14,6 @@ import { AxiosResponse, AxiosError } from "axios"
 // recoil
 import { useRecoilState } from 'recoil';
 import { centerModalState } from '../recoil/centerModal/atom';
-import {userState} from "../recoil/user/loginUserAtom"
 
 // 캐릭터 이미지
 import sol_charater1 from '../assets/character/sol_character1.png';
@@ -82,7 +81,6 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
           setEventMap(newEventMap);
-          // console.log(eventMap);
 
         }else{
           return;
@@ -99,28 +97,33 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   //2. 300m 이내면 성공 모달 혹은 2000m 내로 들어오면 alert
   async function getArrival(data:EventArrivalRequest, name:string): Promise<void> {
     try {
+
+      console.log(data);
       
       if(data.x===undefined || data.y===undefined) return;
       
       const response: AxiosResponse<EventArrivalResponse> = await nonAuthHttp.post<EventArrivalResponse>(`api/event/arrival`, data);
       const result = response.data;
+
       
         if(response.status===200){
           
           const newEventMap = eventMap;
-          result.totalResponseVOList.map((data, index)=>{
 
-            newEventMap.push(
-              {
-                eventSeq : data.eventSeq,
-                name : data.name,
-                x : data.x,
-                y : data.y,
-                description : data.description,
-                is2000Alert : false,
-              }
-            )
-          })
+          for(let i=0;i<eventMap.length;i++){
+            if(eventMap[i].eventSeq!==data.eventSeq){
+              newEventMap.push(
+                {
+                  eventSeq : data.eventSeq,
+                  name : eventMap[i].name,
+                  x : data.x,
+                  y : data.y,
+                  description : eventMap[i].description,
+                  is2000Alert : false,
+                }
+              )
+            }
+          }
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
           setEventMap(newEventMap);
@@ -171,14 +174,16 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   const openEventModalOrAlert = (place: any) => {
     if (isWithin300m(location, place)) {
 
-      console.log(place);
       
       const arrivalData = {
         "memberSeq": loginUserSeq,
-        "eventSeq": location.eventSeq,
+        "eventSeq": place.eventSeq,
         "x": location?.longitude,
         "y": location?.latitude,
       }
+
+      console.log(place.eventSeq);
+
       getArrival(arrivalData, place.name);//2000~100m 근처로 왔는지 체크하는 함수
 
     } else {
@@ -323,10 +328,9 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       event:true,
     }
     setModalVisible(newValue);
-    setModalContent(`${pointMapName} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
-  useEffect(()=>{},[eventMap])
+  useEffect(()=>{},[eventMap, modalVisible])
 
 
   return (
@@ -388,7 +392,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           <View>
             <EventModal
               modalTitle="감사합니다"
-              content={modalContent}
+              content={`${pointMapName} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`}
+              point={point}
             />
           </View>
       </MapView>
