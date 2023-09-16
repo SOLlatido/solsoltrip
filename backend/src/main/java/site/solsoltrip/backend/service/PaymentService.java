@@ -1,8 +1,6 @@
 package site.solsoltrip.backend.service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -13,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import site.solsoltrip.backend.dto.PaymentRequestDto;
 import site.solsoltrip.backend.dto.PaymentResponseDto;
 import site.solsoltrip.backend.dto.ShbhackRequestDto;
+import site.solsoltrip.backend.dto.ShbhackResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.properties.aws.AwsS3Properties;
 import site.solsoltrip.backend.repository.*;
@@ -21,6 +20,7 @@ import site.solsoltrip.backend.util.FileUtility;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -66,6 +66,23 @@ public class PaymentService {
                     accompanyMemberWithdrawRepository.findByAccompanyMemberWithdrawSeq(requestDto.accompanyMemberSeq())
                             .orElseThrow(() -> new IllegalArgumentException("출금 내역을 찾을 수 없습니다."));
 
+            final List<PaymentResponseDto.Withdraw.IncludedMember> includedMemberList = new ArrayList<>();
+
+            final List<MemberAccompany> memberAccompanyList =
+                    memberAccompanyRepository.findByAccompanySeq(requestDto.accompanyMemberSeq());
+
+            for (final MemberAccompany memberAccompany : memberAccompanyList) {
+                final Member member = memberAccompany.getMember();
+
+                final PaymentResponseDto.Withdraw.IncludedMember includedMember =
+                        PaymentResponseDto.Withdraw.IncludedMember.builder()
+                                .memberSeq(member.getMemberSeq())
+                                .name(member.getName())
+                                .build();
+
+                includedMemberList.add(includedMember);
+            }
+
             withdraw = PaymentResponseDto.Withdraw.builder()
                     .name(accompanyMemberWithdraw.getStore())
                     .memo(accompanyMemberWithdraw.getMemo())
@@ -73,6 +90,7 @@ public class PaymentService {
                     .category(accompanyMemberWithdraw.getCategory())
                     .time(accompanyMemberWithdraw.getAcceptedDateTime())
                     .picture(accompanyMemberWithdraw.getPicture())
+                    .includedMemberList(includedMemberList)
                     .build();
         }
 
@@ -91,15 +109,38 @@ public class PaymentService {
 
         accompanyMemberWithdraw.updateWithdrawRecord(requestDto.category(), requestDto.memo(), LocalDateTime.now());
 
+        final JsonElement element = JsonParser.parseString(requestDto.eachExpenseList());
+
+        final JsonObject object = element.getAsJsonObject();
+
+        final JsonArray checkHistory = object.get("EachExpense").getAsJsonArray();
+
+        final List<PaymentRequestDto.EachExpense> eachExpenseList = new ArrayList<>();
+
+        for (int i = 0; i < checkHistory.size(); i++) {
+            JsonElement jsonElement = checkHistory.get(i);
+
+            final JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+            final Long first = jsonObject.get("memberSeq").getAsLong();
+            final double second = jsonObject.get("cost").getAsDouble();
+
+            eachExpenseList.add(PaymentRequestDto.EachExpense.builder()
+                            .memberSeq(first)
+                            .cost(second)
+                    .build()
+            );
+        }
+
         uploadPicture(requestDto.accompanyMemberWithdrawSeq(), requestDto.pictureFile());
 
-        changeEachExpense(requestDto.accompanyMemberWithdrawSeq(), requestDto.eachExpenseList());
+        changeEachExpense(requestDto.accompanyMemberWithdrawSeq(), eachExpenseList);
     }
 
     @Transactional
     public void deposit(final PaymentRequestDto.deposit requestDto) {
         // api 이용 로직
-        // final String jsonObject = sendRequest(requestDto.code(), requestDto.account(), "/v1/search/name");
+        // final String jsonObject = sendRequest(requestDto.code(), requestDto.myAccount(), "/v1/search/name");
 
         // final String name = checkName(jsonObject);
 
@@ -118,9 +159,17 @@ public class PaymentService {
                 continue;
             }
 
+            now.updateTotalDeposit(now.getTotalDeposit() + requestDto.cost());
+
             accompany = now;
             break;
         }
+
+        if (accompany == null) {
+            throw new IllegalArgumentException("해당하는 동행 통장이 없습니다.");
+        }
+
+        final Accompany resultAccompany = accompany;
 
         final List<Member> memberList = memberRepository.findByName(name);
 
@@ -130,7 +179,9 @@ public class PaymentService {
             throw new IllegalArgumentException("동행 통장을 이용하는 고객이 아닙니다.");
         } else if (memberList.size() == 1) {
             member = memberList.get(0);
-        } else {
+        }
+        // TODO: 이름이 같을 경우의 로직 : MemberAccompany 테이블에 uuid 추가할 예정
+        else {
             checkMember:
             for (final Member checkMember : memberList) {
                 final List<RegistedAccount> registedAccountList =
@@ -145,13 +196,37 @@ public class PaymentService {
             }
         }
 
+        // TODO: 이름이 같을 경우의 로직 추가시 아래 if문 삭제
+        if (member == null) {
+            throw new IllegalArgumentException("해당하는 유저가 없습니다.");
+        }
+
+        final Member resultMember = member;
+
+        final MemberAccompany memberAccompany = memberAccompanyRepository
+                .findByAccompanySeqAndMemberSeq(accompany.getAccompanySeq(), member.getMemberSeq())
+                .orElseGet(
+                        () -> memberAccompanyRepository.save(MemberAccompany.builder()
+                                        .member(resultMember)
+                                        .accompany(resultAccompany)
+                                        .isManager(false)
+                                        .isPaid(false)
+                                        .settlement(0)
+                                        .individualDeposit(0)
+                                        .individualWithdraw(0)
+                                        .isChecked(false)
+                                .build())
+                );
+
+        memberAccompany.updateIndividualDeposit(memberAccompany.getIndividualDeposit() + requestDto.cost());
+
         final AccompanyMemberDeposit accompanyMemberDeposit = AccompanyMemberDeposit.builder()
                 .accompany(accompany)
                 .member(member)
                 .name(name)
                 .cost(requestDto.cost())
                 .acceptedDate(LocalDate.now())
-                .category(requestDto.category())
+                .category(Category.입금.getNumber())
                 .acceptedDateTime(LocalDateTime.now())
                 .build();
 
@@ -173,6 +248,12 @@ public class PaymentService {
             }
 
             accompany = now;
+            now.updateTotalWithdraw(now.getTotalWithdraw() + requestDto.cost());
+            break;
+        }
+
+        if (accompany == null) {
+            throw new IllegalArgumentException("해당하는 동행 통장이 없습니다.");
         }
 
         final AccompanyMemberWithdraw accompanyMemberWithdraw = AccompanyMemberWithdraw.builder()
@@ -204,8 +285,39 @@ public class PaymentService {
 
         final double eachWithdraw = (double) requestDto.cost() / size;
 
+        final List<String> eachActualUsageUuid = new ArrayList<>();
+
         for (final MemberAccompany memberAccompany : memberAccompanyList) {
             final Member member = memberAccompany.getMember();
+
+            eachActualUsageUuid.add(member.getUuid());
+        }
+
+        final double[] eachActualUsage = new double[eachActualUsageUuid.size()];
+
+        for (final AccompanyMemberWithdraw now : accompanyMemberWithdrawList) {
+            final List<IndividualWithdraw> individualWithdrawList = individualWithdrawRepository
+                    .findByAccompanyMemberWithdrawSeq(now.getAccompanyMemberWithdrawSeq());
+
+            for (final IndividualWithdraw individualWithdraw : individualWithdrawList) {
+                if (!individualWithdraw.getIsIncluded()) {
+                    continue;
+                }
+
+                final Member member = individualWithdraw.getMember();
+
+                final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
+
+                eachActualUsage[memberLocation] += individualWithdraw.getIndividual();
+            }
+        }
+
+        for (final MemberAccompany memberAccompany : memberAccompanyList) {
+            final Member member = memberAccompany.getMember();
+
+            final int memberLocation = eachActualUsageUuid.indexOf(member.getUuid());
+
+            memberAccompany.updateIndividualWithdraw((int) Math.ceil(eachActualUsage[memberLocation] + eachWithdraw));
 
             final IndividualWithdraw individualWithdraw = IndividualWithdraw.builder()
                     .member(member)

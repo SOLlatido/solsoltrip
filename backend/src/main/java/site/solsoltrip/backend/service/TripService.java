@@ -20,6 +20,7 @@ import site.solsoltrip.backend.repository.*;
 import site.solsoltrip.backend.util.NumberFormatUtility;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -95,6 +96,10 @@ public class TripService {
                 .findByRegistedAccountSeq(requestDto.registedAccountSeq())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계좌입니다."));
 
+        if (account.getIsAccompanyAccount()) {
+            throw new IllegalArgumentException("이미 동행 통장인 계좌입니다.");
+        }
+
         account.updateIsAccompanyAccount(true);
 
         final Accompany accompany = Accompany.builder()
@@ -140,6 +145,18 @@ public class TripService {
                 .build();
 
         memberAccompanyRepository.save(memberAccompany);
+
+        final AccompanyMemberDeposit accompanyMemberDeposit = AccompanyMemberDeposit.builder()
+                .member(member)
+                .accompany(savedAccompany)
+                .name(member.getName())
+                .cost(requestDto.individual())
+                .acceptedDate(LocalDate.now())
+                .category(Category.입금.getNumber())
+                .acceptedDateTime(LocalDateTime.now())
+                .build();
+
+        accompanyMemberDepositRepository.save(accompanyMemberDeposit);
     }
 
     @Transactional

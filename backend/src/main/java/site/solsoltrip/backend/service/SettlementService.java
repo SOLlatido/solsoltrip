@@ -321,7 +321,7 @@ public class SettlementService {
                             .individualDeposit(checkedIndividualDeposit)
                             .formattedIndividualDeposit(NumberFormatUtility.formatter(checkedIndividualDeposit))
                             .individualWithdraw(individualWithdraw)
-                            .formattedSettlement(NumberFormatUtility.formatter(individualWithdraw))
+                            .formattedIndividualWithdraw(NumberFormatUtility.formatter(individualWithdraw))
                             .build();
 
             settlementList.add(responseVO);
