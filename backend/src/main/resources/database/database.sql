@@ -5,7 +5,7 @@ USE `solsoltrip`;
 
 CREATE TABLE `member` (
 	`member_seq` BIGINT  NOT NULL AUTO_INCREMENT,
-	`uuid` VARCHAR(9) NOT NULL,
+	`uuid` VARCHAR(17) NOT NULL,
 	`name` VARCHAR(4) NOT NULL,
 	`profile_image` VARCHAR(255) NULL,
 	`point` INT NOT NULL DEFAULT 0,
