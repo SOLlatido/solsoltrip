@@ -1,10 +1,11 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { View, Text, ScrollView,TouchableOpacity,Alert } from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
 import { AntDesign } from '@expo/vector-icons';
 import tw from "twrnc"
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { nonAuthHttp, authHttp } from '../axios/axios';
 
 // recoil
 import { useRecoilState } from 'recoil';
@@ -13,6 +14,29 @@ import {pickAccountState} from "../recoil/account/pickAccountAtom"
 function MyTravelMates() {
 
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  const [people, setPeople] = useState<memberResponse[]|null>();
+
+
+  // 동행통장에 참여한 전체 인원 불러오기
+  async function getTotalPeople(data:memberRequest): Promise<void> {
+    try {
+
+        const response = await nonAuthHttp.post(`api/trip/total`, data);
+        const result = response.data;
+        
+        if(response.status===200){
+          // setPeople(result);
+          console.log(result);
+        }else{
+            return;
+        }
+
+    } catch (error) {
+        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        console.log(error);
+    }
+  }
+  
   
   return (
     <>
@@ -90,4 +114,15 @@ type accompanyList = {
 
 type getAccountsRequest = {
   memberSeq:number,
+}
+
+// 사람들 불러오기
+type memberRequest = {
+  memberSeq : number,
+  accompanySeq : number
+}
+type memberResponse = {
+  name : string,
+  isMe : boolean,
+  formattedWithdraw : string
 }
