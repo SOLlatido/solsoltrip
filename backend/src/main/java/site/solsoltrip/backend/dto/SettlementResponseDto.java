@@ -27,7 +27,7 @@ public class SettlementResponseDto {
     @Getter
     @Builder
     public static class ShowTripResultCategoryVO {
-        private final Integer category;
+        private final String category;
         private final Integer cost;
         private final String formattedCost;
     }
