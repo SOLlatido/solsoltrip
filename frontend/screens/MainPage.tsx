@@ -13,6 +13,8 @@ import { AxiosError } from 'axios';
 import { pickAccountState } from '../recoil/account/pickAccountAtom'
 import { useRecoilState } from 'recoil';
 import {pickSpecificAccountInfoState} from "../recoil/account/pickSpecificAccountInfo";
+import { currentAccountState } from '../recoil/account/currentAccountAtom';
+
 const loginUser = AsyncStorage.getItem("loginUser")
 
 //들어오자 마자 recoil에 담긴 통장 정보가 떠야 함.
@@ -37,7 +39,11 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 function MainPage() {
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
   const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState);
-  console.log(currAccountInfo.account);
+  const [accompanyState, setAccompanyState] = useRecoilState(currentAccountState);
+  const accompanySeq = accompanyState[0].accompanySeq;
+  const [spendList, setSpendList] = useRecoilState(pickSpecificAccountInfoState);
+
+  console.log(spendList.totalList);
 
   const [activeTab, setActiveTab] = useState("전체");
   const [searchText, setSearchText] = useState('');
@@ -55,11 +61,11 @@ function MainPage() {
       <ImageBackground source={main_aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-                accompanySeq={currAccountInfo.account}
-                accountNumber={currAccount.accountNumber} 
-                travelTitle={currAccount.travelTitle}
-                duration={currAccount.duration}
-                numberOfPeople={currAccount.numberOfPeople}
+                accompanySeq={accompanySeq}
+                accountNumber={currAccountInfo.account} 
+                travelTitle={currAccountInfo.name}
+                duration={`${currAccountInfo.startDate} ~ ${currAccountInfo.endDate}`}
+                numberOfPeople={currAccountInfo.size}
             >
               
             </AccountItem>
@@ -91,25 +97,39 @@ function MainPage() {
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center`}>
                     <ScrollView style={tw `bg-white flex-1 w-7/8`}>
-                      
-                      {/* {
-                        activeTab==="입금"?
-                        currAccountInfo?.accompanyDepositContents.map(()=>{
-                          return(
-                            <ExpenseItem></ExpenseItem>
+                      {
+                        activeTab==="전체"?
+                          spendList.totalList.map((data, index)=>{
+                            return(
+                              data.name!==null && data.name!==undefined?
+                              <ExpenseItem 
+                                key={index}
+                                expenseTitle={data.name} memo={null} expense={data.cost} date={data.acceptedDate} category={data.category}
+                              ></ExpenseItem>:
+                              <ExpenseItem 
+                                key={index}
+                                expenseTitle={data.store} memo={data.memo} expense={data.cost} date={data.acceptedDate} category={data.category}
+                              ></ExpenseItem>
+                            )
+                          }):(
+                            activeTab==="출금"?
+                            spendList.withdrawList.map((data, index)=>{
+                              return(
+                                <ExpenseItem 
+                                  key={index}
+                                  expenseTitle={data.store} memo={data.memo} expense={data.cost} date={data.acceptedDate} category={data.category}
+                                ></ExpenseItem>
+                              )
+                            }):spendList.depositList.map((data, index)=>{
+                              return(
+                                <ExpenseItem 
+                                  key={index}
+                                  expenseTitle={data.name} memo={null} expense={data.cost} date={data.acceptedDate} category={data.category}
+                                ></ExpenseItem>
+                              )
+                            })
                           )
-
-                        }):(activeTab==="출금"?
-                        currAccountInfo?.accompanyWithdrawalContents.map(()=>{
-                            return(
-                              <ExpenseItem></ExpenseItem>
-                            )
-                        }):currAccountInfo?.accompanyWithdrawalContents.map(()=>{
-                            return(
-                              <ExpenseItem></ExpenseItem>
-                            )
-                        }))
-                      } */}
+                      }
 
                     </ScrollView>
                 </View>

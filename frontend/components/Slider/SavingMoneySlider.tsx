@@ -7,45 +7,9 @@ import LongButton from '../ButtonItems/LongButton';
 
 const {width:SCREEN_WIDTH} = Dimensions.get("window");
 
-const SavingMoneySlider = () => {
-    const loginUser = "tksgk2598";
-    const hostUser = "tksgk2598";
-    const [Participants, setParticipants] = useState([
-    {
-        userId : "tksgk2598",
-        userName: "신산하",
-        profileImg: 'https://picsum.photos/100/100',
-        money: "8,000",
-        isHost: true,
-        type: "receive" //send or receive
-      },
-      {
-        userId : "sdy",
-        userName: "석다영",
-        profileImg: 'https://picsum.photos/100/100',
-        money: "2,000",
-        isHost: false,
-        type: "receive" //send or receive
-      },
-      {
-        userId : "kms",
-        userName: "김민식",
-        profileImg: 'https://picsum.photos/100/100',
-        money: "5,000",
-        isHost: false,
-        type: "receive" //send or receive
-      },
-      {
-        userId : "lsh",
-        userName: "이승현",
-        profileImg: 'https://picsum.photos/100/100',
-        money: "5,000",
-        isHost: false,
-        type: "receive" //send or receive
-      }
-  ]);
-
-
+const SavingMoneySlider = (finalFee:EndTripSettleResponse) => {
+  console.log(finalFee.finalFee?.settlementList);
+  console.log(2);
   return (
     <View style={[tw`flex-1`, { backgroundColor: 'rgba(11, 11, 59, 0.5)'}]}>
 
@@ -57,12 +21,12 @@ const SavingMoneySlider = () => {
         contentContainerStyle={tw`mt-[40px]`}>
 
         {
-          Participants.length === 0?(
+          finalFee.finalFee.settlementList?.length === 0?(
             <View style={styles.slider}>
                 <Text style={tw`text-[30px] font-bold text-white items-center mt-[40%]`}>참여자 정보가 없습니다.</Text>
             </View>
           ):(
-            Participants.map((people, index)=>{
+            finalFee.finalFee.settlementList?.map((people, index)=>{
               return(
                 <View key={index} style={styles.slider}>
                     
@@ -72,9 +36,9 @@ const SavingMoneySlider = () => {
                                 source={{ uri: 'https://picsum.photos/100/100' }}
                                 resizeMode="cover"
                         />
-                        <Text style={tw`text-[20px] mt-2 font-bold text-white`}>{people.userName} 님</Text>
+                        <Text style={tw`text-[20px] mt-2 font-bold text-white`}>{people.name} 님</Text>
                         {
-                            people.type==="receive"?
+                            people.isPositive===false?
                                 <Text style={tw`text-[20px] font-bold mt-1 text-white`}>아래 금액을 받아야 합니다.</Text>
                                 :
                                 <Text style={tw`text-[20px] font-bold mt-1 text-white`}>아래 금액을 드려야 합니다.</Text>
@@ -83,7 +47,7 @@ const SavingMoneySlider = () => {
                     </View>
 
                     <View style={tw`items-center mt-10`}>
-                        <Text style={tw`text-[50px] text-5xl font-bold text-white`}>{people.money} 원</Text>
+                        <Text style={tw`text-[50px] text-5xl font-bold text-white`}>{people.formattedSettlement} 원</Text>
                     </View>
 
                     <View style={tw`flex-1 flex-row`}>
@@ -92,11 +56,11 @@ const SavingMoneySlider = () => {
                             // receive : 방장이 돈을 받아야 한다
                             // send : 방장이 돈을 보내야 한다
                             // null : 내가 방장이면 아무것도 안뜸
-                              loginUser!==hostUser? null : (
-                                people.type==="send" && !people.isHost ?<LongButton content='보내기'/>:(
-                                  people.type==="receive" && !people.isHost?<LongButton content='요청하기'/>:null
-                                )
-                              )
+                              // loginUser!==hostUser? null : (
+                              //   people.type==="send" && !people.isHost ?<LongButton content='보내기'/>:(
+                              //     people.type==="receive" && !people.isHost?<LongButton content='요청하기'/>:null
+                              //   )
+                              // )
       
 
                         }
@@ -124,3 +88,30 @@ const styles = StyleSheet.create({
       alignItems:"center",
     },
   });
+
+  //6. 남은 금액 정산
+type EndTripSettleRequest = {
+  accompanySeq : number|null,
+  memberSeq : number|null,
+}
+
+type EndTripSettleResponse = {
+  left : number,//전체 남은 금액 숫자
+  formattedLeft : string, //전체 남은 금액 규격 표시 (,)
+  settlementList:SettlementList[]
+}
+
+type SettlementList = { //각 참여자의 정산 금액
+  name : string,
+  isManager : boolean,
+  isPositive : boolean,
+
+  settlement : number,
+  formattedSettlement : string,
+
+  individualWithdraw : number,
+  formattedIndividualWithdraw : string,
+
+  individualDeposit : number,
+  formattedIndividualDeposit : string
+}

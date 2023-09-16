@@ -28,7 +28,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
   const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
   const [endUpload, setEndUpload] = useState<boolean>(false);
   const [accompanySeq, setAccompanySeq] = useRecoilState(currentAccountState);
-
+  
     useEffect(()=>{
         async function prepare(){
           try{
@@ -98,8 +98,6 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
     async function getAccounts(data:getAccountsRequest): Promise<void> {
       try {
 
-        console.log(data);
-
         if(data.memberSeq<=0) return;
          
         const response: AxiosResponse<getAccountsResponse> = await nonAuthHttp.post<getAccountsResponse>(`api/member/accompany`, data);
@@ -108,7 +106,6 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
         if(response.status===200){
           setMyAccounts(result.accompanyList);
           setAccompanySeq(result.accompanyList);
-          console.log(accompanySeq[0].accompanySeq);
         }
 
       } catch (error) {
@@ -121,7 +118,6 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
       memberSeq:loginUserSeq
     }
     getAccounts(data);
-    console.log(data);
   },[endUpload])
 
 
