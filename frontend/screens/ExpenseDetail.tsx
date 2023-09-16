@@ -9,7 +9,7 @@ import { pickSpecificAccountInfoState } from '../recoil/account/pickSpecificAcco
 import { currentDetailState } from '../recoil/account/currentDetailAtom';
 import { useRecoilState } from 'recoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authHttp } from '../axios/axios';
+import { authHttp, nonAuthHttp } from '../axios/axios';
 import { AxiosError } from 'axios';
 
 const ExpenseDetail = ({route}) => {
@@ -63,7 +63,7 @@ const ExpenseDetail = ({route}) => {
       const getDetail = () => {
         async function callDetail(){
           try {
-            const response = await authHttp.post(`api/payment/detail`, send);
+            const response = await nonAuthHttp.post(`api/payment/detail`, send);
             const data = response.data;
             console.log("data", data);
             //현재 선택된 지출상세 정보

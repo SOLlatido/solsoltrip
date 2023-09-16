@@ -6,12 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import PlaceholderImage from "../../assets/images/sol_expense_large.png";
 import ImageViewerSmall from './ImageViewerSmall';
 const imageSource = null;
-// const expenseTitle = "AKPLAZA 강릉점"
-// const memo = "맛있는 스시를 먹었다! 여기서 다음 일정도 짰다"
-// const date = "07-15 11:57"
-// const expense = "- 34,500"
-const category:number = 4
-console.log(category)
+
+
 //숙소 항공 교통 관광 식비 쇼핑 기타
 const Category = ({categoryNum}:{categoryNum : number}) => {
     return (
