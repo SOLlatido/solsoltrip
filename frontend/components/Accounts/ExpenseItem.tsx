@@ -38,6 +38,9 @@ const Category = ({categoryNum}:{categoryNum : number}) => {
         {categoryNum === 6 && (
         <FontAwesome name="question" size={20} color="black" />
         )}
+        {categoryNum === 7 && (
+          <></>
+        )}
         </View>
         </>
     )

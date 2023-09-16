@@ -5,6 +5,7 @@ import main_aurora from "../assets/images/main_aurora.png"
 
 import EarnPointItem from "../components/Accounts/EarnPointItem";
 import tw from "twrnc";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 컴포넌트
 import PointItem from "../components/Accounts/PointItem";
@@ -18,15 +19,14 @@ import { useRecoilState } from 'recoil';
 import {userState} from "../recoil/user/loginUserAtom"
 
 const MyPointList = () => {
-    const accountNumber:string = "포인트는 개인 계좌로 연동됩니다.";
+    const accountNumber:string = "포인트는 신한마이포인트로 연동됩니다.";
     const [myPoint, setMyPoint] = useState<number>(0);
     const [myPointList, setMyPointList] = useState<PointVO[]|null>(null);
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<PointVO[]|null>(null);
 
     //로그인한 유저 정보
-    const loginUser = useRecoilState(userState);
-    const memberSeq:number|null = loginUser[0].memberSeq;
+    const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
     
     const search = (searchText:string) => {
 
@@ -54,6 +54,10 @@ const MyPointList = () => {
   // axios
   //유저의 포인트 리스트 가져오기
   async function getPointList(data:eventPointRequest): Promise<void> {
+    console.log(data);
+
+    if(data.memberSeq<=0) return;
+
     try {
       
       const response: AxiosResponse<eventPointResponse> = await nonAuthHttp.post<eventPointResponse>(`api/event/point`, data);
@@ -68,15 +72,23 @@ const MyPointList = () => {
         }
         
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
   }
 
   useEffect(()=>{
-    getPointList({memberSeq: memberSeq});
-  },[])
+    // 로그인 정보 불러오기
+    async function getLoginUser(){
+        const loginUser = await AsyncStorage.getItem("loginUser")
+        const parsed = JSON.parse(loginUser as string)
+        const userSeq:number = parsed.memberSeq;
+        setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
+
+    getPointList({memberSeq: loginUserSeq});
+},[loginUserSeq])
 
   return (
     <>
