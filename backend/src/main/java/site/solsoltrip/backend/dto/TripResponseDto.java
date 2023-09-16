@@ -10,6 +10,9 @@ import java.util.List;
 
 public class TripResponseDto {
     @Builder
+    public record validation(List<TripResponseVO> responseVOList) {}
+
+    @Builder
     public record tripDetail(
             String account,
 
@@ -27,7 +30,7 @@ public class TripResponseDto {
     ) {}
 
     @Builder
-    public record validation(List<TripResponseVO> responseVOList) {}
+    public record totalMember(List<TotalMemberVO> totalMemberList) {}
 
     @Builder
     public record check(Boolean endTrip) {}
@@ -39,5 +42,13 @@ public class TripResponseDto {
         private final String account;
         private final String name;
         private final String balance;
+    }
+
+    @Getter
+    @Builder
+    public static class TotalMemberVO {
+        private final String name;
+        private final Boolean isMe;
+        private final String formattedWithdraw;
     }
 }

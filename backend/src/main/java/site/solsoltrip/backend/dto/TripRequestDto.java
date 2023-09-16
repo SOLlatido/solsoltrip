@@ -38,6 +38,14 @@ public class TripRequestDto {
             Long accompanySeq
     ) {}
 
+    public record totalMember(
+            @NotNull
+            Long accompanySeq,
+
+            @NotNull
+            Long memberSeq
+    ) {}
+
     public record check(
             @NotNull
             Long accompanySeq
