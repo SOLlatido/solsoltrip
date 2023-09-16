@@ -1,24 +1,28 @@
-import React from 'react'
-import { View, Text, ScrollView,TouchableOpacity } from 'react-native'
+import React, {useEffect} from 'react'
+import { View, Text, ScrollView,TouchableOpacity,Alert } from 'react-native'
 import AccountItem from '../components/Accounts/AccountItem'
 import { AntDesign } from '@expo/vector-icons';
 import tw from "twrnc"
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// recoil
+import { useRecoilState } from 'recoil';
+import {pickAccountState} from "../recoil/account/pickAccountAtom"
+
 function MyTravelMates() {
-  const navigation = useNavigation()
-  const accountNumber:string = "123232123"
-  const travelTitle:string = "4박 5일 강릉 여행"
-  const duration:string = "2023-07-16 ~ 2023-07-20"
-  const numberOfPeople:number = 4
+
+  const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  
   return (
     <>
       <View style={tw `h-full`}> 
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-            accountNumber={accountNumber} 
-            travelTitle={travelTitle}
-            duration={duration}
-            numberOfPeople={numberOfPeople}
+            accountNumber={currAccount.account} 
+            travelTitle={currAccount.travelTitle}
+            duration={currAccount.duration}
+            numberOfPeople={currAccount.numberOfPeople}
             ></AccountItem>
         </View>
         <ScrollView style={tw `flex-1`}>
@@ -70,3 +74,20 @@ const TravelMatesItem = (props: { name: string, status: string, balance: string 
 
 
 export default MyTravelMates
+
+type getAccountsResponse = {
+  accompanyList : accompanyList[]|null,
+}
+
+type accompanyList = {
+  accompanySeq : number,
+  account : string,
+  name : string,
+  startDate:string,
+  endDate:string,
+  personNum:number
+}
+
+type getAccountsRequest = {
+  memberSeq:number,
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Pressable, TouchableOpacity } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient'
 import { Feather, AntDesign } from '@expo/vector-icons';
@@ -6,13 +6,25 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 
+// recoil
+import { useRecoilState } from 'recoil';
+import {pickAccountState} from "../../recoil/account/pickAccountAtom"
+
 const AccountItem = (props : { accountNumber:string, travelTitle:string, duration:string, numberOfPeople:number }) => {
   const navigation = useNavigation();
   const {accountNumber, travelTitle, duration, numberOfPeople} = props
 
+  const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  
+
   const exitAccount = () => {
     console.log("동행통장 나가기");
   }
+
+  useEffect(()=>{
+    setCurrAccount({ accountNumber:accountNumber, travelTitle:travelTitle, duration:duration, numberOfPeople:numberOfPeople });
+  },[])
+
 
   return (
     <Pressable onPress={()=>console.log("pressed!")}>

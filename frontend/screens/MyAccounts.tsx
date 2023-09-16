@@ -21,6 +21,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>("");
   const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
+  const [endUpload, setEndUpload] = useState<boolean>(false);
 
     useEffect(()=>{
         async function prepare(){
@@ -80,16 +81,19 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
       const userSeq:number = parsed.memberSeq;
       setName(name);
       setLoginUserSeq(userSeq);
+      setEndUpload(true); //1
     }
     getLoginUser();
 
   },[])
 
-  useEffect(()=>{
+  useEffect(()=>{ //2
     //axios 나의 동행통장 리스트 가져오기
     async function getAccounts(data:getAccountsRequest): Promise<void> {
       try {
-        
+
+        if(data.memberSeq===0) return;
+         
         const response: AxiosResponse<getAccountsResponse> = await nonAuthHttp.post<getAccountsResponse>(`api/member/accompany`, data);
         const result: getAccountsResponse = response.data; //{status, message}
           
@@ -105,25 +109,18 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
       }
     }
 
-    console.log(loginUserSeq)
-
     const data:getAccountsRequest = {
       memberSeq:loginUserSeq
     }
     getAccounts(data);
-  },[])
+    console.log(data);
+  },[endUpload])
 
 
   const handleRegisterAccount = () => {
     navigation.navigate("AccountList");
   }
   return (
-    // {myAccounts.length === 0?
-    
-    
-    // :
-    
-    // }
     <>
       {loading?<LoadingAnimation_morning/>:<View style={tw`flex-1`}>
         <ImageBackground source={aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
