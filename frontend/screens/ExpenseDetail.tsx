@@ -4,8 +4,14 @@ import tw from "twrnc";
 import * as ImagePicker from 'expo-image-picker';
 import PlaceholderImage from "../assets/images/sol_expense_large.png"
 import ImageViewer from '../components/Accounts/ImageViewer';
-
 import { MaterialIcons, FontAwesome, Feather, MaterialCommunityIcons, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { pickSpecificAccountInfoState } from '../recoil/account/pickSpecificAccountInfo';
+import { pickAccountState } from '../recoil/account/pickAccountAtom';
+import { useRecoilState } from 'recoil';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authHttp, nonAuthHttp } from '../axios/axios';
+import { AxiosError } from 'axios';
+
 const ExpenseDetail = ({route}) => {
   const { imageSource, expenseTitle, memo, date, expense, category:initialCategory } = route.params;
   const categoryIcons = [
@@ -17,11 +23,76 @@ const ExpenseDetail = ({route}) => {
     <Feather name="shopping-bag" size={20} color="black" />,
     <FontAwesome name="question" size={20} color="black" />,
   ];
-  const friendsList = ['석다영', '신산하', '이승현', '김민식'];
+
   const categoryLabels = ["숙소", "항공", "교통", "관광", "식비", "쇼핑", "기타"];
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedNames, setSelectedNames] = useState(friendsList);
+  const [pick, setPick] = useRecoilState(pickSpecificAccountInfoState);
+  const [detailId, setDetailId] = useRecoilState(pickAccountState);
+  const accompanySeq = detailId.accountSeq;
+  const [detailData, setDetailData] = useState<detailDataType>();
+  //들어오면서 동시에 accompanyMemberWidthdrawSeq 를 가져온다. (atom에 저장한다) 
+  //useEffect로 멤버번호와 위 번호를 쏘아서 요청을 보낸다.
+  //받아온 친구들을 저장 후 보여준다.
+  type detailDataType = {
+    name : string,
+    memo : string,
+    const : number,
+    category : string,
+    time : string,
+    picture : string
+  }
+  useEffect(()=>{
+    // 로그인 유저 받아오기
+    async function getLoginUser(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      const name:string = parsed.name;
+      const userSeq:number = parsed.memberSeq;
+      //멤버번호 + accompanyMemberWidthdrawSeq 
+      console.log("선택한 지출상세의 아이디! :", accompanySeq)
+      //보낼 데이터
+      const send = {
+        accompanyMemberSeq : accompanySeq,
+        memberSeq : null
+      }
 
+      // setName(name);
+      // setLoginUserSeq(userSeq);
+      // setEndUpload(true); //1
+
+      const getDetail = () => {
+        // async function callDetail(){
+        //   try {
+        //     const response = await nonAuthHttp.post(`api/payment/detail`, send);
+        //     const data = response.data;
+            
+        //     console.log(data.withdraw);
+        //     //현재 선택된 지출상세 정보
+        //     setDetailData(data.withdraw);
+
+     
+        //     setFriendList(data.withdraw.includedMemberList);
+        //     console.log(data.withdraw.includedMemberList + `rr`)
+
+
+        //     // console.log(1);
+        //     // console.log(friendList);
+
+        //   } catch (error) {
+        //       const err = error as AxiosError
+        //       console.log(err)
+        //       alert("에러!!")
+        //   }
+        // }
+        // callDetail();
+      }
+      getDetail();
+    }
+    getLoginUser();
+
+
+
+  },[])
   const handleCategoryPress = (index:number) => {
     setSelectedCategory(index);
     console.log(index);
@@ -30,6 +101,7 @@ const ExpenseDetail = ({route}) => {
   ////////////////////
   //동행별 지출 모듈 //
   ////////////////////
+  // const [friendList, setFriendList] = useState<{name:string, expense:number}[]>([]);
   const friendList = [
     {
       name : "석다영",
@@ -54,6 +126,7 @@ const ExpenseDetail = ({route}) => {
   const [showExpenses, setShowExpenses] = useState(
     friendList.map((friend) => Math.ceil(friend.expense))
   );
+  console.log(showExpenses);
   const [participants, setParticipants] = useState(
     friendList.map(() => true)
   );
@@ -130,6 +203,7 @@ const ExpenseDetail = ({route}) => {
     return (
       <View style={tw`flex-1 p-4 justify-center`}>
         {friendList.map((friend, index) => (
+          
           <View key={index} style={tw`flex-row items-center mb-4`}>
             <Text style={tw`flex-1 text-lg font-bold text-[#333]`}>
               {friend.name}
@@ -137,7 +211,7 @@ const ExpenseDetail = ({route}) => {
             <TextInput
               editable={participants[index]}
               style={tw`flex-1 h-10 border border-gray-400 rounded px-2`}
-              value={showExpenses[index].toString()}
+              value={showExpenses[index]}
               onChangeText={(value) => handleExpenseChange(value, index)}
               keyboardType="numeric"
             />
@@ -196,8 +270,8 @@ const ExpenseDetail = ({route}) => {
     style={tw`mt-10 p-7 mb-10 flex-1`}>
     <ScrollView style={tw `flex-1`}>
     <View style={tw `flex-1 items-center p-3 justify-center rounded-3 mb-7 bg-[#E4E0F0]`}>
-    <Text style={tw `font-bold text-base`}>{expenseTitle}</Text>
-    <Text style={tw `font-bold text-2xl`}>{expense}</Text>
+    <Text style={tw `font-bold text-base`}>{detailData?.name}</Text>
+    <Text style={tw `font-bold text-2xl`}>{detailData?.cost}</Text>
     </View>
       {/* 메모 */}
       <View style={tw `flex-1`}>
@@ -207,7 +281,7 @@ const ExpenseDetail = ({route}) => {
             tw`h-13 px-3 mb-5`,
             { borderBottomWidth: 0.6, borderBottomColor: '#444' },
           ]}
-        >{memo}</TextInput>
+        >{detailData?.memo}</TextInput>
       </View>
 
       <View style={tw `flex-1`}>

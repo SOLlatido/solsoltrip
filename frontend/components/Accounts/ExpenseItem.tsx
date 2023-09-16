@@ -6,12 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import PlaceholderImage from "../../assets/images/sol_expense_large.png";
 import ImageViewerSmall from './ImageViewerSmall';
 const imageSource = null;
-const expenseTitle = "AKPLAZA 강릉점"
-const memo = "맛있는 스시를 먹었다! 여기서 다음 일정도 짰다"
-const date = "07-15 11:57"
-const expense = "- 34,500"
-const category:number = 4
-console.log(category)
+
+
 //숙소 항공 교통 관광 식비 쇼핑 기타
 const Category = ({categoryNum}:{categoryNum : number}) => {
     return (
@@ -38,16 +34,19 @@ const Category = ({categoryNum}:{categoryNum : number}) => {
         {categoryNum === 6 && (
         <FontAwesome name="question" size={20} color="black" />
         )}
+        {categoryNum === 7 && (
+          <></>
+        )}
         </View>
         </>
     )
 }
 
-const ExpenseItem = () => {
-  const navigation = useNavigation()
-  console.log(category)
-  console.log(memo)
-  const handleExpensePress = () => {
+const ExpenseItem = (props:{expenseTitle:string, memo:string,expense:string, date:string, category:string}) => {
+    const navigation = useNavigation()
+    const {expenseTitle, memo, expense, date, category} = props;
+
+    const handleExpensePress = () => {
     navigation.navigate("ExpenseDetail" as never, {
       imageSource,
       expenseTitle,
@@ -66,13 +65,13 @@ const ExpenseItem = () => {
         </ImageViewerSmall>
       </View>
       <View style={tw.style('flex-3 p-2 justify-center')}>
-        <Text style={tw `font-bold text-[#333] mb-1`} numberOfLines={1} ellipsizeMode='tail'>{expenseTitle}</Text>
-        <Text style={tw `text-xs`} numberOfLines={1} ellipsizeMode='tail'>{memo}</Text>
+        <Text style={tw `font-bold text-[#333] mb-1`} numberOfLines={1} ellipsizeMode='tail'>{props.expenseTitle}</Text>
+        <Text style={tw `text-xs`} numberOfLines={1} ellipsizeMode='tail'>{props.memo===null?"메모가 없습니다":props.memo}</Text>
       </View>
       <View style={tw.style('justify-center items-end p-1 pr-2')}>
-        <Category categoryNum={category}></Category>
-        <Text style={tw `font-bold text-[#333] mb-0`}>{expense}</Text>
-        <Text style={tw `text-[2.4] tracking-tighter`}>{date}</Text>
+        <Category categoryNum={Number(props.category)}></Category>
+        <Text style={tw `font-bold text-[#333] mb-0`}>{props.expense}</Text>
+        <Text style={tw `text-[2.4] tracking-tighter`}>{props.date}</Text>
       </View>
     </TouchableOpacity>
   );

@@ -13,6 +13,13 @@ import starrynight from '../assets/images/starrynight_bg.jpg';
 import SavingMoneySlider from '../components/Slider/SavingMoneySlider';
 import LongButton from '../components/ButtonItems/LongButton';
 
+import { useRecoilState } from 'recoil';
+import {userState} from "../recoil/user/loginUserAtom"
+import {currentAccountState} from "../recoil/account/currentAccountAtom"
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {pickAccountState} from "../recoil/account/pickAccountAtom";
+
 
 type EndTimeSavingMoneyProps = {
     navigation: StackNavigationProp<any>;
@@ -32,6 +39,16 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
     const [animation1, setAnimation1] = useState(null);
     const [animation2, setAnimation2] = useState(null);
 
+    const loginUser = useRecoilState(userState);
+    const [loginUserSeq,setLoginUserSeq] = useState<number>(0);
+
+
+    const currAccount = useRecoilState(currentAccountState);
+    const [accompany, setAccompany] = useRecoilState(pickAccountState);
+    const accompanySeq = accompany.accountSeq;
+
+    const [finalFee, setFinalFee] = useState<EndTripSettleResponse>();
+
     useEffect(() => {
         if (animation1) animation1.slideInUp(1000); // 첫 번째 애니메이션
       }, [animation1]);
@@ -45,11 +62,16 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
     async function EndTripSettle(data:EndTripSettleRequest): Promise<void> {
         try {
 
-            const response: AxiosResponse<EndTripSettleResponse> = await authHttp.patch<EndTripSettleResponse>(`/api/settlement/settle`, data);
+            if(data.accompanySeq==0 || data.memberSeq==0) return;
+
+            const response: AxiosResponse<EndTripSettleResponse> = await nonAuthHttp.patch<EndTripSettleResponse>(`api/settlement/settle`, data);
             const result: EndTripSettleResponse = response.data; //{status, message}
+
+            console.log(result);
             
             if(response.status===200){
                 setSaving(result.formattedLeft);
+                setFinalFee(result);
             }
 
         } catch (error) {
@@ -58,6 +80,26 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
             console.log(err);
         }
     }
+
+    useEffect(()=>{
+
+        // 로그인 유저 받아오기
+        async function getLoginUser(){
+            const loginUser = await AsyncStorage.getItem("loginUser")
+            const parsed = JSON.parse(loginUser as string)
+            const userSeq:number = parsed.memberSeq;
+            setLoginUserSeq(userSeq);
+        }
+        getLoginUser();
+
+        const requestData:EndTripSettleRequest = {
+            accompanySeq: accompanySeq,
+            memberSeq: loginUserSeq
+        }
+
+        EndTripSettle(requestData);
+
+    },[loginUserSeq])
 
     return(
         <View style={tw`flex-1`}>
@@ -70,7 +112,7 @@ const EndTimeSavingMoney:React.FC<EndTimeSavingMoneyProps> = ({navigation}) => {
             </Animatable.View>
 
             <Animatable.View ref={(ref) => setAnimation2(ref)} style={tw `flex-4 items-center justify-center`}>
-                <SavingMoneySlider/>
+                <SavingMoneySlider finalFee={finalFee}/>
             </Animatable.View>
 
             <View style={tw `flex-1 flex-row`}>
@@ -85,8 +127,8 @@ export default EndTimeSavingMoney
 
 //6. 남은 금액 정산
 type EndTripSettleRequest = {
-    accompanySeq : number,
-    memberSeq : number,
+    accompanySeq : number|null,
+    memberSeq : number|null,
 }
 
 type EndTripSettleResponse = {

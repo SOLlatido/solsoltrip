@@ -10,18 +10,21 @@ import TabNavigation from '../navigation/TabNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nonAuthHttp } from '../axios/axios';
 import { AxiosError } from 'axios';
-import { currentAccountState } from '../recoil/account/currentAccountAtom'
+import { pickAccountState } from '../recoil/account/pickAccountAtom'
 import { useRecoilState } from 'recoil';
+import {pickSpecificAccountInfoState} from "../recoil/account/pickSpecificAccountInfo";
+import { currentAccountState } from '../recoil/account/currentAccountAtom';
+
 const loginUser = AsyncStorage.getItem("loginUser")
-console.log(typeof loginUser.name)
+
 //들어오자 마자 recoil에 담긴 통장 정보가 떠야 함.
 
 
 const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => { 
+  
   return (
     <>
         <TouchableOpacity onPress = {props.onPress}>
-    const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
         <View style={[
             tw `ml-3 w-20 h-9 rounded-2 bg-[#ddd] justify-center items-center`,
             props.isActive? {backgroundColor : '#EDF7FA'} : {backgroundColor : "transparent"}
@@ -34,12 +37,15 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 }
 
 function MainPage() {
-  const [currAccount, setCurrAccount] = useRecoilState(currentAccountState)
+  const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState);
+  const [accompanyState, setAccompanyState] = useRecoilState(currentAccountState);
+  const accompanySeq = accompanyState[0].accompanySeq;
+  const [spendList, setSpendList] = useRecoilState(pickSpecificAccountInfoState);
+
+  console.log(spendList.totalList);
+
   const [activeTab, setActiveTab] = useState("전체");
-  const accountNumber:string = "123232123"
-  const travelTitle:string = "4박 5일 강릉 여행"
-  const duration:string = "2023-07-16 ~ 2023-07-20"
-  const numberOfPeople:number = 4
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = (text:string) => {
@@ -55,11 +61,14 @@ function MainPage() {
       <ImageBackground source={main_aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-            accountNumber={accountNumber} 
-            travelTitle={travelTitle}
-            duration={duration}
-            numberOfPeople={numberOfPeople}
-            ></AccountItem>
+                accompanySeq={accompanySeq}
+                accountNumber={currAccountInfo.account} 
+                travelTitle={currAccountInfo.name}
+                duration={`${currAccountInfo.startDate} ~ ${currAccountInfo.endDate}`}
+                numberOfPeople={currAccountInfo.size}
+            >
+              
+            </AccountItem>
         </View>
             {/* 내용이 들어가는 View */}
             <View style={tw `-mt-20 flex-col w-full flex-1 bg-white rounded-t-7`}> 
@@ -88,11 +97,39 @@ function MainPage() {
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center`}>
                     <ScrollView style={tw `bg-white flex-1 w-7/8`}>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
+                      {
+                        activeTab==="전체"?
+                          spendList.totalList.map((data, index)=>{
+                            return(
+                              data.name!==null && data.name!==undefined?
+                              <ExpenseItem 
+                                key={index}
+                                expenseTitle={data.name} memo={null} expense={data.cost} date={data.acceptedDate} category={data.category}
+                              ></ExpenseItem>:
+                              <ExpenseItem 
+                                key={index}
+                                expenseTitle={data.store} memo={data.memo} expense={data.cost} date={data.acceptedDate} category={data.category}
+                              ></ExpenseItem>
+                            )
+                          }):(
+                            activeTab==="출금"?
+                            spendList.withdrawList.map((data, index)=>{
+                              return(
+                                <ExpenseItem 
+                                  key={index}
+                                  expenseTitle={data.store} memo={data.memo} expense={data.cost} date={data.acceptedDate} category={data.category}
+                                ></ExpenseItem>
+                              )
+                            }):spendList.depositList.map((data, index)=>{
+                              return(
+                                <ExpenseItem 
+                                  key={index}
+                                  expenseTitle={data.name} memo={null} expense={data.cost} date={data.acceptedDate} category={data.category}
+                                ></ExpenseItem>
+                              )
+                            })
+                          )
+                      }
 
                     </ScrollView>
                 </View>

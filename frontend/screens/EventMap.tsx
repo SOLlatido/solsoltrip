@@ -5,6 +5,8 @@ import MapView, { PROVIDER_GOOGLE,Marker, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingAnimation_morning from '../components/Animation/LoadingAnimation_morning';
 
 // axios
 import {authHttp, nonAuthHttp} from '../axios/axios';
@@ -21,12 +23,13 @@ import sol_charater1 from '../assets/character/sol_character1.png';
 import EventModal from '../components/Modals/EventModal';
 
 //2000m는 근처에 관광지가 있다고 알림
-//100m는 포인트를 받을 수 있음
+//300m는 포인트를 받을 수 있음
 const EventMap:React.FC<EventMap> = ({navigation}) => {
 
   //axios 결과
   const [eventMap, setEventMap] = useState<EventAreaData[]>([]); //전체 캐릭터 위치
   const [point, setPoint] = useState<number>(0); //유저가 누른 캐릭터의 포인트
+  const [pointMapName,setPointMapName] = useState<string>("");
   
 
   //delta 고정값
@@ -44,24 +47,33 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
   const [modalContent, setModalContent] = useState('');
 
+  //로그인한 유저 정보
+  const [loginUserSeq, setLoginUserSeq] = useState<number|null>();
+
+  //로딩
+  const [loading, setLoding] = useState<boolean>(true);
+  
+
 
   // axios
-  //1. 이벤트 장소 주변 알림/도착 알림/포인트 (지도 켜면 1회 내 위치가 정해졌을 때 부르고, 어떤 캐릭터를 눌렀을 때 요청 보내면 될 것 같음)
-  async function getArrival(data:EventArrivalRequest): Promise<void> {
+  //1. 이벤트 장소 주변 알림/도착 알림/포인트 (지도 켜면 1회 내 위치가 정해졌을 때 불러서 캐릭터들을 띄운다.)
+  async function getInform(data:EventInformRequest): Promise<void> {
     try {
       
       if(data.x===undefined || data.y===undefined) return;
       
-      const response: AxiosResponse<EventArrivalResponse> = await nonAuthHttp.post<EventArrivalResponse>(`api/event/inform`, data);
+      const response: AxiosResponse<EventInformResponse> = await nonAuthHttp.post<EventInformResponse>(`api/event/inform`, data);
       const result = response.data;
       
         if(response.status===200){
+          console.log(result);
           
           const newEventMap = eventMap;
           result.totalResponseVOList.map((data, index)=>{
 
             newEventMap.push(
               {
+                eventSeq : data.eventSeq,
                 name : data.name,
                 x : data.x,
                 y : data.y,
@@ -73,16 +85,70 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
           setEventMap(newEventMap);
+          setLoding(false);
+          console.log("if");
+
+        }else{
+          console.log("else");
+          return;
+        }
+        
+        
+    } catch (error) {
+        const err = error as AxiosError
+        console.log(err);
+    }
+  }
+
+
+  //2. 300m 이내면 성공 모달 혹은 2000m 내로 들어오면 alert
+  async function getArrival(data:EventArrivalRequest, name:string): Promise<void> {
+    try {
+
+      console.log(data);
+      
+      if(data.x===undefined || data.y===undefined) return;
+      
+      const response: AxiosResponse<EventArrivalResponse> = await nonAuthHttp.post<EventArrivalResponse>(`api/event/arrival`, data);
+      const result = response.data;
+
+      
+        if(response.status===200){
+          
+          const newEventMap = eventMap;
+
+          for(let i=0;i<eventMap.length;i++){
+            if(eventMap[i].eventSeq!==data.eventSeq){
+              newEventMap.push(
+                {
+                  eventSeq : data.eventSeq,
+                  name : eventMap[i].name,
+                  x : data.x,
+                  y : data.y,
+                  description : eventMap[i].description,
+                  is2000Alert : eventMap[i].is2000Alert,
+                }
+              )
+            }
+          }
+
+          //지도상 캐릭터 위치들을 저장 (업데이트)
+          setEventMap(newEventMap);
 
           //캐릭터를 눌렀을 때 포인트 가져오기
           setPoint(result.point);
+
+          //포인트 받기 해당하는 장소 이름 설정
+          setPointMapName(name);
+
+          //모달 띄우기
+          getPoint();
 
         }else{
           return;
         }
         
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
@@ -104,28 +170,31 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     return distance <= 2; // 2000m = 2 km
   };
 
-  // 유저의 위치와 마커 간의 거리를 확인하는 함수 100m 알람범위
-  const isWithin100m = (markerLocation: any, userLocation: any) => {
+  // 유저의 위치와 마커 간의 거리를 확인하는 함수 300m 알람범위
+  const isWithin300m = (markerLocation: any, userLocation: any) => {
     const distance = calcDistance(markerLocation, userLocation);
-    return distance <= 0.1; // 100m = 0.1 km
+    return distance <= 0.3; // 300m = 0.3 km
   };
 
   // EventModal을 열거나 alert를 띄우는 함수를 작성
   const openEventModalOrAlert = (place: any) => {
-    if (isWithin100m(location, place)) {
+    if (isWithin300m(location, place)) {
+
       
       const arrivalData = {
-        "memberSeq": 1,
+        "memberSeq": loginUserSeq,
+        "eventSeq": place.eventSeq,
         "x": location?.longitude,
         "y": location?.latitude,
       }
-      getArrival(arrivalData);
 
-      // 거리가 100 이내인 경우 EventModal 열기
-      getPoint(place?.title);
+      console.log(place.eventSeq);
+
+      getArrival(arrivalData, place.name);//2000~100m 근처로 왔는지 체크하는 함수
+
     } else {
-      // 거리가 100m 이내가 아닌 경우 alert 띄우기
-      Alert.alert("100m 이내가 아닙니다");
+      // 거리가 300m 이내가 아닌 경우 alert 띄우기
+      Alert.alert("300m 이내가 아닙니다");
     }
   };
 
@@ -158,22 +227,34 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   }, []);
 
   useEffect(()=>{
+    // 로그인 정보 불러오기
+    async function getLoginUser(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      const userSeq:number = parsed.memberSeq;
+      setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
+
+
     const arrivalData = {
-      "memberSeq": 1,
+      "memberSeq": loginUserSeq,
       "x": location?.longitude,
       "y": location?.latitude,
     }
-    getArrival(arrivalData);
+    getInform(arrivalData);
 
-  },[locationSetting])
+  },[locationSetting, loading])
 
 
   // 이동 위치 추적
   useEffect(() => {
+    console.log(1);
     const watchLocation = async () => {
+      
       const locationOptions = {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 3000,
+        timeInterval: 1000,
         distanceInterval: 10,
       };
 
@@ -213,9 +294,10 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           
           
             isWithin2000mFlag = isWithin2000m(markerLocation,newCoordinate);
+            console.log(2);
           
             if (isWithin2000mFlag) {
-
+              console.log(3);
               //2000m 알람이 울리지 않은 것
               if (!oneCharacter.is2000Alert&&oneCharacter.name != null) {
                 Alert.alert(`2000m 이내에 ${oneCharacter.name} 관광지가 보입니다!`);
@@ -223,6 +305,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
                 //2000m 내로 들어온 캐릭터 is2000Alert true
                 const newEventMap = eventMap;
                 newEventMap[i] = {
+                  eventSeq : newEventMap[i].eventSeq,
                   name : newEventMap[i].name,
                   x : newEventMap[i].x,
                   y : newEventMap[i].y,
@@ -248,18 +331,17 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
 
   //포인트 얻게 도와주는 모달창 띄우기
-  const getPoint = (title:string) => {
+  const getPoint = () => {
     const newValue = {
       open:true,
       event:true,
     }
     setModalVisible(newValue);
-    setModalContent(`${title} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
 
   return (
-    <View style={{flex:1}}>
+    loading?<LoadingAnimation_morning/>:<View style={{flex:1}}>
       <MapView
         initialRegion={{
           latitude: 36.3538693,
@@ -277,12 +359,15 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
         {eventMap?.map((place, index) => {
+          console.log(place);
           if (!place || !place.y || !place.x) {
             // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
             return null;
           }
 
           const markerLocation = {
+            eventSeq : place.eventSeq,
+            name : place.name,
             latitude : place.y,
             longitude : place.x,
             is2000Alert : place.is2000Alert,
@@ -302,8 +387,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
               
               
               <Image
-                source={sol_charater1} // 이미지를 직접 지정합니다.
-                style={tw`w-[40px] h-[40px]`} // 이미지 크기를 조정하세요.
+                source={sol_charater1}
+                style={tw`w-[40px] h-[40px]`} // 이미지 크기 조정
               />
 
             </Marker>
@@ -314,7 +399,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
           <View>
             <EventModal
               modalTitle="감사합니다"
-              content={modalContent}
+              content={`${pointMapName} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`}
+              point={point}
             />
           </View>
       </MapView>
@@ -347,6 +433,7 @@ type CenterModalState = {
 
 //1. 이벤트 장소 설정 -> 관리자용
 type EventAreaData = {
+  eventSeq : number,
   name : string,
   description : string,
   x : number,
@@ -359,9 +446,22 @@ type EventResponse = {
   message : string,
 }
 
-//2. 이벤트 장소 주변 알림/도착 알림/포인트
+//2. 이벤트 장소 정보
+type EventInformRequest = {
+  memberSeq : number,
+  x : number,
+  y : number,
+}
+
+type EventInformResponse = {
+  // display가 true인 전체 장소 다
+  totalResponseVOList : EventAreaData[], //전체 이벤트 지역 리스트
+  responseVOList : ResponseVOList[] //모달용 이름
+}
+
 type EventArrivalRequest = {
   memberSeq : number,
+  eventSeq:number,
   x : number,
   y : number,
 }
@@ -380,6 +480,21 @@ type EventArrivalResponse = {
 type ResponseVOList = {
   name : number,
 }
+
+//유저가 클릭 시 포인트 획득
+type pointRequest = {
+  memberSeq : number,
+  eventSeq : number,
+  x:string,
+  y:string
+}
+
+type pointResponse = {
+  name : string,
+  point : number
+}
+
+
 
 //기타
 type EventMap = {

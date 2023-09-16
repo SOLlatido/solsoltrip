@@ -5,6 +5,7 @@ import main_aurora from "../assets/images/main_aurora.png"
 
 import EarnPointItem from "../components/Accounts/EarnPointItem";
 import tw from "twrnc";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 컴포넌트
 import PointItem from "../components/Accounts/PointItem";
@@ -13,12 +14,19 @@ import PointItem from "../components/Accounts/PointItem";
 import {authHttp, nonAuthHttp} from '../axios/axios';
 import { AxiosResponse, AxiosError } from "axios"
 
+// recoil
+import { useRecoilState } from 'recoil';
+import {userState} from "../recoil/user/loginUserAtom"
+
 const MyPointList = () => {
-    const accountNumber:string = "포인트는 개인 계좌로 연동됩니다.";
+    const accountNumber:string = "포인트는 신한마이포인트로 연동됩니다.";
     const [myPoint, setMyPoint] = useState<number>(0);
     const [myPointList, setMyPointList] = useState<PointVO[]|null>(null);
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<PointVO[]|null>(null);
+
+    //로그인한 유저 정보
+    const [loginUserSeq, setLoginUserSeq] = useState<number>(0);
     
     const search = (searchText:string) => {
 
@@ -46,12 +54,16 @@ const MyPointList = () => {
   // axios
   //유저의 포인트 리스트 가져오기
   async function getPointList(data:eventPointRequest): Promise<void> {
+    console.log(data);
+
+    if(data.memberSeq<=0) return;
+
     try {
       
       const response: AxiosResponse<eventPointResponse> = await nonAuthHttp.post<eventPointResponse>(`api/event/point`, data);
       const result = response.data;
-      console.log(result);
-        if(response.status===200){
+      if(response.status===200){
+            console.log(result);
             setMyPointList(result.pointVOList);
             setSearchList(result.pointVOList);
             setMyPoint(result.myPoint);
@@ -60,15 +72,23 @@ const MyPointList = () => {
         }
         
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
   }
 
   useEffect(()=>{
-    getPointList({memberSeq: 1});
-  },[])
+    // 로그인 정보 불러오기
+    async function getLoginUser(){
+        const loginUser = await AsyncStorage.getItem("loginUser")
+        const parsed = JSON.parse(loginUser as string)
+        const userSeq:number = parsed.memberSeq;
+        setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
+
+    getPointList({memberSeq: loginUserSeq});
+},[loginUserSeq])
 
   return (
     <>
@@ -98,7 +118,7 @@ const MyPointList = () => {
                 
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center mt-5`}>
-                    {searchList?.length===0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
+                    {searchList?.length!==0?<ScrollView style={tw `bg-white flex-0.9 w-7/8`}>
                         
                         {searchList?.map((pointData, index)=>{
 
@@ -120,7 +140,7 @@ const MyPointList = () => {
 export default MyPointList
 
 type eventPointRequest = {
-    memberSeq : number
+    memberSeq : number|null
 } 
 
 type eventPointResponse = {

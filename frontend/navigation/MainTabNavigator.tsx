@@ -53,7 +53,7 @@ const MainTabNavigator = () => {
             if (route.name === 'MainPage') {
               label = '동행통장';
             } else if (route.name === 'Report') {
-              label = '그래프';
+              label = '리포트';
             } else if (route.name === 'Event') {
               label = '이벤트';
             } else if (route.name === 'MyPointList') {

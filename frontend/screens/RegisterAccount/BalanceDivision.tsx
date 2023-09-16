@@ -15,9 +15,10 @@ function AccountDivision() {
   const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
   
   const balanceLeft = "320,000";
-  const makeNewAccount = () => {
+  const makeNewAccount = async () => {
     async function createAccount(){
       try {
+        console.log("second", newAccount);
         const response = await authHttp.post(`api/trip/regist`, newAccount);
         const data = response.data;
         console.log("data", data);
@@ -33,15 +34,14 @@ function AccountDivision() {
           alert("에러!!")
       }
     }
-    createAccount();
+    await createAccount();
   }
 
-  const handleExpenseGoal = () => {
+  const handleExpenseGoal = async () => {
     setNewAccount((prevNewAccount) => ({
       ...prevNewAccount,
-      personalAmount : Number(plannedExpense)
+      individual : Number(plannedExpense)
     }));
-
     makeNewAccount();
   }
 
