@@ -81,6 +81,7 @@ function MyTravelMates() {
             
             {
               people?.map((peopleData, index)=>{
+                console.log(peopleData);
                 return(
                   <TravelMatesItem key={index} name={peopleData.name} status={peopleData.isMe?"나":"모임원"} balance={peopleData.formattedWithdraw}/>
                 )  
