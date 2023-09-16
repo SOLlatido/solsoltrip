@@ -135,6 +135,7 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
               return (
                 <AccountItem 
                 key={i}
+                accompanySeq={account.accompanySeq}
                 accountNumber={account.account} 
                 travelTitle={account.name}
                 duration={duration}

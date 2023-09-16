@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, Pressable, Dimensions, Alert} from 'react-native'
 import tw from "twrnc"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -9,7 +9,7 @@ import { nonAuthHttp, authHttp } from '../axios/axios';
 
 // recoil
 import { useRecoilState } from 'recoil';
-import {currentAccountState} from "../recoil/account/currentAccountAtom"
+import {pickAccountState} from "../recoil/account/pickAccountAtom";
 
 type EndTimeResetProps = {
     navigation: StackNavigationProp<any>;
@@ -17,29 +17,20 @@ type EndTimeResetProps = {
 
 const EndTimeReset: React.FC = ()=>{
 
-    //오늘의 날짜 설정
-    const now = new Date();
-    let nowYear:string = String(now.getFullYear());
-    let nowMonth:string = String(now.getMonth()+1);
-    let nowDate:string = String(now.getDate());
+    const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
 
-    if(Number(nowMonth)<10){
-        nowMonth = `0${nowMonth}`;
-    }
-    if(Number(nowDate)<10){
-        nowDate = `0${nowDate}`;
-    }
-
-    const currAccount = useRecoilState(currentAccountState);
-    const accompanySeq:number|null = currAccount[0].accompanySeq;
+    const accompanySeq:number|null = currAccount[0].accountSeq;
+    const startDateSplit = currAccount[0].duration.split("~")[0].replace();
+    const endDateSplit = currAccount[0].duration.split("~")[1].replace();
 
     const navigation = useNavigation();
-    const [startText, setStartText] = useState<string>(`${nowYear}-${nowMonth}-${nowDate}`)
-    const [endText, setEndText] = useState<string>("종료 날짜")
+    const [startText, setStartText] = useState<string>(startDateSplit);
+    const [endText, setEndText] = useState<string>(endDateSplit)
     const [selectedDate, setSelectedDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const height = Dimensions.get("window").height;
+    
 
 
     const showDatePicker = () => {
@@ -59,22 +50,31 @@ const EndTimeReset: React.FC = ()=>{
 
         
         
-        // 년도가 크거나 같냐
-        if(start_year<=parseInt(date.toISOString().slice(0,4))){
-            //월이 크거나 같냐
-            if(start_month<=parseInt(date.toISOString().slice(5,7))){
-                //일이 크거나 같냐
-                if(start_day<=parseInt(date.toISOString().slice(8,10))){
-                    setEndDate(date);
-                    setEndText(String(date.toISOString().slice(0,10)));
-                }else flag = false;
-            }else flag = false;
-        }else flag = false;
-
-        if(!flag){
-            alert("시작 날짜보다 이전 날짜는\n선택하실 수 없습니다.");
+        // 년도가 작냐
+        if(start_year>parseInt(date.toISOString().slice(0,4))){
+            flag = false;
+        }
+           
+        //년도가 같은데 월이 작다
+        if(start_year==parseInt(date.toISOString().slice(0,4))&&start_month>parseInt(date.toISOString().slice(5,7))){
+            flag = false;
         }
 
+        // 년도가 같은데 달도 크거나 같은데 일이 작냐
+        if(start_year==parseInt(date.toISOString().slice(0,4))&&start_month==parseInt(date.toISOString().slice(5,7))&&start_day>parseInt(date.toISOString().slice(8,10))){
+            flag = false;
+        }
+
+
+        if(flag){
+            setEndDate(date);
+            setEndText(String(date.toISOString().slice(0,10)));
+        }
+
+        if(!flag){
+            Alert.alert("시작 날짜보다 이전 날짜는\n선택하실 수 없습니다.");
+        }
+        flag=true;
         hideDatePicker();
     };
 
@@ -82,10 +82,23 @@ const EndTimeReset: React.FC = ()=>{
     async function setTripEndDate(data:endTimeResetRequest): Promise<void> {
         try {
 
+            console.log(currAccount);
             const response = await nonAuthHttp.patch(`api/settlement/reset`, data);
             
             if(response.status===200){
-                Alert.alert("종료날짜를 재설정하였습니다.")
+                const newDuration= `${startText} ~ ${endText}`
+
+                setCurrAccount({
+                    accountSeq:currAccount.accountSeq,
+                    accountNumber: currAccount.accountNumber,
+                    travelTitle:currAccount.travelTitle,
+                    duration: newDuration,
+                    numberOfPeople: currAccount.numberOfPeople
+                });
+                
+                Alert.alert("종료날짜를 재설정하였습니다.");
+                
+                navigation.navigate("MyAccounts");
             }else{
                 return;
             }
@@ -95,6 +108,10 @@ const EndTimeReset: React.FC = ()=>{
             console.log(error);
         }
     }
+
+    useEffect(()=>{
+        
+    },[endDate])
 
 
     return(
@@ -106,7 +123,7 @@ const EndTimeReset: React.FC = ()=>{
 
                 <View style={tw `flex flex-row w-5/6 self-center items-center mt-15`}>
 
-                    <Pressable style={[tw `flex-1 self-center items-center`]} onPress={()=>{alert(`시작 날짜는 변경하실 수 없습니다.\n통행 통장 시작 날짜입니다.`);}}>
+                    <Pressable style={[tw `flex-1 self-center items-center`]} onPress={()=>{Alert.alert(`시작 날짜는 변경하실 수 없습니다.\n통행 통장 시작 날짜입니다.`);}}>
                         <Text style={tw `text-[#555] p-3 text-center bg-white w-6/7 h-10`}>
                             {startText}
                         </Text>
@@ -135,12 +152,12 @@ const EndTimeReset: React.FC = ()=>{
                     style={[
                         tw`mt-[${height-400}] w-5/7 bg-[#51C0C7]/90 h-12 rounded-[4] justify-center self-center items-center`,
                     ]}
-                    onPress={()=>{navigation.navigate("MyAccounts")}}
-                >
-                    <Text onPress={()=>{setTripEndDate({
+                    onPress={()=>{setTripEndDate({
                         accompanySeq: accompanySeq,
                         endDate: endText
-                    })}} style={tw `text-white text-base font-semibold`}>수정하기</Text>
+                    })}}
+                >
+                    <Text style={tw `text-white text-base font-semibold`}>수정하기</Text>
                 </TouchableOpacity>
             
 

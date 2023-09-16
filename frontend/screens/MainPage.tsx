@@ -10,18 +10,19 @@ import TabNavigation from '../navigation/TabNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nonAuthHttp } from '../axios/axios';
 import { AxiosError } from 'axios';
-import { currentAccountState } from '../recoil/account/currentAccountAtom'
+import { pickAccountState } from '../recoil/account/pickAccountAtom'
 import { useRecoilState } from 'recoil';
+import {pickSpecificAccountInfoState} from "../recoil/account/pickSpecificAccountInfo";
 const loginUser = AsyncStorage.getItem("loginUser")
-console.log(typeof loginUser.name)
+
 //들어오자 마자 recoil에 담긴 통장 정보가 떠야 함.
 
 
 const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => void }) => { 
+  
   return (
     <>
         <TouchableOpacity onPress = {props.onPress}>
-    const [currAccount, setCurrAccount] = useRecoilState(currentAccountState);
         <View style={[
             tw `ml-3 w-20 h-9 rounded-2 bg-[#ddd] justify-center items-center`,
             props.isActive? {backgroundColor : '#EDF7FA'} : {backgroundColor : "transparent"}
@@ -34,12 +35,11 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 }
 
 function MainPage() {
-  const [currAccount, setCurrAccount] = useRecoilState(currentAccountState)
+  const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
+  const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState);
+  // console.log(currAccountInfo);
+
   const [activeTab, setActiveTab] = useState("전체");
-  const accountNumber:string = "123232123"
-  const travelTitle:string = "4박 5일 강릉 여행"
-  const duration:string = "2023-07-16 ~ 2023-07-20"
-  const numberOfPeople:number = 4
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = (text:string) => {
@@ -55,11 +55,14 @@ function MainPage() {
       <ImageBackground source={main_aurora} style={tw `w-full bg-[#ddd] h-full absolute`}></ImageBackground>
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-            accountNumber={accountNumber} 
-            travelTitle={travelTitle}
-            duration={duration}
-            numberOfPeople={numberOfPeople}
-            ></AccountItem>
+                accompanySeq={currAccount.accountSeq}
+                accountNumber={currAccount.accountNumber} 
+                travelTitle={currAccount.travelTitle}
+                duration={currAccount.duration}
+                numberOfPeople={currAccount.numberOfPeople}
+            >
+              
+            </AccountItem>
         </View>
             {/* 내용이 들어가는 View */}
             <View style={tw `-mt-20 flex-col w-full flex-1 bg-white rounded-t-7`}> 

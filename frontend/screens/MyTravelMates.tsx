@@ -19,10 +19,10 @@ function MyTravelMates() {
       <View style={tw `h-full`}> 
         <View style={tw `mt-25 z-10`}>
             <AccountItem 
-            accountNumber={currAccount.account} 
-            travelTitle={currAccount.travelTitle}
-            duration={currAccount.duration}
-            numberOfPeople={currAccount.numberOfPeople}
+              accountNumber={currAccount.accountNumber} 
+              travelTitle={currAccount.travelTitle}
+              duration={currAccount.duration}
+              numberOfPeople={currAccount.numberOfPeople}
             ></AccountItem>
         </View>
         <ScrollView style={tw `flex-1`}>
