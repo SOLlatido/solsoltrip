@@ -37,7 +37,7 @@ const ExpenseTab = (props: { content: string; isActive: boolean; onPress: () => 
 function MainPage() {
   const [currAccount, setCurrAccount] = useRecoilState(pickAccountState);
   const [currAccountInfo, setCurrAccountInfo] = useRecoilState(pickSpecificAccountInfoState);
-  // console.log(currAccountInfo);
+  console.log(currAccountInfo);
 
   const [activeTab, setActiveTab] = useState("전체");
   const [searchText, setSearchText] = useState('');
@@ -91,11 +91,25 @@ function MainPage() {
                 {/* expenseHistory */}
                 <View style={tw `flex-7 items-center`}>
                     <ScrollView style={tw `bg-white flex-1 w-7/8`}>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
-                      <ExpenseItem></ExpenseItem>
+                      
+                      {/* {
+                        activeTab==="입금"?
+                        currAccountInfo?.accompanyDepositContents.map(()=>{
+                          return(
+                            <ExpenseItem></ExpenseItem>
+                          )
+
+                        }):(activeTab==="출금"?
+                        currAccountInfo?.accompanyWithdrawalContents.map(()=>{
+                            return(
+                              <ExpenseItem></ExpenseItem>
+                            )
+                        }):currAccountInfo?.accompanyWithdrawalContents.map(()=>{
+                            return(
+                              <ExpenseItem></ExpenseItem>
+                            )
+                        }))
+                      } */}
 
                     </ScrollView>
                 </View>

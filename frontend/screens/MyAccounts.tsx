@@ -142,12 +142,12 @@ const MyAccounts:React.FC<NavigationProps> = ({navigation}) => {
               const duration = `${account.startDate} ~ ${account.endDate}`
               return (
                 <AccountItem 
-                key={i}
-                accompanySeq={account?.accompanySeq}
-                accountNumber={account?.account} 
-                travelTitle={account?.name}
-                duration={duration}
-                numberOfPeople={account?.personNum}
+                  key={i}
+                  accompanySeq={account?.accompanySeq}
+                  accountNumber={account?.account} 
+                  travelTitle={account?.name}
+                  duration={duration}
+                  numberOfPeople={account?.personNum}
                 ></AccountItem>
               )
             })

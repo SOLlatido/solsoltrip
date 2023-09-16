@@ -24,6 +24,9 @@ const AccountItem = (props : { accompanySeq:number, accountNumber:string, travel
     console.log("동행통장 나가기");
   }
 
+
+
+  // 통장의 상세 정보를 불러오는 axios
   async function getOneAccountInfo(data:tripAccountRequest): Promise<void> {
     try {
 
