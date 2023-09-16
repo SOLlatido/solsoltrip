@@ -23,6 +23,7 @@ function MyTravelMates() {
 
 
   const [people, setPeople] = useState<memberResponse[]|null>();
+  const [ok, setOk] = useState<boolean>(false);
 
 
 
@@ -33,10 +34,11 @@ function MyTravelMates() {
         const response: AxiosResponse<memberResponse[]> = await nonAuthHttp.post<memberResponse[]>(`api/trip/total`, data);
         const result = response.data; //{status, message}
 
-        
+        console.log(result);
         if(response.status===200){
           setPeople(result.totalMemberList);
           console.log(result.totalMemberList);
+          setOk(true);
         }else{
             return;
         }
@@ -62,7 +64,7 @@ function MyTravelMates() {
       memberSeq: loginUserSeq,
       accompanySeq: accompanySeq
     });
-  },[])
+  },[ok])
   
   
   return (
@@ -81,7 +83,6 @@ function MyTravelMates() {
             
             {
               people?.map((peopleData, index)=>{
-                console.log(peopleData);
                 return(
                   <TravelMatesItem key={index} name={peopleData.name} status={peopleData.isMe?"나":"모임원"} balance={peopleData.formattedWithdraw}/>
                 )  
