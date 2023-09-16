@@ -1,5 +1,6 @@
 package site.solsoltrip.backend.controller;
 
+import com.amazonaws.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,13 @@ public class SettlementController {
     @PostMapping("/result")
     public ResponseEntity<SettlementResponseDto.showTripResult> showTripResult(final SettlementRequestDto.showTripResult requestDto) {
         SettlementResponseDto.showTripResult responseDto = settlementService.checkShowTripResult(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PostMapping("/timeline")
+    public ResponseEntity<SettlementResponseDto.timeline> timeline(final SettlementRequestDto.timeline requestDto) {
+        final SettlementResponseDto.timeline responseDto = settlementService.timeline(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

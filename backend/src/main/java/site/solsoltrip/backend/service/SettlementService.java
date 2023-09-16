@@ -64,6 +64,30 @@ public class SettlementService {
         }
     }
 
+    public SettlementResponseDto.timeline timeline(final SettlementRequestDto.timeline requestDto) {
+        final List<AccompanyMemberWithdraw> accompanyMemberWithdrawList =
+                accompanyMemberWithdrawRepository.findByAccompanySeq(requestDto.accompanySeq());
+
+        final List<SettlementResponseDto.TimelineVO> timelineVOList = new ArrayList<>();
+
+        for (final AccompanyMemberWithdraw accompanyMemberWithdraw : accompanyMemberWithdrawList) {
+            final SettlementResponseDto.TimelineVO timelineVO = SettlementResponseDto.TimelineVO.builder()
+                    .store(accompanyMemberWithdraw.getStore())
+                    .cost(accompanyMemberWithdraw.getCost())
+                    .memo(accompanyMemberWithdraw.getMemo())
+                    .picture(accompanyMemberWithdraw.getPicture())
+                    .acceptedDate(accompanyMemberWithdraw.getAcceptedDate())
+                    .acceptedDateTime(accompanyMemberWithdraw.getAcceptedDateTime())
+                    .build();
+
+            timelineVOList.add(timelineVO);
+        }
+
+        return SettlementResponseDto.timeline.builder()
+                .timeline(timelineVOList)
+                .build();
+    }
+
     public SettlementResponseDto.settleUp settleUp(final SettlementRequestDto.settleUp requestDto) {
         final List<MemberAccompany> memberAccompanyList =
                 memberAccompanyRepository.findByAccompanySeq(requestDto.accompanySeq());
