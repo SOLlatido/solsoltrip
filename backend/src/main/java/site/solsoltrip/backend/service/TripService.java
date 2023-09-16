@@ -15,6 +15,7 @@ import site.solsoltrip.backend.dto.TripResponseDto;
 import site.solsoltrip.backend.entity.*;
 import site.solsoltrip.backend.repository.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,6 +143,19 @@ public class TripService {
                 .endDate(accompany.getEndDate())
                 .depositList(depositList)
                 .withdrawList(withdrawList)
+                .build();
+    }
+
+    @Transactional
+    public TripResponseDto.check check(final TripRequestDto.check requestDto) {
+        final Accompany accompany = accompanyRepository.findByAccompanySeq(requestDto.accompanySeq()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 동행 통장이 없습니다.")
+        );
+
+        final boolean endTrip = accompany.getEndDate().isBefore(LocalDate.now());
+
+        return TripResponseDto.check.builder()
+                .endTrip(endTrip)
                 .build();
     }
 
