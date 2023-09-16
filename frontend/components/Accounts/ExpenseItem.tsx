@@ -47,8 +47,9 @@ const Category = ({categoryNum}:{categoryNum : number}) => {
 }
 
 const ExpenseItem = (props:{expenseTitle:string, memo:string,expense:string, date:string, category:string}) => {
-  const navigation = useNavigation()
-  console.log(category)
+    const navigation = useNavigation()
+    const {expenseTitle, memo, expense, date, category} = props;
+
     const handleExpensePress = () => {
     navigation.navigate("ExpenseDetail" as never, {
       imageSource,

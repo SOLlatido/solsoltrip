@@ -130,25 +130,6 @@ function MainPage() {
                             })
                           )
                       }
-                      
-                      {/* {
-                        activeTab==="입금"?
-                        currAccountInfo?.accompanyDepositContents.map(()=>{
-                          return(
-                            <ExpenseItem></ExpenseItem>
-                          )
-
-                        }):(activeTab==="출금"?
-                        currAccountInfo?.accompanyWithdrawalContents.map(()=>{
-                            return(
-                              <ExpenseItem></ExpenseItem>
-                            )
-                        }):currAccountInfo?.accompanyWithdrawalContents.map(()=>{
-                            return(
-                              <ExpenseItem></ExpenseItem>
-                            )
-                        }))
-                      } */}
 
                     </ScrollView>
                 </View>
