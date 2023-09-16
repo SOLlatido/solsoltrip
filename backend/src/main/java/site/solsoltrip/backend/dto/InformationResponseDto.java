@@ -16,7 +16,7 @@ public class InformationResponseDto {
     @Getter
     @Builder
     public static class AnalysisCategoryVO {
-        private final Integer category;
+        private final String category;
         private final Double cost;
     }
 

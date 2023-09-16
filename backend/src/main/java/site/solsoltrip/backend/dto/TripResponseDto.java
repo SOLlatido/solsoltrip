@@ -18,6 +18,8 @@ public class TripResponseDto {
 
             String name,
 
+            Integer size,
+
             LocalDate startDate,
 
             LocalDate endDate,
@@ -26,7 +28,9 @@ public class TripResponseDto {
 
             List<AccompanyMemberDeposit> depositList,
 
-            List<AccompanyMemberWithdraw> withdrawList
+            List<AccompanyMemberWithdraw> withdrawList,
+
+            List<Object> totalList
     ) {}
 
     @Builder
