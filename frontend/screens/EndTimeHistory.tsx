@@ -19,6 +19,8 @@ import { useRecoilState } from 'recoil';
 import {userState} from "../recoil/user/loginUserAtom"
 import {currentAccountState} from "../recoil/account/currentAccountAtom"
 
+import {pickAccountState} from "../recoil/account/pickAccountAtom";
+
 type EndTimeHistoryProps = {
   navigation: StackNavigationProp<any>;
 };
@@ -41,6 +43,10 @@ const EndTimeHistory:React.FC<EndTimeHistoryProps> = ({navigation}) => {
 
   const currAccount = useRecoilState(currentAccountState);
   const accompanySeq:number|null = currAccount[0].accompanySeq; //동행 통장 정보
+  console.log(accompanySeq)
+
+  const [accompany, setAccompany] = useRecoilState(pickAccountState);
+
 
 
   useEffect(()=>{
