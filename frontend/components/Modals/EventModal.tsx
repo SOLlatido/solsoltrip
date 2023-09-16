@@ -16,9 +16,10 @@ import EventMapAnimation from '../Animation/EventMapAnimation';
 interface EventModalProps {
     modalTitle: string;
     content: string;
-  }
+    point:number;
+}
 
-const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, point }: CenterModalProps) => {
+const EventModal:React.FC<EventModalProps> = ({ modalTitle, content, point }: EventModalProps) => {
     
     const [modalVisible, setModalVisible] = useRecoilState<CenterModalState>(centerModalState);
 
