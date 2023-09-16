@@ -8,8 +8,13 @@ import LongButton from '../ButtonItems/LongButton';
 const {width:SCREEN_WIDTH} = Dimensions.get("window");
 
 const SavingMoneySlider = (finalFee:EndTripSettleResponse) => {
-  console.log(finalFee.finalFee?.settlementList);
-  console.log(2);
+
+  useEffect(()=>{
+    
+    console.log(finalFee?.finalFee?.settlementList);
+    // console.log(2);
+  },[finalFee])
+
   return (
     <View style={[tw`flex-1`, { backgroundColor: 'rgba(11, 11, 59, 0.5)'}]}>
 
@@ -21,12 +26,12 @@ const SavingMoneySlider = (finalFee:EndTripSettleResponse) => {
         contentContainerStyle={tw`mt-[40px]`}>
 
         {
-          finalFee.finalFee.settlementList?.length === 0?(
+          finalFee.finalFee?.settlementList?.length === 0?(
             <View style={styles.slider}>
                 <Text style={tw`text-[30px] font-bold text-white items-center mt-[40%]`}>참여자 정보가 없습니다.</Text>
             </View>
           ):(
-            finalFee.finalFee.settlementList?.map((people, index)=>{
+            finalFee.finalFee?.settlementList?.map((people, index)=>{
               return(
                 <View key={index} style={styles.slider}>
                     
