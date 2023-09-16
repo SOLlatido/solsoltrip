@@ -5,6 +5,7 @@ import MapView, { PROVIDER_GOOGLE,Marker, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import haversine from 'haversine';
 import {StackNavigationProp} from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // axios
 import {authHttp, nonAuthHttp} from '../axios/axios';
@@ -22,7 +23,7 @@ import sol_charater1 from '../assets/character/sol_character1.png';
 import EventModal from '../components/Modals/EventModal';
 
 //2000m는 근처에 관광지가 있다고 알림
-//100m는 포인트를 받을 수 있음
+//300m는 포인트를 받을 수 있음
 const EventMap:React.FC<EventMap> = ({navigation}) => {
 
   //axios 결과
@@ -47,8 +48,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   const [modalContent, setModalContent] = useState('');
 
   //로그인한 유저 정보
-  const loginUser = useRecoilState(userState);
-  const memberSeq:number|null = loginUser[0].memberSeq;
+  const [loginUserSeq, setLoginUserSeq] = useState<number|null>();
+  
 
 
   // axios
@@ -62,6 +63,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       const result = response.data;
       
         if(response.status===200){
+          console.log(result);
           
           const newEventMap = eventMap;
           result.totalResponseVOList.map((data, index)=>{
@@ -80,20 +82,21 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
 
           //지도상 캐릭터 위치들을 저장 (업데이트)
           setEventMap(newEventMap);
+          // console.log(eventMap);
 
         }else{
           return;
         }
         
     } catch (error) {
-        Alert.alert("시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
+        Alert.alert("1시스템 에러입니다.\n빠른 시일 내 조치를 취하겠습니다.");
         const err = error as AxiosError
         console.log(err);
     }
   }
 
 
-  //2. 100m 이내면 성공 모달 혹은 2000m 내로 들어오면 alert
+  //2. 300m 이내면 성공 모달 혹은 2000m 내로 들어오면 alert
   async function getArrival(data:EventArrivalRequest, name:string): Promise<void> {
     try {
       
@@ -159,19 +162,19 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   };
 
   // 유저의 위치와 마커 간의 거리를 확인하는 함수 100m 알람범위
-  const isWithin100m = (markerLocation: any, userLocation: any) => {
+  const isWithin300m = (markerLocation: any, userLocation: any) => {
     const distance = calcDistance(markerLocation, userLocation);
-    return distance <= 0.1; // 100m = 0.1 km
+    return distance <= 0.3; // 300m = 0.3 km
   };
 
   // EventModal을 열거나 alert를 띄우는 함수를 작성
   const openEventModalOrAlert = (place: any) => {
-    if (isWithin100m(location, place)) {
+    if (isWithin300m(location, place)) {
 
       console.log(place);
       
       const arrivalData = {
-        "memberSeq": memberSeq,
+        "memberSeq": loginUserSeq,
         "eventSeq": location.eventSeq,
         "x": location?.longitude,
         "y": location?.latitude,
@@ -179,8 +182,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
       getArrival(arrivalData, place.name);//2000~100m 근처로 왔는지 체크하는 함수
 
     } else {
-      // 거리가 100m 이내가 아닌 경우 alert 띄우기
-      Alert.alert("100m 이내가 아닙니다");
+      // 거리가 300m 이내가 아닌 경우 alert 띄우기
+      Alert.alert("300m 이내가 아닙니다");
     }
   };
 
@@ -213,8 +216,18 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
   }, []);
 
   useEffect(()=>{
+    // 로그인 정보 불러오기
+    async function getLoginUser(){
+      const loginUser = await AsyncStorage.getItem("loginUser")
+      const parsed = JSON.parse(loginUser as string)
+      const userSeq:number = parsed.memberSeq;
+      setLoginUserSeq(userSeq);
+    }
+    getLoginUser();
+
+
     const arrivalData = {
-      "memberSeq": memberSeq,
+      "memberSeq": loginUserSeq,
       "x": location?.longitude,
       "y": location?.latitude,
     }
@@ -313,6 +326,8 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
     setModalContent(`${pointMapName} 방문 감사합니다.\n${point}포인트를 획득하셨습니다!`);
   }
 
+  useEffect(()=>{},[eventMap])
+
 
   return (
     <View style={{flex:1}}>
@@ -333,6 +348,7 @@ const EventMap:React.FC<EventMap> = ({navigation}) => {
         <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="#0046FF" />
 
         {eventMap?.map((place, index) => {
+          console.log(place);
           if (!place || !place.y || !place.x) {
             // 유효하지 않은 위치 데이터를 가지고 있는 경우 이 요소를 건너뛰기
             return null;
