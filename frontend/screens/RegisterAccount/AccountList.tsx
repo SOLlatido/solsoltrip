@@ -54,7 +54,7 @@ function AccountList() {
     setSelectedAccount(index);
     setNewAccount((prevNewAccount) => ({
       ...prevNewAccount,
-      registerAccountSeq: index,
+      registedAccountSeq: index,
       // memberSeq : memberN,
     }));
     console.log("new :", newAccount);
